@@ -1,0 +1,749 @@
+[1;32m%%%% spikChIP.pl by Enrique Blanco @ CRG (2021)
+[0m[1;32m%%%% 
+[0m[1;32m%%%% [Sat Apr 24 03:21:03 2021] Stage 0.  Configuration of the pipeline
+[0m[1;32m%%%% Reading options of the command line
+[0m[1;32m%%%% Syntax is correct and options are acquired[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Checking for external software availability
+[0m[1;32m%%%% Searching samtools...[0m[1;32m [OK]
+[0m[1;32m%%%% Searching gawk...[0m[1;32m [OK]
+[0m[1;32m%%%% Searching R...[0m[1;32m [OK]
+[0m[1;32m%%%% Searching SeqCode |recoverChIPlevels...[0m[1;32m [OK]
+[0m[1;32m%%%% Searching SeqCode |matchpeaks...[0m[1;32m [OK]
+[0m[1;32m%%%% Closing external software check...[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Generating output folders (if necessary)
+[0m[1;32m%%%% Trying the results/ directory
+[0m[1;32m%%%% It is already existing
+[0m[1;32m%%%% Trying the Rscripts/ directory
+[0m[1;32m%%%% It is already existing
+[0m[1;32m%%%% Trying the plots/ directory
+[0m[1;32m%%%% It is already existing[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Checking information on chromosome sizes
+[0mchr1	249250621
+chr2	243199373
+chr3	198022430
+chr4	191154276
+chr5	180915260
+chr6	171115067
+chr7	159138663
+chr8	146364022
+chr9	141213431
+chr10	135534747
+chr11	135006516
+chr12	133851895
+chr13	115169878
+chr14	107349540
+chr15	102531392
+chr16	90354753
+chr17	81195210
+chr18	78077248
+chr19	59128983
+chr20	63025520
+chr21	48129895
+chr22	51304566
+chrX	155270560
+chrY	59373566
+chr2L_FLY	23011544
+chr2R_FLY	21146708
+chr3L_FLY	24543557
+chr3R_FLY	27905053
+chr4_FLY	1351857
+chrX_FLY	22422827
+[1;32m%%%% Closing ChromInfo file check...[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Establishing the bin size
+[0m[1;32m%%%% Effective bin size: 1000[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Establishing the palette
+[0m[1;32m%%%% Effective palette: c("pink","red","brown")[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Reading configuration file, calculating reads and down-sampling
+[0m[1;32m%%%% Processing the configuration file
+[0m[1;32m%%%% samtools flagstat map_files/0-100_sample.bam > results/H3K79me2_0-100_sample_flagstat.txt
+[0m[1;32m%%%% (H3K79me2_0-100, 19129459 reads) Confirming filename map_files/0-100_sample.bam
+[0m[1;32m%%%% samtools flagstat map_files/0-100_spike.bam > results/H3K79me2_0-100_spike_flagstat.txt
+[0m[1;32m%%%% (H3K79me2_0-100, 5308049 reads) Confirming filename map_files/0-100_spike.bam
+[0m[1;32m%%%% (H3K79me2_0-100) Confirming filename peak_files/25-75_sample_peaks.bed
+[0m[1;32m%%%% (H3K79me2_0-100) Confirming filename peak_files/25-75_spike_peaks.bed
+[0m[1;32m%%%% samtools flagstat map_files/25-75_sample.bam > results/25-75_sample_flagstat.txt
+[0m[1;32m%%%% (25-75, 17921399 reads) Confirming filename map_files/25-75_sample.bam
+[0m[1;32m%%%% samtools flagstat map_files/25-75_spike.bam > results/25-75_spike_flagstat.txt
+[0m[1;32m%%%% (25-75, 6226309 reads) Confirming filename map_files/25-75_spike.bam
+[0m[1;32m%%%% (25-75) Confirming filename peak_files/25-75_sample_peaks.bed
+[0m[1;32m%%%% (25-75) Confirming filename peak_files/25-75_spike_peaks.bed
+[0m[1;32m%%%% samtools flagstat map_files/50-50_sample.bam > results/50-50_sample_flagstat.txt
+[0m[1;32m%%%% (50-50, 15946819 reads) Confirming filename map_files/50-50_sample.bam
+[0m[1;32m%%%% samtools flagstat map_files/50-50_spike.bam > results/50-50_spike_flagstat.txt
+[0m[1;32m%%%% (50-50, 7151795 reads) Confirming filename map_files/50-50_spike.bam
+[0m[1;32m%%%% (50-50) Confirming filename peak_files/25-75_sample_peaks.bed
+[0m[1;32m%%%% (50-50) Confirming filename peak_files/25-75_spike_peaks.bed
+[0m[1;32m%%%% samtools flagstat map_files/75-25_sample.bam > results/75-25_sample_flagstat.txt
+[0m[1;32m%%%% (75-25, 10918718 reads) Confirming filename map_files/75-25_sample.bam
+[0m[1;32m%%%% samtools flagstat map_files/75-25_spike.bam > results/75-25_spike_flagstat.txt
+[0m[1;32m%%%% (75-25, 8554870 reads) Confirming filename map_files/75-25_spike.bam
+[0m[1;32m%%%% (75-25) Confirming filename peak_files/25-75_sample_peaks.bed
+[0m[1;32m%%%% (75-25) Confirming filename peak_files/25-75_spike_peaks.bed
+[0m[1;32m%%%% samtools flagstat map_files/100-0_sample.bam > results/100-0_sample_flagstat.txt
+[0m[1;32m%%%% (100-0, 7318439 reads) Confirming filename map_files/100-0_sample.bam
+[0m[1;32m%%%% samtools flagstat map_files/100-0_spike.bam > results/100-0_spike_flagstat.txt
+[0m[1;32m%%%% (100-0, 14829317 reads) Confirming filename map_files/100-0_spike.bam
+[0m[1;32m%%%% (100-0) Confirming filename peak_files/25-75_sample_peaks.bed
+[0m[1;32m%%%% (100-0) Confirming filename peak_files/25-75_spike_peaks.bed
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Starting downsampling of the experiments
+[0m[1;32m%%%% Minimum value of spike reads: 5308049
+[0m[1;32m%%%% H3K79me2_0-100: factor of 1.0 = 5308049 / 5308049
+[0m[1;32m%%%% samtools view -h -b -s 1.0 -o map_files/0-100_spike_adjusted.bam map_files/0-100_spike.bam
+[0m[1;32m%%%% samtools flagstat map_files/0-100_spike_adjusted.bam > results/H3K79me2_0-100_spike_adjusted_flagstat.txt
+[0m[1;32m%%%% (map_files/0-100_spike_adjusted.bam, 5308049) Final number of reads after downsampling
+[0m[1;32m%%%% samtools view -h -b -s 1.0 -o map_files/0-100_sample_adjusted.bam map_files/0-100_sample.bam
+[0m[1;32m%%%% samtools flagstat map_files/0-100_sample_adjusted.bam > results/H3K79me2_0-100_sample_adjusted_flagstat.txt
+[0m[1;32m%%%% (map_files/0-100_sample_adjusted.bam, 19129459) Final number of reads after downsampling
+[0m[1;32m%%%% 25-75: factor of 0.852519365807254 = 5308049 / 6226309
+[0m[1;32m%%%% samtools view -h -b -s 0.852519365807254 -o map_files/25-75_spike_adjusted.bam map_files/25-75_spike.bam
+[0m[1;32m%%%% samtools flagstat map_files/25-75_spike_adjusted.bam > results/25-75_spike_adjusted_flagstat.txt
+[0m[1;32m%%%% (map_files/25-75_spike_adjusted.bam, 5307373) Final number of reads after downsampling
+[0m[1;32m%%%% samtools view -h -b -s 0.852519365807254 -o map_files/25-75_sample_adjusted.bam map_files/25-75_sample.bam
+[0m[1;32m%%%% samtools flagstat map_files/25-75_sample_adjusted.bam > results/25-75_sample_adjusted_flagstat.txt
+[0m[1;32m%%%% (map_files/25-75_sample_adjusted.bam, 15278279) Final number of reads after downsampling
+[0m[1;32m%%%% 50-50: factor of 0.742198147458086 = 5308049 / 7151795
+[0m[1;32m%%%% samtools view -h -b -s 0.742198147458086 -o map_files/50-50_spike_adjusted.bam map_files/50-50_spike.bam
+[0m[1;32m%%%% samtools flagstat map_files/50-50_spike_adjusted.bam > results/50-50_spike_adjusted_flagstat.txt
+[0m[1;32m%%%% (map_files/50-50_spike_adjusted.bam, 5307801) Final number of reads after downsampling
+[0m[1;32m%%%% samtools view -h -b -s 0.742198147458086 -o map_files/50-50_sample_adjusted.bam map_files/50-50_sample.bam
+[0m[1;32m%%%% samtools flagstat map_files/50-50_sample_adjusted.bam > results/50-50_sample_adjusted_flagstat.txt
+[0m[1;32m%%%% (map_files/50-50_sample_adjusted.bam, 11836725) Final number of reads after downsampling
+[0m[1;32m%%%% 75-25: factor of 0.620471029951361 = 5308049 / 8554870
+[0m[1;32m%%%% samtools view -h -b -s 0.620471029951361 -o map_files/75-25_spike_adjusted.bam map_files/75-25_spike.bam
+[0m[1;32m%%%% samtools flagstat map_files/75-25_spike_adjusted.bam > results/75-25_spike_adjusted_flagstat.txt
+[0m[1;32m%%%% (map_files/75-25_spike_adjusted.bam, 5307952) Final number of reads after downsampling
+[0m[1;32m%%%% samtools view -h -b -s 0.620471029951361 -o map_files/75-25_sample_adjusted.bam map_files/75-25_sample.bam
+[0m[1;32m%%%% samtools flagstat map_files/75-25_sample_adjusted.bam > results/75-25_sample_adjusted_flagstat.txt
+[0m[1;32m%%%% (map_files/75-25_sample_adjusted.bam, 6773049) Final number of reads after downsampling
+[0m[1;32m%%%% 100-0: factor of 0.357942918072356 = 5308049 / 14829317
+[0m[1;32m%%%% samtools view -h -b -s 0.357942918072356 -o map_files/100-0_spike_adjusted.bam map_files/100-0_spike.bam
+[0m[1;32m%%%% samtools flagstat map_files/100-0_spike_adjusted.bam > results/100-0_spike_adjusted_flagstat.txt
+[0m[1;32m%%%% (map_files/100-0_spike_adjusted.bam, 5309247) Final number of reads after downsampling
+[0m[1;32m%%%% samtools view -h -b -s 0.357942918072356 -o map_files/100-0_sample_adjusted.bam map_files/100-0_sample.bam
+[0m[1;32m%%%% samtools flagstat map_files/100-0_sample_adjusted.bam > results/100-0_sample_adjusted_flagstat.txt
+[0m[1;32m%%%% (map_files/100-0_sample_adjusted.bam, 2616382) Final number of reads after downsampling
+[0m[1;32m%%%% Finishing Stage 0. Configuration...[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% [Sat Apr 24 03:29:58 2021] Stage 1.  Producing the segmentation of both genomes in bins (1000 bps)
+[0m[1;32m%%%% grep FLY config/ChromInfo.txt | gawk 'BEGIN{OFS="\t";offset=1000;}{for(i=1;i<$2-offset;i=i+offset) print $1,i,i+offset;}' > results/H3K79me2_0-100-25-75-50-50-75-25-100-0_fly_1000.bed
+[0m[1;32m%%%% 120378 bins generated in the segmentation of the spike genome
+[0m[1;32m%%%% grep -v FLY config/ChromInfo.txt | gawk 'BEGIN{OFS="\t";offset=1000;}{for(i=1;i<$2-offset;i=i+offset) print $1,i,i+offset;}' > results/H3K79me2_0-100-25-75-50-50-75-25-100-0_human_1000.bed
+[0m[1;32m%%%% 3095665 bins generated in the segmentation of the sample genome[0m[1;32m [OK]
+[0m[1;32m%%%% Finishing Stage 1. Segmentation...[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% [Sat Apr 24 03:30:03 2021] Stage 2.  Processing each experiment with different normalization methods
+[0m[1;32m%%%% Total pairs of sample/spike experiments to be analyzed: 5
+[0m[1;32m%%%% Processing the H3K79me2_0-100 experiment
+[0m[1;32m%%%% Starting RAW normalization...
+[0m[1;32m%%%% recoverChIPlevels -ns 1000000 config/ChromInfo.txt map_files/0-100_spike.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_fly_1000.bed H3K79me2_0-100_RAW_1000_spike
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' H3K79me2_0-100_RAW_1000_spike_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_RAW_1000_spike.bed | sort > H3K79me2_0-100_RAW_1000_spike_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_RAW_1000_spike_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' H3K79me2_0-100_RAW_1000_spike_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_RAW_1000_spike.bed | sort > H3K79me2_0-100_RAW_1000_spike_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_RAW_1000_spike_max.bed
+[0m[1;32m%%%% recoverChIPlevels -ns 1000000 config/ChromInfo.txt map_files/0-100_sample.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_human_1000.bed H3K79me2_0-100_RAW_1000_sample
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' H3K79me2_0-100_RAW_1000_sample_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_RAW_1000_sample.bed | sort > H3K79me2_0-100_RAW_1000_sample_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_RAW_1000_sample_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' H3K79me2_0-100_RAW_1000_sample_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_RAW_1000_sample.bed | sort > H3K79me2_0-100_RAW_1000_sample_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_RAW_1000_sample_max.bed[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Starting TRADITIONAL normalization...
+[0m[1;32m%%%% recoverChIPlevels -ns 24437508 config/ChromInfo.txt map_files/0-100_spike.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_fly_1000.bed H3K79me2_0-100_TRADITIONAL_1000_spike
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' H3K79me2_0-100_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_TRADITIONAL_1000_spike.bed | sort > H3K79me2_0-100_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_TRADITIONAL_1000_spike_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' H3K79me2_0-100_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_TRADITIONAL_1000_spike.bed | sort > H3K79me2_0-100_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_TRADITIONAL_1000_spike_max.bed
+[0m[1;32m%%%% recoverChIPlevels -ns 19129459 config/ChromInfo.txt map_files/0-100_sample.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_human_1000.bed H3K79me2_0-100_TRADITIONAL_1000_sample
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' H3K79me2_0-100_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_TRADITIONAL_1000_sample.bed | sort > H3K79me2_0-100_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_TRADITIONAL_1000_sample_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' H3K79me2_0-100_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_TRADITIONAL_1000_sample.bed | sort > H3K79me2_0-100_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_TRADITIONAL_1000_sample_max.bed[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Starting CHIP-RX normalization...
+[0m[1;32m%%%% recoverChIPlevels -ns 5308049 config/ChromInfo.txt map_files/0-100_spike.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_fly_1000.bed H3K79me2_0-100_CHIPRX_1000_spike
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' H3K79me2_0-100_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_CHIPRX_1000_spike.bed | sort > H3K79me2_0-100_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_CHIPRX_1000_spike_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' H3K79me2_0-100_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_CHIPRX_1000_spike.bed | sort > H3K79me2_0-100_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_CHIPRX_1000_spike_max.bed
+[0m[1;32m%%%% recoverChIPlevels -ns 5308049 config/ChromInfo.txt map_files/0-100_sample.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_human_1000.bed H3K79me2_0-100_CHIPRX_1000_sample
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' H3K79me2_0-100_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_CHIPRX_1000_sample.bed | sort > H3K79me2_0-100_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_CHIPRX_1000_sample_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' H3K79me2_0-100_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_CHIPRX_1000_sample.bed | sort > H3K79me2_0-100_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_CHIPRX_1000_sample_max.bed[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Starting TAG_REMOVAL normalization...
+[0m[1;32m%%%% recoverChIPlevels -ns 1000000 config/ChromInfo.txt map_files/0-100_spike_adjusted.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_fly_1000.bed H3K79me2_0-100_TAGREMOVAL_1000_spike
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' H3K79me2_0-100_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_TAGREMOVAL_1000_spike.bed | sort > H3K79me2_0-100_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_TAGREMOVAL_1000_spike_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' H3K79me2_0-100_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_TAGREMOVAL_1000_spike.bed | sort > H3K79me2_0-100_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_TAGREMOVAL_1000_spike_max.bed
+[0m[1;32m%%%% recoverChIPlevels -ns 1000000 config/ChromInfo.txt map_files/0-100_sample_adjusted.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_human_1000.bed H3K79me2_0-100_TAGREMOVAL_1000_sample
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' H3K79me2_0-100_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_TAGREMOVAL_1000_sample.bed | sort > H3K79me2_0-100_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_TAGREMOVAL_1000_sample_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' H3K79me2_0-100_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_TAGREMOVAL_1000_sample.bed | sort > H3K79me2_0-100_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_TAGREMOVAL_1000_sample_max.bed[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Processing the 25-75 experiment
+[0m[1;32m%%%% Starting RAW normalization...
+[0m[1;32m%%%% recoverChIPlevels -ns 1000000 config/ChromInfo.txt map_files/25-75_spike.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_fly_1000.bed 25-75_RAW_1000_spike
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' 25-75_RAW_1000_spike_recoverChIPlevels/PEAKsignal_25-75_RAW_1000_spike.bed | sort > 25-75_RAW_1000_spike_recoverChIPlevels/PEAKsignal_25-75_RAW_1000_spike_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' 25-75_RAW_1000_spike_recoverChIPlevels/PEAKsignal_25-75_RAW_1000_spike.bed | sort > 25-75_RAW_1000_spike_recoverChIPlevels/PEAKsignal_25-75_RAW_1000_spike_max.bed
+[0m[1;32m%%%% recoverChIPlevels -ns 1000000 config/ChromInfo.txt map_files/25-75_sample.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_human_1000.bed 25-75_RAW_1000_sample
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' 25-75_RAW_1000_sample_recoverChIPlevels/PEAKsignal_25-75_RAW_1000_sample.bed | sort > 25-75_RAW_1000_sample_recoverChIPlevels/PEAKsignal_25-75_RAW_1000_sample_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' 25-75_RAW_1000_sample_recoverChIPlevels/PEAKsignal_25-75_RAW_1000_sample.bed | sort > 25-75_RAW_1000_sample_recoverChIPlevels/PEAKsignal_25-75_RAW_1000_sample_max.bed[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Starting TRADITIONAL normalization...
+[0m[1;32m%%%% recoverChIPlevels -ns 24147708 config/ChromInfo.txt map_files/25-75_spike.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_fly_1000.bed 25-75_TRADITIONAL_1000_spike
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' 25-75_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_25-75_TRADITIONAL_1000_spike.bed | sort > 25-75_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_25-75_TRADITIONAL_1000_spike_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' 25-75_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_25-75_TRADITIONAL_1000_spike.bed | sort > 25-75_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_25-75_TRADITIONAL_1000_spike_max.bed
+[0m[1;32m%%%% recoverChIPlevels -ns 17921399 config/ChromInfo.txt map_files/25-75_sample.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_human_1000.bed 25-75_TRADITIONAL_1000_sample
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' 25-75_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_25-75_TRADITIONAL_1000_sample.bed | sort > 25-75_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_25-75_TRADITIONAL_1000_sample_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' 25-75_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_25-75_TRADITIONAL_1000_sample.bed | sort > 25-75_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_25-75_TRADITIONAL_1000_sample_max.bed[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Starting CHIP-RX normalization...
+[0m[1;32m%%%% recoverChIPlevels -ns 6226309 config/ChromInfo.txt map_files/25-75_spike.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_fly_1000.bed 25-75_CHIPRX_1000_spike
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' 25-75_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_25-75_CHIPRX_1000_spike.bed | sort > 25-75_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_25-75_CHIPRX_1000_spike_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' 25-75_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_25-75_CHIPRX_1000_spike.bed | sort > 25-75_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_25-75_CHIPRX_1000_spike_max.bed
+[0m[1;32m%%%% recoverChIPlevels -ns 6226309 config/ChromInfo.txt map_files/25-75_sample.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_human_1000.bed 25-75_CHIPRX_1000_sample
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' 25-75_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_25-75_CHIPRX_1000_sample.bed | sort > 25-75_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_25-75_CHIPRX_1000_sample_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' 25-75_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_25-75_CHIPRX_1000_sample.bed | sort > 25-75_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_25-75_CHIPRX_1000_sample_max.bed[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Starting TAG_REMOVAL normalization...
+[0m[1;32m%%%% recoverChIPlevels -ns 1000000 config/ChromInfo.txt map_files/25-75_spike_adjusted.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_fly_1000.bed 25-75_TAGREMOVAL_1000_spike
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' 25-75_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_25-75_TAGREMOVAL_1000_spike.bed | sort > 25-75_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_25-75_TAGREMOVAL_1000_spike_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' 25-75_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_25-75_TAGREMOVAL_1000_spike.bed | sort > 25-75_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_25-75_TAGREMOVAL_1000_spike_max.bed
+[0m[1;32m%%%% recoverChIPlevels -ns 1000000 config/ChromInfo.txt map_files/25-75_sample_adjusted.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_human_1000.bed 25-75_TAGREMOVAL_1000_sample
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' 25-75_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_25-75_TAGREMOVAL_1000_sample.bed | sort > 25-75_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_25-75_TAGREMOVAL_1000_sample_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' 25-75_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_25-75_TAGREMOVAL_1000_sample.bed | sort > 25-75_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_25-75_TAGREMOVAL_1000_sample_max.bed[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Processing the 50-50 experiment
+[0m[1;32m%%%% Starting RAW normalization...
+[0m[1;32m%%%% recoverChIPlevels -ns 1000000 config/ChromInfo.txt map_files/50-50_spike.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_fly_1000.bed 50-50_RAW_1000_spike
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' 50-50_RAW_1000_spike_recoverChIPlevels/PEAKsignal_50-50_RAW_1000_spike.bed | sort > 50-50_RAW_1000_spike_recoverChIPlevels/PEAKsignal_50-50_RAW_1000_spike_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' 50-50_RAW_1000_spike_recoverChIPlevels/PEAKsignal_50-50_RAW_1000_spike.bed | sort > 50-50_RAW_1000_spike_recoverChIPlevels/PEAKsignal_50-50_RAW_1000_spike_max.bed
+[0m[1;32m%%%% recoverChIPlevels -ns 1000000 config/ChromInfo.txt map_files/50-50_sample.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_human_1000.bed 50-50_RAW_1000_sample
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' 50-50_RAW_1000_sample_recoverChIPlevels/PEAKsignal_50-50_RAW_1000_sample.bed | sort > 50-50_RAW_1000_sample_recoverChIPlevels/PEAKsignal_50-50_RAW_1000_sample_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' 50-50_RAW_1000_sample_recoverChIPlevels/PEAKsignal_50-50_RAW_1000_sample.bed | sort > 50-50_RAW_1000_sample_recoverChIPlevels/PEAKsignal_50-50_RAW_1000_sample_max.bed[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Starting TRADITIONAL normalization...
+[0m[1;32m%%%% recoverChIPlevels -ns 23098614 config/ChromInfo.txt map_files/50-50_spike.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_fly_1000.bed 50-50_TRADITIONAL_1000_spike
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' 50-50_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_50-50_TRADITIONAL_1000_spike.bed | sort > 50-50_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_50-50_TRADITIONAL_1000_spike_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' 50-50_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_50-50_TRADITIONAL_1000_spike.bed | sort > 50-50_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_50-50_TRADITIONAL_1000_spike_max.bed
+[0m[1;32m%%%% recoverChIPlevels -ns 15946819 config/ChromInfo.txt map_files/50-50_sample.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_human_1000.bed 50-50_TRADITIONAL_1000_sample
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' 50-50_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_50-50_TRADITIONAL_1000_sample.bed | sort > 50-50_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_50-50_TRADITIONAL_1000_sample_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' 50-50_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_50-50_TRADITIONAL_1000_sample.bed | sort > 50-50_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_50-50_TRADITIONAL_1000_sample_max.bed[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Starting CHIP-RX normalization...
+[0m[1;32m%%%% recoverChIPlevels -ns 7151795 config/ChromInfo.txt map_files/50-50_spike.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_fly_1000.bed 50-50_CHIPRX_1000_spike
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' 50-50_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_50-50_CHIPRX_1000_spike.bed | sort > 50-50_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_50-50_CHIPRX_1000_spike_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' 50-50_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_50-50_CHIPRX_1000_spike.bed | sort > 50-50_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_50-50_CHIPRX_1000_spike_max.bed
+[0m[1;32m%%%% recoverChIPlevels -ns 7151795 config/ChromInfo.txt map_files/50-50_sample.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_human_1000.bed 50-50_CHIPRX_1000_sample
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' 50-50_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_50-50_CHIPRX_1000_sample.bed | sort > 50-50_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_50-50_CHIPRX_1000_sample_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' 50-50_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_50-50_CHIPRX_1000_sample.bed | sort > 50-50_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_50-50_CHIPRX_1000_sample_max.bed[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Starting TAG_REMOVAL normalization...
+[0m[1;32m%%%% recoverChIPlevels -ns 1000000 config/ChromInfo.txt map_files/50-50_spike_adjusted.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_fly_1000.bed 50-50_TAGREMOVAL_1000_spike
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' 50-50_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_50-50_TAGREMOVAL_1000_spike.bed | sort > 50-50_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_50-50_TAGREMOVAL_1000_spike_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' 50-50_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_50-50_TAGREMOVAL_1000_spike.bed | sort > 50-50_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_50-50_TAGREMOVAL_1000_spike_max.bed
+[0m[1;32m%%%% recoverChIPlevels -ns 1000000 config/ChromInfo.txt map_files/50-50_sample_adjusted.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_human_1000.bed 50-50_TAGREMOVAL_1000_sample
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' 50-50_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_50-50_TAGREMOVAL_1000_sample.bed | sort > 50-50_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_50-50_TAGREMOVAL_1000_sample_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' 50-50_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_50-50_TAGREMOVAL_1000_sample.bed | sort > 50-50_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_50-50_TAGREMOVAL_1000_sample_max.bed[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Processing the 75-25 experiment
+[0m[1;32m%%%% Starting RAW normalization...
+[0m[1;32m%%%% recoverChIPlevels -ns 1000000 config/ChromInfo.txt map_files/75-25_spike.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_fly_1000.bed 75-25_RAW_1000_spike
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' 75-25_RAW_1000_spike_recoverChIPlevels/PEAKsignal_75-25_RAW_1000_spike.bed | sort > 75-25_RAW_1000_spike_recoverChIPlevels/PEAKsignal_75-25_RAW_1000_spike_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' 75-25_RAW_1000_spike_recoverChIPlevels/PEAKsignal_75-25_RAW_1000_spike.bed | sort > 75-25_RAW_1000_spike_recoverChIPlevels/PEAKsignal_75-25_RAW_1000_spike_max.bed
+[0m[1;32m%%%% recoverChIPlevels -ns 1000000 config/ChromInfo.txt map_files/75-25_sample.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_human_1000.bed 75-25_RAW_1000_sample
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' 75-25_RAW_1000_sample_recoverChIPlevels/PEAKsignal_75-25_RAW_1000_sample.bed | sort > 75-25_RAW_1000_sample_recoverChIPlevels/PEAKsignal_75-25_RAW_1000_sample_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' 75-25_RAW_1000_sample_recoverChIPlevels/PEAKsignal_75-25_RAW_1000_sample.bed | sort > 75-25_RAW_1000_sample_recoverChIPlevels/PEAKsignal_75-25_RAW_1000_sample_max.bed[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Starting TRADITIONAL normalization...
+[0m[1;32m%%%% recoverChIPlevels -ns 19473588 config/ChromInfo.txt map_files/75-25_spike.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_fly_1000.bed 75-25_TRADITIONAL_1000_spike
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' 75-25_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_75-25_TRADITIONAL_1000_spike.bed | sort > 75-25_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_75-25_TRADITIONAL_1000_spike_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' 75-25_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_75-25_TRADITIONAL_1000_spike.bed | sort > 75-25_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_75-25_TRADITIONAL_1000_spike_max.bed
+[0m[1;32m%%%% recoverChIPlevels -ns 10918718 config/ChromInfo.txt map_files/75-25_sample.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_human_1000.bed 75-25_TRADITIONAL_1000_sample
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' 75-25_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_75-25_TRADITIONAL_1000_sample.bed | sort > 75-25_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_75-25_TRADITIONAL_1000_sample_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' 75-25_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_75-25_TRADITIONAL_1000_sample.bed | sort > 75-25_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_75-25_TRADITIONAL_1000_sample_max.bed[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Starting CHIP-RX normalization...
+[0m[1;32m%%%% recoverChIPlevels -ns 8554870 config/ChromInfo.txt map_files/75-25_spike.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_fly_1000.bed 75-25_CHIPRX_1000_spike
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' 75-25_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_75-25_CHIPRX_1000_spike.bed | sort > 75-25_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_75-25_CHIPRX_1000_spike_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' 75-25_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_75-25_CHIPRX_1000_spike.bed | sort > 75-25_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_75-25_CHIPRX_1000_spike_max.bed
+[0m[1;32m%%%% recoverChIPlevels -ns 8554870 config/ChromInfo.txt map_files/75-25_sample.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_human_1000.bed 75-25_CHIPRX_1000_sample
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' 75-25_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_75-25_CHIPRX_1000_sample.bed | sort > 75-25_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_75-25_CHIPRX_1000_sample_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' 75-25_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_75-25_CHIPRX_1000_sample.bed | sort > 75-25_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_75-25_CHIPRX_1000_sample_max.bed[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Starting TAG_REMOVAL normalization...
+[0m[1;32m%%%% recoverChIPlevels -ns 1000000 config/ChromInfo.txt map_files/75-25_spike_adjusted.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_fly_1000.bed 75-25_TAGREMOVAL_1000_spike
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' 75-25_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_75-25_TAGREMOVAL_1000_spike.bed | sort > 75-25_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_75-25_TAGREMOVAL_1000_spike_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' 75-25_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_75-25_TAGREMOVAL_1000_spike.bed | sort > 75-25_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_75-25_TAGREMOVAL_1000_spike_max.bed
+[0m[1;32m%%%% recoverChIPlevels -ns 1000000 config/ChromInfo.txt map_files/75-25_sample_adjusted.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_human_1000.bed 75-25_TAGREMOVAL_1000_sample
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' 75-25_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_75-25_TAGREMOVAL_1000_sample.bed | sort > 75-25_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_75-25_TAGREMOVAL_1000_sample_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' 75-25_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_75-25_TAGREMOVAL_1000_sample.bed | sort > 75-25_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_75-25_TAGREMOVAL_1000_sample_max.bed[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Processing the 100-0 experiment
+[0m[1;32m%%%% Starting RAW normalization...
+[0m[1;32m%%%% recoverChIPlevels -ns 1000000 config/ChromInfo.txt map_files/100-0_spike.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_fly_1000.bed 100-0_RAW_1000_spike
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' 100-0_RAW_1000_spike_recoverChIPlevels/PEAKsignal_100-0_RAW_1000_spike.bed | sort > 100-0_RAW_1000_spike_recoverChIPlevels/PEAKsignal_100-0_RAW_1000_spike_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' 100-0_RAW_1000_spike_recoverChIPlevels/PEAKsignal_100-0_RAW_1000_spike.bed | sort > 100-0_RAW_1000_spike_recoverChIPlevels/PEAKsignal_100-0_RAW_1000_spike_max.bed
+[0m[1;32m%%%% recoverChIPlevels -ns 1000000 config/ChromInfo.txt map_files/100-0_sample.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_human_1000.bed 100-0_RAW_1000_sample
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' 100-0_RAW_1000_sample_recoverChIPlevels/PEAKsignal_100-0_RAW_1000_sample.bed | sort > 100-0_RAW_1000_sample_recoverChIPlevels/PEAKsignal_100-0_RAW_1000_sample_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' 100-0_RAW_1000_sample_recoverChIPlevels/PEAKsignal_100-0_RAW_1000_sample.bed | sort > 100-0_RAW_1000_sample_recoverChIPlevels/PEAKsignal_100-0_RAW_1000_sample_max.bed[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Starting TRADITIONAL normalization...
+[0m[1;32m%%%% recoverChIPlevels -ns 22147756 config/ChromInfo.txt map_files/100-0_spike.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_fly_1000.bed 100-0_TRADITIONAL_1000_spike
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' 100-0_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_100-0_TRADITIONAL_1000_spike.bed | sort > 100-0_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_100-0_TRADITIONAL_1000_spike_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' 100-0_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_100-0_TRADITIONAL_1000_spike.bed | sort > 100-0_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_100-0_TRADITIONAL_1000_spike_max.bed
+[0m[1;32m%%%% recoverChIPlevels -ns 7318439 config/ChromInfo.txt map_files/100-0_sample.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_human_1000.bed 100-0_TRADITIONAL_1000_sample
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' 100-0_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_100-0_TRADITIONAL_1000_sample.bed | sort > 100-0_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_100-0_TRADITIONAL_1000_sample_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' 100-0_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_100-0_TRADITIONAL_1000_sample.bed | sort > 100-0_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_100-0_TRADITIONAL_1000_sample_max.bed[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Starting CHIP-RX normalization...
+[0m[1;32m%%%% recoverChIPlevels -ns 14829317 config/ChromInfo.txt map_files/100-0_spike.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_fly_1000.bed 100-0_CHIPRX_1000_spike
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' 100-0_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_100-0_CHIPRX_1000_spike.bed | sort > 100-0_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_100-0_CHIPRX_1000_spike_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' 100-0_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_100-0_CHIPRX_1000_spike.bed | sort > 100-0_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_100-0_CHIPRX_1000_spike_max.bed
+[0m[1;32m%%%% recoverChIPlevels -ns 14829317 config/ChromInfo.txt map_files/100-0_sample.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_human_1000.bed 100-0_CHIPRX_1000_sample
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' 100-0_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_100-0_CHIPRX_1000_sample.bed | sort > 100-0_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_100-0_CHIPRX_1000_sample_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' 100-0_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_100-0_CHIPRX_1000_sample.bed | sort > 100-0_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_100-0_CHIPRX_1000_sample_max.bed[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Starting TAG_REMOVAL normalization...
+[0m[1;32m%%%% recoverChIPlevels -ns 1000000 config/ChromInfo.txt map_files/100-0_spike_adjusted.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_fly_1000.bed 100-0_TAGREMOVAL_1000_spike
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' 100-0_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_100-0_TAGREMOVAL_1000_spike.bed | sort > 100-0_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_100-0_TAGREMOVAL_1000_spike_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' 100-0_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_100-0_TAGREMOVAL_1000_spike.bed | sort > 100-0_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_100-0_TAGREMOVAL_1000_spike_max.bed
+[0m[1;32m%%%% recoverChIPlevels -ns 1000000 config/ChromInfo.txt map_files/100-0_sample_adjusted.bam results/H3K79me2_0-100-25-75-50-50-75-25-100-0_human_1000.bed 100-0_TAGREMOVAL_1000_sample
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' 100-0_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_100-0_TAGREMOVAL_1000_sample.bed | sort > 100-0_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_100-0_TAGREMOVAL_1000_sample_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' 100-0_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_100-0_TAGREMOVAL_1000_sample.bed | sort > 100-0_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_100-0_TAGREMOVAL_1000_sample_max.bed[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Join raw data values from all experiments
+[0m[1;32m%%%% join H3K79me2_0-100_RAW_1000_spike_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_RAW_1000_spike_avg.bed 25-75_RAW_1000_spike_recoverChIPlevels/PEAKsignal_25-75_RAW_1000_spike_avg.bed  | join - 50-50_RAW_1000_spike_recoverChIPlevels/PEAKsignal_50-50_RAW_1000_spike_avg.bed  | join - 75-25_RAW_1000_spike_recoverChIPlevels/PEAKsignal_75-25_RAW_1000_spike_avg.bed  | join - 100-0_RAW_1000_spike_recoverChIPlevels/PEAKsignal_100-0_RAW_1000_spike_avg.bed  > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_spike_avg.txt
+[0m[1;32m%%%% join H3K79me2_0-100_RAW_1000_spike_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_RAW_1000_spike_max.bed 25-75_RAW_1000_spike_recoverChIPlevels/PEAKsignal_25-75_RAW_1000_spike_max.bed  | join - 50-50_RAW_1000_spike_recoverChIPlevels/PEAKsignal_50-50_RAW_1000_spike_max.bed  | join - 75-25_RAW_1000_spike_recoverChIPlevels/PEAKsignal_75-25_RAW_1000_spike_max.bed  | join - 100-0_RAW_1000_spike_recoverChIPlevels/PEAKsignal_100-0_RAW_1000_spike_max.bed  > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_spike_max.txt
+[0m[1;32m%%%% join H3K79me2_0-100_RAW_1000_sample_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_RAW_1000_sample_avg.bed 25-75_RAW_1000_sample_recoverChIPlevels/PEAKsignal_25-75_RAW_1000_sample_avg.bed  | join - 50-50_RAW_1000_sample_recoverChIPlevels/PEAKsignal_50-50_RAW_1000_sample_avg.bed  | join - 75-25_RAW_1000_sample_recoverChIPlevels/PEAKsignal_75-25_RAW_1000_sample_avg.bed  | join - 100-0_RAW_1000_sample_recoverChIPlevels/PEAKsignal_100-0_RAW_1000_sample_avg.bed  > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_sample_avg.txt
+[0m[1;32m%%%% join H3K79me2_0-100_RAW_1000_sample_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_RAW_1000_sample_max.bed 25-75_RAW_1000_sample_recoverChIPlevels/PEAKsignal_25-75_RAW_1000_sample_max.bed  | join - 50-50_RAW_1000_sample_recoverChIPlevels/PEAKsignal_50-50_RAW_1000_sample_max.bed  | join - 75-25_RAW_1000_sample_recoverChIPlevels/PEAKsignal_75-25_RAW_1000_sample_max.bed  | join - 100-0_RAW_1000_sample_recoverChIPlevels/PEAKsignal_100-0_RAW_1000_sample_max.bed  > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_sample_max.txt
+[0m[1;32m%%%% Removing SeqCode folders
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Join traditional data values from all experiments
+[0m[1;32m%%%% join H3K79me2_0-100_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_TRADITIONAL_1000_spike_avg.bed 25-75_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_25-75_TRADITIONAL_1000_spike_avg.bed  | join - 50-50_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_50-50_TRADITIONAL_1000_spike_avg.bed  | join - 75-25_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_75-25_TRADITIONAL_1000_spike_avg.bed  | join - 100-0_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_100-0_TRADITIONAL_1000_spike_avg.bed  > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_spike_avg.txt
+[0m[1;32m%%%% join H3K79me2_0-100_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_TRADITIONAL_1000_spike_max.bed 25-75_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_25-75_TRADITIONAL_1000_spike_max.bed  | join - 50-50_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_50-50_TRADITIONAL_1000_spike_max.bed  | join - 75-25_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_75-25_TRADITIONAL_1000_spike_max.bed  | join - 100-0_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_100-0_TRADITIONAL_1000_spike_max.bed  > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_spike_max.txt
+[0m[1;32m%%%% join H3K79me2_0-100_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_TRADITIONAL_1000_sample_avg.bed 25-75_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_25-75_TRADITIONAL_1000_sample_avg.bed  | join - 50-50_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_50-50_TRADITIONAL_1000_sample_avg.bed  | join - 75-25_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_75-25_TRADITIONAL_1000_sample_avg.bed  | join - 100-0_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_100-0_TRADITIONAL_1000_sample_avg.bed  > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_sample_avg.txt
+[0m[1;32m%%%% join H3K79me2_0-100_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_TRADITIONAL_1000_sample_max.bed 25-75_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_25-75_TRADITIONAL_1000_sample_max.bed  | join - 50-50_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_50-50_TRADITIONAL_1000_sample_max.bed  | join - 75-25_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_75-25_TRADITIONAL_1000_sample_max.bed  | join - 100-0_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_100-0_TRADITIONAL_1000_sample_max.bed  > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_sample_max.txt
+[0m[1;32m%%%% Removing SeqCode folders
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Join ChIP-RX data values from all experiments
+[0m[1;32m%%%% join H3K79me2_0-100_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_CHIPRX_1000_spike_avg.bed 25-75_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_25-75_CHIPRX_1000_spike_avg.bed  | join - 50-50_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_50-50_CHIPRX_1000_spike_avg.bed  | join - 75-25_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_75-25_CHIPRX_1000_spike_avg.bed  | join - 100-0_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_100-0_CHIPRX_1000_spike_avg.bed  > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_spike_avg.txt
+[0m[1;32m%%%% join H3K79me2_0-100_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_CHIPRX_1000_spike_max.bed 25-75_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_25-75_CHIPRX_1000_spike_max.bed  | join - 50-50_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_50-50_CHIPRX_1000_spike_max.bed  | join - 75-25_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_75-25_CHIPRX_1000_spike_max.bed  | join - 100-0_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_100-0_CHIPRX_1000_spike_max.bed  > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_spike_max.txt
+[0m[1;32m%%%% join H3K79me2_0-100_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_CHIPRX_1000_sample_avg.bed 25-75_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_25-75_CHIPRX_1000_sample_avg.bed  | join - 50-50_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_50-50_CHIPRX_1000_sample_avg.bed  | join - 75-25_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_75-25_CHIPRX_1000_sample_avg.bed  | join - 100-0_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_100-0_CHIPRX_1000_sample_avg.bed  > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_sample_avg.txt
+[0m[1;32m%%%% join H3K79me2_0-100_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_CHIPRX_1000_sample_max.bed 25-75_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_25-75_CHIPRX_1000_sample_max.bed  | join - 50-50_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_50-50_CHIPRX_1000_sample_max.bed  | join - 75-25_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_75-25_CHIPRX_1000_sample_max.bed  | join - 100-0_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_100-0_CHIPRX_1000_sample_max.bed  > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_sample_max.txt
+[0m[1;32m%%%% Removing SeqCode folders
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Join tag removal data values from all experiments
+[0m[1;32m%%%% join H3K79me2_0-100_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_TAGREMOVAL_1000_spike_avg.bed 25-75_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_25-75_TAGREMOVAL_1000_spike_avg.bed  | join - 50-50_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_50-50_TAGREMOVAL_1000_spike_avg.bed  | join - 75-25_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_75-25_TAGREMOVAL_1000_spike_avg.bed  | join - 100-0_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_100-0_TAGREMOVAL_1000_spike_avg.bed  > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_spike_avg.txt
+[0m[1;32m%%%% join H3K79me2_0-100_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_TAGREMOVAL_1000_spike_max.bed 25-75_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_25-75_TAGREMOVAL_1000_spike_max.bed  | join - 50-50_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_50-50_TAGREMOVAL_1000_spike_max.bed  | join - 75-25_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_75-25_TAGREMOVAL_1000_spike_max.bed  | join - 100-0_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_100-0_TAGREMOVAL_1000_spike_max.bed  > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_spike_max.txt
+[0m[1;32m%%%% join H3K79me2_0-100_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_TAGREMOVAL_1000_sample_avg.bed 25-75_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_25-75_TAGREMOVAL_1000_sample_avg.bed  | join - 50-50_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_50-50_TAGREMOVAL_1000_sample_avg.bed  | join - 75-25_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_75-25_TAGREMOVAL_1000_sample_avg.bed  | join - 100-0_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_100-0_TAGREMOVAL_1000_sample_avg.bed  > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_sample_avg.txt
+[0m[1;32m%%%% join H3K79me2_0-100_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_H3K79me2_0-100_TAGREMOVAL_1000_sample_max.bed 25-75_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_25-75_TAGREMOVAL_1000_sample_max.bed  | join - 50-50_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_50-50_TAGREMOVAL_1000_sample_max.bed  | join - 75-25_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_75-25_TAGREMOVAL_1000_sample_max.bed  | join - 100-0_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_100-0_TAGREMOVAL_1000_sample_max.bed  > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_sample_max.txt
+[0m[1;32m%%%% Removing SeqCode folders
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Starting spikChIP local normalization...
+[0m[1;32m%%%% Prepare spikChIP data values for local normalization
+[0m[1;32m%%%% cat results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_spike_avg.txt results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_sample_avg.txt > results/H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_spike-sample_avg.txt
+[0m[1;32m%%%% gawk 'BEGIN{OFS="\t"}{print  $2, $3, $4, $5, $6}' results/H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_spike-sample_avg.txt > results/H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_spike-sample_avg_values.txt
+[0m[1;32m%%%% gawk 'BEGIN{OFS="\t"}{print NR}' results/H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_spike-sample_avg.txt > results/H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_spike-sample_avg_names.txt
+[0m[1;32m%%%% gawk 'BEGIN{OFS="\t"}{print NR,$1}' results/H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_spike-sample_avg.txt > results/H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_spike-sample_avg_names2.txt
+[0m[1;32m%%%% cat results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_spike_max.txt results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_sample_max.txt > results/H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_spike-sample_max.txt
+[0m[1;32m%%%% gawk 'BEGIN{OFS="\t"}{print  $2, $3, $4, $5, $6}' results/H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_spike-sample_max.txt > results/H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_spike-sample_max_values.txt
+[0m[1;32m%%%% gawk 'BEGIN{OFS="\t"}{print NR}' results/H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_spike-sample_max.txt > results/H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_spike-sample_max_names.txt
+[0m[1;32m%%%% gawk 'BEGIN{OFS="\t"}{print NR,$1}' results/H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_spike-sample_max.txt > results/H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_spike-sample_max_names2.txt
+[0m[1;32m%%%% Run local regression adjusting sample values with spike values
+[0m[1;32m%%%% Performing the analysis on average values
+[0m[1;32m%%%% R CMD BATCH Rscripts/H3K79me2_0-100-25-75-50-50-75-25-100-0_1000_avg.R
+[0m[1;32m%%%% rm -f H3K79me2_0-100-25-75-50-50-75-25-100-0_1000_avg.Rout
+[0m[1;32m%%%% join results/H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_avg_normalized.txt results/H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_spike-sample_avg_names2.txt | grep FLY | gawk 'BEGIN{OFS="\t"}{print  $7, $2, $3, $4, $5, $6}'> results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_avg_normalized_spike.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_avg_normalized.txt results/H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_spike-sample_avg_names2.txt | grep -v FLY | gawk 'BEGIN{OFS="\t"}{print  $7, $2, $3, $4, $5, $6}'> results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_avg_normalized_sample.txt
+[0m[1;32m%%%% Performing the analysis on average values
+[0m[1;32m%%%% R CMD BATCH Rscripts/H3K79me2_0-100-25-75-50-50-75-25-100-0_1000_max.R
+[0m[1;32m%%%% rm -f H3K79me2_0-100-25-75-50-50-75-25-100-0_1000_max.Rout
+[0m[1;32m%%%% join results/H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_max_normalized.txt results/H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_spike-sample_max_names2.txt | grep FLY | gawk 'BEGIN{OFS="\t"}{print  $7, $2, $3, $4, $5, $6}'> results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_max_normalized_spike.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_max_normalized.txt results/H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_spike-sample_max_names2.txt | grep -v FLY | gawk 'BEGIN{OFS="\t"}{print  $7, $2, $3, $4, $5, $6}'> results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_max_normalized_sample.txt[0m[1;32m [OK]
+[0m[1;32m%%%% Finishing Stage 2. Normalization...[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% [Sat Apr 24 04:10:28 2021] Stage 3.  Distinguishing bins of spike and sample genomes into peaks or bg according to peak files
+[0m[1;32m%%%% Generic classification of genome segmentations into peaks and bg
+[0m[1;32m%%%% Working with sample H3K79me2_0-100: peaks Vs. bins of spike
+[0m[1;32m%%%% matchpeaks peak_files/25-75_spike_peaks.bed results/H3K79me2_0-100-25-75-50-50-75-25-100-0_fly_1000.bed binpeaks H3K79me2_0-100_1000_spike_bins
+[0m[1;32m%%%% grep spike_bins binpeaks_H3K79me2_0-100_1000_spike_bins_matchpeaks/common_binpeaks_H3K79me2_0-100_1000_spike_bins.bed > results/H3K79me2_0-100_1000_bins_spike_peaks.bed
+[0m[1;32m%%%% Removing SeqCode folder
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Working with sample H3K79me2_0-100: peaks Vs. bins of sample
+[0m[1;32m%%%% matchpeaks peak_files/25-75_sample_peaks.bed results/H3K79me2_0-100-25-75-50-50-75-25-100-0_human_1000.bed binpeaks H3K79me2_0-100_1000_sample_bins
+[0m[1;32m%%%% grep sample_bins binpeaks_H3K79me2_0-100_1000_sample_bins_matchpeaks/common_binpeaks_H3K79me2_0-100_1000_sample_bins.bed > results/H3K79me2_0-100_1000_bins_sample_peaks.bed
+[0m[1;32m%%%% Removing SeqCode folder
+[0m[1;32m%%%% Working with sample 25-75: peaks Vs. bins of spike
+[0m[1;32m%%%% matchpeaks peak_files/25-75_spike_peaks.bed results/H3K79me2_0-100-25-75-50-50-75-25-100-0_fly_1000.bed binpeaks 25-75_1000_spike_bins
+[0m[1;32m%%%% grep spike_bins binpeaks_25-75_1000_spike_bins_matchpeaks/common_binpeaks_25-75_1000_spike_bins.bed > results/25-75_1000_bins_spike_peaks.bed
+[0m[1;32m%%%% Removing SeqCode folder
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Working with sample 25-75: peaks Vs. bins of sample
+[0m[1;32m%%%% matchpeaks peak_files/25-75_sample_peaks.bed results/H3K79me2_0-100-25-75-50-50-75-25-100-0_human_1000.bed binpeaks 25-75_1000_sample_bins
+[0m[1;32m%%%% grep sample_bins binpeaks_25-75_1000_sample_bins_matchpeaks/common_binpeaks_25-75_1000_sample_bins.bed > results/25-75_1000_bins_sample_peaks.bed
+[0m[1;32m%%%% Removing SeqCode folder
+[0m[1;32m%%%% Working with sample 50-50: peaks Vs. bins of spike
+[0m[1;32m%%%% matchpeaks peak_files/25-75_spike_peaks.bed results/H3K79me2_0-100-25-75-50-50-75-25-100-0_fly_1000.bed binpeaks 50-50_1000_spike_bins
+[0m[1;32m%%%% grep spike_bins binpeaks_50-50_1000_spike_bins_matchpeaks/common_binpeaks_50-50_1000_spike_bins.bed > results/50-50_1000_bins_spike_peaks.bed
+[0m[1;32m%%%% Removing SeqCode folder
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Working with sample 50-50: peaks Vs. bins of sample
+[0m[1;32m%%%% matchpeaks peak_files/25-75_sample_peaks.bed results/H3K79me2_0-100-25-75-50-50-75-25-100-0_human_1000.bed binpeaks 50-50_1000_sample_bins
+[0m[1;32m%%%% grep sample_bins binpeaks_50-50_1000_sample_bins_matchpeaks/common_binpeaks_50-50_1000_sample_bins.bed > results/50-50_1000_bins_sample_peaks.bed
+[0m[1;32m%%%% Removing SeqCode folder
+[0m[1;32m%%%% Working with sample 75-25: peaks Vs. bins of spike
+[0m[1;32m%%%% matchpeaks peak_files/25-75_spike_peaks.bed results/H3K79me2_0-100-25-75-50-50-75-25-100-0_fly_1000.bed binpeaks 75-25_1000_spike_bins
+[0m[1;32m%%%% grep spike_bins binpeaks_75-25_1000_spike_bins_matchpeaks/common_binpeaks_75-25_1000_spike_bins.bed > results/75-25_1000_bins_spike_peaks.bed
+[0m[1;32m%%%% Removing SeqCode folder
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Working with sample 75-25: peaks Vs. bins of sample
+[0m[1;32m%%%% matchpeaks peak_files/25-75_sample_peaks.bed results/H3K79me2_0-100-25-75-50-50-75-25-100-0_human_1000.bed binpeaks 75-25_1000_sample_bins
+[0m[1;32m%%%% grep sample_bins binpeaks_75-25_1000_sample_bins_matchpeaks/common_binpeaks_75-25_1000_sample_bins.bed > results/75-25_1000_bins_sample_peaks.bed
+[0m[1;32m%%%% Removing SeqCode folder
+[0m[1;32m%%%% Working with sample 100-0: peaks Vs. bins of spike
+[0m[1;32m%%%% matchpeaks peak_files/25-75_spike_peaks.bed results/H3K79me2_0-100-25-75-50-50-75-25-100-0_fly_1000.bed binpeaks 100-0_1000_spike_bins
+[0m[1;32m%%%% grep spike_bins binpeaks_100-0_1000_spike_bins_matchpeaks/common_binpeaks_100-0_1000_spike_bins.bed > results/100-0_1000_bins_spike_peaks.bed
+[0m[1;32m%%%% Removing SeqCode folder
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Working with sample 100-0: peaks Vs. bins of sample
+[0m[1;32m%%%% matchpeaks peak_files/25-75_sample_peaks.bed results/H3K79me2_0-100-25-75-50-50-75-25-100-0_human_1000.bed binpeaks 100-0_1000_sample_bins
+[0m[1;32m%%%% grep sample_bins binpeaks_100-0_1000_sample_bins_matchpeaks/common_binpeaks_100-0_1000_sample_bins.bed > results/100-0_1000_bins_sample_peaks.bed
+[0m[1;32m%%%% Removing SeqCode folder
+[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Processing values of each normalization strategy into peaks and bg
+[0m[1;32m%%%% Working with RAW values
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_spike_avg.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_RAW_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_spike_avg.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_RAW_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_sample_avg.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_RAW_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_sample_avg.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_RAW_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_spike_max.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_RAW_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_spike_max.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_RAW_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_sample_max.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_RAW_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_sample_max.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_RAW_1000_sample_max_bg.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_spike_avg.txt | gawk '{print $1,$3;}' > results/25-75_RAW_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_spike_avg.txt | gawk '{print $1,$3;}' > results/25-75_RAW_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_sample_avg.txt | gawk '{print $1,$3;}' > results/25-75_RAW_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_sample_avg.txt | gawk '{print $1,$3;}' > results/25-75_RAW_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_spike_max.txt | gawk '{print $1,$3;}' > results/25-75_RAW_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_spike_max.txt | gawk '{print $1,$3;}' > results/25-75_RAW_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_sample_max.txt | gawk '{print $1,$3;}' > results/25-75_RAW_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_sample_max.txt | gawk '{print $1,$3;}' > results/25-75_RAW_1000_sample_max_bg.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_spike_avg.txt | gawk '{print $1,$4;}' > results/50-50_RAW_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_spike_avg.txt | gawk '{print $1,$4;}' > results/50-50_RAW_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_sample_avg.txt | gawk '{print $1,$4;}' > results/50-50_RAW_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_sample_avg.txt | gawk '{print $1,$4;}' > results/50-50_RAW_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_spike_max.txt | gawk '{print $1,$4;}' > results/50-50_RAW_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_spike_max.txt | gawk '{print $1,$4;}' > results/50-50_RAW_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_sample_max.txt | gawk '{print $1,$4;}' > results/50-50_RAW_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_sample_max.txt | gawk '{print $1,$4;}' > results/50-50_RAW_1000_sample_max_bg.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_spike_avg.txt | gawk '{print $1,$5;}' > results/75-25_RAW_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_spike_avg.txt | gawk '{print $1,$5;}' > results/75-25_RAW_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_sample_avg.txt | gawk '{print $1,$5;}' > results/75-25_RAW_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_sample_avg.txt | gawk '{print $1,$5;}' > results/75-25_RAW_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_spike_max.txt | gawk '{print $1,$5;}' > results/75-25_RAW_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_spike_max.txt | gawk '{print $1,$5;}' > results/75-25_RAW_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_sample_max.txt | gawk '{print $1,$5;}' > results/75-25_RAW_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_sample_max.txt | gawk '{print $1,$5;}' > results/75-25_RAW_1000_sample_max_bg.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_spike_avg.txt | gawk '{print $1,$6;}' > results/100-0_RAW_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_spike_avg.txt | gawk '{print $1,$6;}' > results/100-0_RAW_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_sample_avg.txt | gawk '{print $1,$6;}' > results/100-0_RAW_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_sample_avg.txt | gawk '{print $1,$6;}' > results/100-0_RAW_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_spike_max.txt | gawk '{print $1,$6;}' > results/100-0_RAW_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_spike_max.txt | gawk '{print $1,$6;}' > results/100-0_RAW_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_sample_max.txt | gawk '{print $1,$6;}' > results/100-0_RAW_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_sample_max.txt | gawk '{print $1,$6;}' > results/100-0_RAW_1000_sample_max_bg.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_RAW_1000_spike_avg_peaks.txt results/25-75_RAW_1000_spike_avg_peaks.txt  | join - results/50-50_RAW_1000_spike_avg_peaks.txt  | join - results/75-25_RAW_1000_spike_avg_peaks.txt  | join - results/100-0_RAW_1000_spike_avg_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_RAW_1000_spike_max_peaks.txt results/25-75_RAW_1000_spike_max_peaks.txt  | join - results/50-50_RAW_1000_spike_max_peaks.txt  | join - results/75-25_RAW_1000_spike_max_peaks.txt  | join - results/100-0_RAW_1000_spike_max_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_spike_max_peaks.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_RAW_1000_sample_avg_peaks.txt results/25-75_RAW_1000_sample_avg_peaks.txt  | join - results/50-50_RAW_1000_sample_avg_peaks.txt  | join - results/75-25_RAW_1000_sample_avg_peaks.txt  | join - results/100-0_RAW_1000_sample_avg_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_RAW_1000_sample_max_peaks.txt results/25-75_RAW_1000_sample_max_peaks.txt  | join - results/50-50_RAW_1000_sample_max_peaks.txt  | join - results/75-25_RAW_1000_sample_max_peaks.txt  | join - results/100-0_RAW_1000_sample_max_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_sample_max_peaks.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_RAW_1000_spike_avg_bg.txt results/25-75_RAW_1000_spike_avg_bg.txt  | join - results/50-50_RAW_1000_spike_avg_bg.txt  | join - results/75-25_RAW_1000_spike_avg_bg.txt  | join - results/100-0_RAW_1000_spike_avg_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_spike_avg_bg.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_RAW_1000_spike_max_bg.txt results/25-75_RAW_1000_spike_max_bg.txt  | join - results/50-50_RAW_1000_spike_max_bg.txt  | join - results/75-25_RAW_1000_spike_max_bg.txt  | join - results/100-0_RAW_1000_spike_max_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_spike_max_bg.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_RAW_1000_sample_avg_bg.txt results/25-75_RAW_1000_sample_avg_bg.txt  | join - results/50-50_RAW_1000_sample_avg_bg.txt  | join - results/75-25_RAW_1000_sample_avg_bg.txt  | join - results/100-0_RAW_1000_sample_avg_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_sample_avg_bg.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_RAW_1000_sample_max_bg.txt results/25-75_RAW_1000_sample_max_bg.txt  | join - results/50-50_RAW_1000_sample_max_bg.txt  | join - results/75-25_RAW_1000_sample_max_bg.txt  | join - results/100-0_RAW_1000_sample_max_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_sample_max_bg.txt[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Working with TRADITIONAL values
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_spike_avg.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_TRADITIONAL_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_spike_avg.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_TRADITIONAL_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_sample_avg.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_TRADITIONAL_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_sample_avg.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_TRADITIONAL_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_spike_max.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_TRADITIONAL_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_spike_max.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_TRADITIONAL_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_sample_max.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_TRADITIONAL_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_sample_max.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_TRADITIONAL_1000_sample_max_bg.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_spike_avg.txt | gawk '{print $1,$3;}' > results/25-75_TRADITIONAL_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_spike_avg.txt | gawk '{print $1,$3;}' > results/25-75_TRADITIONAL_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_sample_avg.txt | gawk '{print $1,$3;}' > results/25-75_TRADITIONAL_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_sample_avg.txt | gawk '{print $1,$3;}' > results/25-75_TRADITIONAL_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_spike_max.txt | gawk '{print $1,$3;}' > results/25-75_TRADITIONAL_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_spike_max.txt | gawk '{print $1,$3;}' > results/25-75_TRADITIONAL_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_sample_max.txt | gawk '{print $1,$3;}' > results/25-75_TRADITIONAL_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_sample_max.txt | gawk '{print $1,$3;}' > results/25-75_TRADITIONAL_1000_sample_max_bg.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_spike_avg.txt | gawk '{print $1,$4;}' > results/50-50_TRADITIONAL_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_spike_avg.txt | gawk '{print $1,$4;}' > results/50-50_TRADITIONAL_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_sample_avg.txt | gawk '{print $1,$4;}' > results/50-50_TRADITIONAL_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_sample_avg.txt | gawk '{print $1,$4;}' > results/50-50_TRADITIONAL_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_spike_max.txt | gawk '{print $1,$4;}' > results/50-50_TRADITIONAL_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_spike_max.txt | gawk '{print $1,$4;}' > results/50-50_TRADITIONAL_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_sample_max.txt | gawk '{print $1,$4;}' > results/50-50_TRADITIONAL_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_sample_max.txt | gawk '{print $1,$4;}' > results/50-50_TRADITIONAL_1000_sample_max_bg.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_spike_avg.txt | gawk '{print $1,$5;}' > results/75-25_TRADITIONAL_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_spike_avg.txt | gawk '{print $1,$5;}' > results/75-25_TRADITIONAL_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_sample_avg.txt | gawk '{print $1,$5;}' > results/75-25_TRADITIONAL_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_sample_avg.txt | gawk '{print $1,$5;}' > results/75-25_TRADITIONAL_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_spike_max.txt | gawk '{print $1,$5;}' > results/75-25_TRADITIONAL_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_spike_max.txt | gawk '{print $1,$5;}' > results/75-25_TRADITIONAL_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_sample_max.txt | gawk '{print $1,$5;}' > results/75-25_TRADITIONAL_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_sample_max.txt | gawk '{print $1,$5;}' > results/75-25_TRADITIONAL_1000_sample_max_bg.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_spike_avg.txt | gawk '{print $1,$6;}' > results/100-0_TRADITIONAL_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_spike_avg.txt | gawk '{print $1,$6;}' > results/100-0_TRADITIONAL_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_sample_avg.txt | gawk '{print $1,$6;}' > results/100-0_TRADITIONAL_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_sample_avg.txt | gawk '{print $1,$6;}' > results/100-0_TRADITIONAL_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_spike_max.txt | gawk '{print $1,$6;}' > results/100-0_TRADITIONAL_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_spike_max.txt | gawk '{print $1,$6;}' > results/100-0_TRADITIONAL_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_sample_max.txt | gawk '{print $1,$6;}' > results/100-0_TRADITIONAL_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_sample_max.txt | gawk '{print $1,$6;}' > results/100-0_TRADITIONAL_1000_sample_max_bg.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_TRADITIONAL_1000_spike_avg_peaks.txt results/25-75_TRADITIONAL_1000_spike_avg_peaks.txt  | join - results/50-50_TRADITIONAL_1000_spike_avg_peaks.txt  | join - results/75-25_TRADITIONAL_1000_spike_avg_peaks.txt  | join - results/100-0_TRADITIONAL_1000_spike_avg_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_TRADITIONAL_1000_spike_max_peaks.txt results/25-75_TRADITIONAL_1000_spike_max_peaks.txt  | join - results/50-50_TRADITIONAL_1000_spike_max_peaks.txt  | join - results/75-25_TRADITIONAL_1000_spike_max_peaks.txt  | join - results/100-0_TRADITIONAL_1000_spike_max_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_spike_max_peaks.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_TRADITIONAL_1000_sample_avg_peaks.txt results/25-75_TRADITIONAL_1000_sample_avg_peaks.txt  | join - results/50-50_TRADITIONAL_1000_sample_avg_peaks.txt  | join - results/75-25_TRADITIONAL_1000_sample_avg_peaks.txt  | join - results/100-0_TRADITIONAL_1000_sample_avg_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_TRADITIONAL_1000_sample_max_peaks.txt results/25-75_TRADITIONAL_1000_sample_max_peaks.txt  | join - results/50-50_TRADITIONAL_1000_sample_max_peaks.txt  | join - results/75-25_TRADITIONAL_1000_sample_max_peaks.txt  | join - results/100-0_TRADITIONAL_1000_sample_max_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_sample_max_peaks.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_TRADITIONAL_1000_spike_avg_bg.txt results/25-75_TRADITIONAL_1000_spike_avg_bg.txt  | join - results/50-50_TRADITIONAL_1000_spike_avg_bg.txt  | join - results/75-25_TRADITIONAL_1000_spike_avg_bg.txt  | join - results/100-0_TRADITIONAL_1000_spike_avg_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_spike_avg_bg.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_TRADITIONAL_1000_spike_max_bg.txt results/25-75_TRADITIONAL_1000_spike_max_bg.txt  | join - results/50-50_TRADITIONAL_1000_spike_max_bg.txt  | join - results/75-25_TRADITIONAL_1000_spike_max_bg.txt  | join - results/100-0_TRADITIONAL_1000_spike_max_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_spike_max_bg.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_TRADITIONAL_1000_sample_avg_bg.txt results/25-75_TRADITIONAL_1000_sample_avg_bg.txt  | join - results/50-50_TRADITIONAL_1000_sample_avg_bg.txt  | join - results/75-25_TRADITIONAL_1000_sample_avg_bg.txt  | join - results/100-0_TRADITIONAL_1000_sample_avg_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_sample_avg_bg.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_TRADITIONAL_1000_sample_max_bg.txt results/25-75_TRADITIONAL_1000_sample_max_bg.txt  | join - results/50-50_TRADITIONAL_1000_sample_max_bg.txt  | join - results/75-25_TRADITIONAL_1000_sample_max_bg.txt  | join - results/100-0_TRADITIONAL_1000_sample_max_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_sample_max_bg.txt[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Working with CHIPRX values
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_spike_avg.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_CHIPRX_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_spike_avg.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_CHIPRX_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_sample_avg.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_CHIPRX_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_sample_avg.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_CHIPRX_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_spike_max.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_CHIPRX_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_spike_max.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_CHIPRX_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_sample_max.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_CHIPRX_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_sample_max.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_CHIPRX_1000_sample_max_bg.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_spike_avg.txt | gawk '{print $1,$3;}' > results/25-75_CHIPRX_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_spike_avg.txt | gawk '{print $1,$3;}' > results/25-75_CHIPRX_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_sample_avg.txt | gawk '{print $1,$3;}' > results/25-75_CHIPRX_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_sample_avg.txt | gawk '{print $1,$3;}' > results/25-75_CHIPRX_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_spike_max.txt | gawk '{print $1,$3;}' > results/25-75_CHIPRX_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_spike_max.txt | gawk '{print $1,$3;}' > results/25-75_CHIPRX_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_sample_max.txt | gawk '{print $1,$3;}' > results/25-75_CHIPRX_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_sample_max.txt | gawk '{print $1,$3;}' > results/25-75_CHIPRX_1000_sample_max_bg.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_spike_avg.txt | gawk '{print $1,$4;}' > results/50-50_CHIPRX_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_spike_avg.txt | gawk '{print $1,$4;}' > results/50-50_CHIPRX_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_sample_avg.txt | gawk '{print $1,$4;}' > results/50-50_CHIPRX_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_sample_avg.txt | gawk '{print $1,$4;}' > results/50-50_CHIPRX_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_spike_max.txt | gawk '{print $1,$4;}' > results/50-50_CHIPRX_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_spike_max.txt | gawk '{print $1,$4;}' > results/50-50_CHIPRX_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_sample_max.txt | gawk '{print $1,$4;}' > results/50-50_CHIPRX_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_sample_max.txt | gawk '{print $1,$4;}' > results/50-50_CHIPRX_1000_sample_max_bg.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_spike_avg.txt | gawk '{print $1,$5;}' > results/75-25_CHIPRX_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_spike_avg.txt | gawk '{print $1,$5;}' > results/75-25_CHIPRX_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_sample_avg.txt | gawk '{print $1,$5;}' > results/75-25_CHIPRX_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_sample_avg.txt | gawk '{print $1,$5;}' > results/75-25_CHIPRX_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_spike_max.txt | gawk '{print $1,$5;}' > results/75-25_CHIPRX_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_spike_max.txt | gawk '{print $1,$5;}' > results/75-25_CHIPRX_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_sample_max.txt | gawk '{print $1,$5;}' > results/75-25_CHIPRX_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_sample_max.txt | gawk '{print $1,$5;}' > results/75-25_CHIPRX_1000_sample_max_bg.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_spike_avg.txt | gawk '{print $1,$6;}' > results/100-0_CHIPRX_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_spike_avg.txt | gawk '{print $1,$6;}' > results/100-0_CHIPRX_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_sample_avg.txt | gawk '{print $1,$6;}' > results/100-0_CHIPRX_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_sample_avg.txt | gawk '{print $1,$6;}' > results/100-0_CHIPRX_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_spike_max.txt | gawk '{print $1,$6;}' > results/100-0_CHIPRX_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_spike_max.txt | gawk '{print $1,$6;}' > results/100-0_CHIPRX_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_sample_max.txt | gawk '{print $1,$6;}' > results/100-0_CHIPRX_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_sample_max.txt | gawk '{print $1,$6;}' > results/100-0_CHIPRX_1000_sample_max_bg.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_CHIPRX_1000_spike_avg_peaks.txt results/25-75_CHIPRX_1000_spike_avg_peaks.txt  | join - results/50-50_CHIPRX_1000_spike_avg_peaks.txt  | join - results/75-25_CHIPRX_1000_spike_avg_peaks.txt  | join - results/100-0_CHIPRX_1000_spike_avg_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_CHIPRX_1000_spike_max_peaks.txt results/25-75_CHIPRX_1000_spike_max_peaks.txt  | join - results/50-50_CHIPRX_1000_spike_max_peaks.txt  | join - results/75-25_CHIPRX_1000_spike_max_peaks.txt  | join - results/100-0_CHIPRX_1000_spike_max_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_spike_max_peaks.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_CHIPRX_1000_sample_avg_peaks.txt results/25-75_CHIPRX_1000_sample_avg_peaks.txt  | join - results/50-50_CHIPRX_1000_sample_avg_peaks.txt  | join - results/75-25_CHIPRX_1000_sample_avg_peaks.txt  | join - results/100-0_CHIPRX_1000_sample_avg_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_CHIPRX_1000_sample_max_peaks.txt results/25-75_CHIPRX_1000_sample_max_peaks.txt  | join - results/50-50_CHIPRX_1000_sample_max_peaks.txt  | join - results/75-25_CHIPRX_1000_sample_max_peaks.txt  | join - results/100-0_CHIPRX_1000_sample_max_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_sample_max_peaks.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_CHIPRX_1000_spike_avg_bg.txt results/25-75_CHIPRX_1000_spike_avg_bg.txt  | join - results/50-50_CHIPRX_1000_spike_avg_bg.txt  | join - results/75-25_CHIPRX_1000_spike_avg_bg.txt  | join - results/100-0_CHIPRX_1000_spike_avg_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_spike_avg_bg.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_CHIPRX_1000_spike_max_bg.txt results/25-75_CHIPRX_1000_spike_max_bg.txt  | join - results/50-50_CHIPRX_1000_spike_max_bg.txt  | join - results/75-25_CHIPRX_1000_spike_max_bg.txt  | join - results/100-0_CHIPRX_1000_spike_max_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_spike_max_bg.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_CHIPRX_1000_sample_avg_bg.txt results/25-75_CHIPRX_1000_sample_avg_bg.txt  | join - results/50-50_CHIPRX_1000_sample_avg_bg.txt  | join - results/75-25_CHIPRX_1000_sample_avg_bg.txt  | join - results/100-0_CHIPRX_1000_sample_avg_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_sample_avg_bg.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_CHIPRX_1000_sample_max_bg.txt results/25-75_CHIPRX_1000_sample_max_bg.txt  | join - results/50-50_CHIPRX_1000_sample_max_bg.txt  | join - results/75-25_CHIPRX_1000_sample_max_bg.txt  | join - results/100-0_CHIPRX_1000_sample_max_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_sample_max_bg.txt[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Working with TAGREMOVAL values
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_spike_avg.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_TAGREMOVAL_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_spike_avg.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_TAGREMOVAL_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_sample_avg.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_TAGREMOVAL_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_sample_avg.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_TAGREMOVAL_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_spike_max.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_TAGREMOVAL_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_spike_max.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_TAGREMOVAL_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_sample_max.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_TAGREMOVAL_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_sample_max.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_TAGREMOVAL_1000_sample_max_bg.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_spike_avg.txt | gawk '{print $1,$3;}' > results/25-75_TAGREMOVAL_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_spike_avg.txt | gawk '{print $1,$3;}' > results/25-75_TAGREMOVAL_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_sample_avg.txt | gawk '{print $1,$3;}' > results/25-75_TAGREMOVAL_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_sample_avg.txt | gawk '{print $1,$3;}' > results/25-75_TAGREMOVAL_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_spike_max.txt | gawk '{print $1,$3;}' > results/25-75_TAGREMOVAL_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_spike_max.txt | gawk '{print $1,$3;}' > results/25-75_TAGREMOVAL_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_sample_max.txt | gawk '{print $1,$3;}' > results/25-75_TAGREMOVAL_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_sample_max.txt | gawk '{print $1,$3;}' > results/25-75_TAGREMOVAL_1000_sample_max_bg.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_spike_avg.txt | gawk '{print $1,$4;}' > results/50-50_TAGREMOVAL_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_spike_avg.txt | gawk '{print $1,$4;}' > results/50-50_TAGREMOVAL_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_sample_avg.txt | gawk '{print $1,$4;}' > results/50-50_TAGREMOVAL_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_sample_avg.txt | gawk '{print $1,$4;}' > results/50-50_TAGREMOVAL_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_spike_max.txt | gawk '{print $1,$4;}' > results/50-50_TAGREMOVAL_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_spike_max.txt | gawk '{print $1,$4;}' > results/50-50_TAGREMOVAL_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_sample_max.txt | gawk '{print $1,$4;}' > results/50-50_TAGREMOVAL_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_sample_max.txt | gawk '{print $1,$4;}' > results/50-50_TAGREMOVAL_1000_sample_max_bg.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_spike_avg.txt | gawk '{print $1,$5;}' > results/75-25_TAGREMOVAL_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_spike_avg.txt | gawk '{print $1,$5;}' > results/75-25_TAGREMOVAL_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_sample_avg.txt | gawk '{print $1,$5;}' > results/75-25_TAGREMOVAL_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_sample_avg.txt | gawk '{print $1,$5;}' > results/75-25_TAGREMOVAL_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_spike_max.txt | gawk '{print $1,$5;}' > results/75-25_TAGREMOVAL_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_spike_max.txt | gawk '{print $1,$5;}' > results/75-25_TAGREMOVAL_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_sample_max.txt | gawk '{print $1,$5;}' > results/75-25_TAGREMOVAL_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_sample_max.txt | gawk '{print $1,$5;}' > results/75-25_TAGREMOVAL_1000_sample_max_bg.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_spike_avg.txt | gawk '{print $1,$6;}' > results/100-0_TAGREMOVAL_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_spike_avg.txt | gawk '{print $1,$6;}' > results/100-0_TAGREMOVAL_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_sample_avg.txt | gawk '{print $1,$6;}' > results/100-0_TAGREMOVAL_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_sample_avg.txt | gawk '{print $1,$6;}' > results/100-0_TAGREMOVAL_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_spike_max.txt | gawk '{print $1,$6;}' > results/100-0_TAGREMOVAL_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_spike_max.txt | gawk '{print $1,$6;}' > results/100-0_TAGREMOVAL_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_sample_max.txt | gawk '{print $1,$6;}' > results/100-0_TAGREMOVAL_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_sample_max.txt | gawk '{print $1,$6;}' > results/100-0_TAGREMOVAL_1000_sample_max_bg.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_TAGREMOVAL_1000_spike_avg_peaks.txt results/25-75_TAGREMOVAL_1000_spike_avg_peaks.txt  | join - results/50-50_TAGREMOVAL_1000_spike_avg_peaks.txt  | join - results/75-25_TAGREMOVAL_1000_spike_avg_peaks.txt  | join - results/100-0_TAGREMOVAL_1000_spike_avg_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_TAGREMOVAL_1000_spike_max_peaks.txt results/25-75_TAGREMOVAL_1000_spike_max_peaks.txt  | join - results/50-50_TAGREMOVAL_1000_spike_max_peaks.txt  | join - results/75-25_TAGREMOVAL_1000_spike_max_peaks.txt  | join - results/100-0_TAGREMOVAL_1000_spike_max_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_spike_max_peaks.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_TAGREMOVAL_1000_sample_avg_peaks.txt results/25-75_TAGREMOVAL_1000_sample_avg_peaks.txt  | join - results/50-50_TAGREMOVAL_1000_sample_avg_peaks.txt  | join - results/75-25_TAGREMOVAL_1000_sample_avg_peaks.txt  | join - results/100-0_TAGREMOVAL_1000_sample_avg_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_TAGREMOVAL_1000_sample_max_peaks.txt results/25-75_TAGREMOVAL_1000_sample_max_peaks.txt  | join - results/50-50_TAGREMOVAL_1000_sample_max_peaks.txt  | join - results/75-25_TAGREMOVAL_1000_sample_max_peaks.txt  | join - results/100-0_TAGREMOVAL_1000_sample_max_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_sample_max_peaks.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_TAGREMOVAL_1000_spike_avg_bg.txt results/25-75_TAGREMOVAL_1000_spike_avg_bg.txt  | join - results/50-50_TAGREMOVAL_1000_spike_avg_bg.txt  | join - results/75-25_TAGREMOVAL_1000_spike_avg_bg.txt  | join - results/100-0_TAGREMOVAL_1000_spike_avg_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_spike_avg_bg.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_TAGREMOVAL_1000_spike_max_bg.txt results/25-75_TAGREMOVAL_1000_spike_max_bg.txt  | join - results/50-50_TAGREMOVAL_1000_spike_max_bg.txt  | join - results/75-25_TAGREMOVAL_1000_spike_max_bg.txt  | join - results/100-0_TAGREMOVAL_1000_spike_max_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_spike_max_bg.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_TAGREMOVAL_1000_sample_avg_bg.txt results/25-75_TAGREMOVAL_1000_sample_avg_bg.txt  | join - results/50-50_TAGREMOVAL_1000_sample_avg_bg.txt  | join - results/75-25_TAGREMOVAL_1000_sample_avg_bg.txt  | join - results/100-0_TAGREMOVAL_1000_sample_avg_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_sample_avg_bg.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_TAGREMOVAL_1000_sample_max_bg.txt results/25-75_TAGREMOVAL_1000_sample_max_bg.txt  | join - results/50-50_TAGREMOVAL_1000_sample_max_bg.txt  | join - results/75-25_TAGREMOVAL_1000_sample_max_bg.txt  | join - results/100-0_TAGREMOVAL_1000_sample_max_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_sample_max_bg.txt[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Working with SPIKCHIP values
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_avg_normalized_spike.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_SPIKCHIP_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_avg_normalized_spike.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_SPIKCHIP_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_avg_normalized_sample.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_SPIKCHIP_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_avg_normalized_sample.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_SPIKCHIP_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_max_normalized_spike.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_SPIKCHIP_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_max_normalized_spike.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_SPIKCHIP_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_max_normalized_sample.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_SPIKCHIP_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/H3K79me2_0-100_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_max_normalized_sample.txt | gawk '{print $1,$2;}' > results/H3K79me2_0-100_SPIKCHIP_1000_sample_max_bg.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_avg_normalized_spike.txt | gawk '{print $1,$3;}' > results/25-75_SPIKCHIP_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_avg_normalized_spike.txt | gawk '{print $1,$3;}' > results/25-75_SPIKCHIP_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_avg_normalized_sample.txt | gawk '{print $1,$3;}' > results/25-75_SPIKCHIP_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_avg_normalized_sample.txt | gawk '{print $1,$3;}' > results/25-75_SPIKCHIP_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_max_normalized_spike.txt | gawk '{print $1,$3;}' > results/25-75_SPIKCHIP_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_max_normalized_spike.txt | gawk '{print $1,$3;}' > results/25-75_SPIKCHIP_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_max_normalized_sample.txt | gawk '{print $1,$3;}' > results/25-75_SPIKCHIP_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/25-75_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_max_normalized_sample.txt | gawk '{print $1,$3;}' > results/25-75_SPIKCHIP_1000_sample_max_bg.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_avg_normalized_spike.txt | gawk '{print $1,$4;}' > results/50-50_SPIKCHIP_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_avg_normalized_spike.txt | gawk '{print $1,$4;}' > results/50-50_SPIKCHIP_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_avg_normalized_sample.txt | gawk '{print $1,$4;}' > results/50-50_SPIKCHIP_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_avg_normalized_sample.txt | gawk '{print $1,$4;}' > results/50-50_SPIKCHIP_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_max_normalized_spike.txt | gawk '{print $1,$4;}' > results/50-50_SPIKCHIP_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_max_normalized_spike.txt | gawk '{print $1,$4;}' > results/50-50_SPIKCHIP_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_max_normalized_sample.txt | gawk '{print $1,$4;}' > results/50-50_SPIKCHIP_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/50-50_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_max_normalized_sample.txt | gawk '{print $1,$4;}' > results/50-50_SPIKCHIP_1000_sample_max_bg.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_avg_normalized_spike.txt | gawk '{print $1,$5;}' > results/75-25_SPIKCHIP_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_avg_normalized_spike.txt | gawk '{print $1,$5;}' > results/75-25_SPIKCHIP_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_avg_normalized_sample.txt | gawk '{print $1,$5;}' > results/75-25_SPIKCHIP_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_avg_normalized_sample.txt | gawk '{print $1,$5;}' > results/75-25_SPIKCHIP_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_max_normalized_spike.txt | gawk '{print $1,$5;}' > results/75-25_SPIKCHIP_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_max_normalized_spike.txt | gawk '{print $1,$5;}' > results/75-25_SPIKCHIP_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_max_normalized_sample.txt | gawk '{print $1,$5;}' > results/75-25_SPIKCHIP_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/75-25_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_max_normalized_sample.txt | gawk '{print $1,$5;}' > results/75-25_SPIKCHIP_1000_sample_max_bg.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_avg_normalized_spike.txt | gawk '{print $1,$6;}' > results/100-0_SPIKCHIP_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_avg_normalized_spike.txt | gawk '{print $1,$6;}' > results/100-0_SPIKCHIP_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_avg_normalized_sample.txt | gawk '{print $1,$6;}' > results/100-0_SPIKCHIP_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_avg_normalized_sample.txt | gawk '{print $1,$6;}' > results/100-0_SPIKCHIP_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_max_normalized_spike.txt | gawk '{print $1,$6;}' > results/100-0_SPIKCHIP_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_max_normalized_spike.txt | gawk '{print $1,$6;}' > results/100-0_SPIKCHIP_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_max_normalized_sample.txt | gawk '{print $1,$6;}' > results/100-0_SPIKCHIP_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/100-0_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_max_normalized_sample.txt | gawk '{print $1,$6;}' > results/100-0_SPIKCHIP_1000_sample_max_bg.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_SPIKCHIP_1000_spike_avg_peaks.txt results/25-75_SPIKCHIP_1000_spike_avg_peaks.txt  | join - results/50-50_SPIKCHIP_1000_spike_avg_peaks.txt  | join - results/75-25_SPIKCHIP_1000_spike_avg_peaks.txt  | join - results/100-0_SPIKCHIP_1000_spike_avg_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_SPIKCHIP_1000_spike_max_peaks.txt results/25-75_SPIKCHIP_1000_spike_max_peaks.txt  | join - results/50-50_SPIKCHIP_1000_spike_max_peaks.txt  | join - results/75-25_SPIKCHIP_1000_spike_max_peaks.txt  | join - results/100-0_SPIKCHIP_1000_spike_max_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_spike_max_peaks.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_SPIKCHIP_1000_sample_avg_peaks.txt results/25-75_SPIKCHIP_1000_sample_avg_peaks.txt  | join - results/50-50_SPIKCHIP_1000_sample_avg_peaks.txt  | join - results/75-25_SPIKCHIP_1000_sample_avg_peaks.txt  | join - results/100-0_SPIKCHIP_1000_sample_avg_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_SPIKCHIP_1000_sample_max_peaks.txt results/25-75_SPIKCHIP_1000_sample_max_peaks.txt  | join - results/50-50_SPIKCHIP_1000_sample_max_peaks.txt  | join - results/75-25_SPIKCHIP_1000_sample_max_peaks.txt  | join - results/100-0_SPIKCHIP_1000_sample_max_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_sample_max_peaks.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_SPIKCHIP_1000_spike_avg_bg.txt results/25-75_SPIKCHIP_1000_spike_avg_bg.txt  | join - results/50-50_SPIKCHIP_1000_spike_avg_bg.txt  | join - results/75-25_SPIKCHIP_1000_spike_avg_bg.txt  | join - results/100-0_SPIKCHIP_1000_spike_avg_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_spike_avg_bg.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_SPIKCHIP_1000_spike_max_bg.txt results/25-75_SPIKCHIP_1000_spike_max_bg.txt  | join - results/50-50_SPIKCHIP_1000_spike_max_bg.txt  | join - results/75-25_SPIKCHIP_1000_spike_max_bg.txt  | join - results/100-0_SPIKCHIP_1000_spike_max_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_spike_max_bg.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_SPIKCHIP_1000_sample_avg_bg.txt results/25-75_SPIKCHIP_1000_sample_avg_bg.txt  | join - results/50-50_SPIKCHIP_1000_sample_avg_bg.txt  | join - results/75-25_SPIKCHIP_1000_sample_avg_bg.txt  | join - results/100-0_SPIKCHIP_1000_sample_avg_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_sample_avg_bg.txt
+[0m[1;32m%%%% join results/H3K79me2_0-100_SPIKCHIP_1000_sample_max_bg.txt results/25-75_SPIKCHIP_1000_sample_max_bg.txt  | join - results/50-50_SPIKCHIP_1000_sample_max_bg.txt  | join - results/75-25_SPIKCHIP_1000_sample_max_bg.txt  | join - results/100-0_SPIKCHIP_1000_sample_max_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0 && $6 !=0) print $0}' > results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_sample_max_bg.txt[0m[1;32m [OK]
+[0m[1;32m%%%% Finishing Stage 3. Segregation...[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% [Sat Apr 24 04:34:52 2021] Stage 4.  Generating the final boxplots of values
+[0m[1;32m%%%% Boxplots using the average values
+[0m[1;32m%%%% R CMD BATCH Rscripts/H3K79me2_0-100-25-75-50-50-75-25-100-0_1000_spike_avg_boxplot.R
+[0m[1;32m%%%% rm -f H3K79me2_0-100-25-75-50-50-75-25-100-0_1000_spike_avg_boxplot.Rout
+[0m[1;32m%%%% R CMD BATCH Rscripts/H3K79me2_0-100-25-75-50-50-75-25-100-0_1000_spike_avg_boxplot_nolabels.R
+[0m[1;32m%%%% rm -f H3K79me2_0-100-25-75-50-50-75-25-100-0_1000_spike_avg_boxplot_nolabels.Rout[0m[1;32m%%%% R CMD BATCH Rscripts/H3K79me2_0-100-25-75-50-50-75-25-100-0_1000_sample_avg_boxplot.R
+[0m[1;32m%%%% rm -f H3K79me2_0-100-25-75-50-50-75-25-100-0_1000_sample_avg_boxplot.Rout
+[0m[1;32m%%%% R CMD BATCH Rscripts/H3K79me2_0-100-25-75-50-50-75-25-100-0_1000_sample_avg_boxplot_nolabels.R
+[0m[1;32m%%%% rm -f H3K79me2_0-100-25-75-50-50-75-25-100-0_1000_sample_avg_boxplot_nolabels.Rout[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Boxplots using the maximum values
+[0m[1;32m%%%% R CMD BATCH Rscripts/H3K79me2_0-100-25-75-50-50-75-25-100-0_1000_spike_max_boxplot.R
+[0m[1;32m%%%% rm -f H3K79me2_0-100-25-75-50-50-75-25-100-0_1000_spike_max_boxplot.Rout
+[0m[1;32m%%%% R CMD BATCH Rscripts/H3K79me2_0-100-25-75-50-50-75-25-100-0_1000_spike_max_boxplot_nolabels.R
+[0m[1;32m%%%% rm -f H3K79me2_0-100-25-75-50-50-75-25-100-0_1000_spike_max_boxplot_nolabels.Rout[0m[1;32m%%%% R CMD BATCH Rscripts/H3K79me2_0-100-25-75-50-50-75-25-100-0_1000_sample_max_boxplot.R
+[0m[1;32m%%%% rm -f H3K79me2_0-100-25-75-50-50-75-25-100-0_1000_sample_max_boxplot.Rout
+[0m[1;32m%%%% R CMD BATCH Rscripts/H3K79me2_0-100-25-75-50-50-75-25-100-0_1000_sample_max_boxplot_nolabels.R
+[0m[1;32m%%%% rm -f H3K79me2_0-100-25-75-50-50-75-25-100-0_1000_sample_max_boxplot_nolabels.Rout[0m[1;32m [OK]
+[0m[1;32m%%%% Finishing Stage 4. Drawing...[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% [Sat Apr 24 04:42:06 2021] Stage 5.  Successfully finishing the work
+[0m[1;32m%%%% Cleaning temporary files[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Saving final files (gzip)
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_spike_avg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_spike_max.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_sample_avg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_sample_max.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_spike_avg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_spike_max.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_sample_avg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_sample_max.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_spike_avg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_spike_max.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_sample_avg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_sample_max.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_spike_avg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_spike_max.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_sample_avg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_sample_max.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_avg_normalized_spike.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_avg_normalized_sample.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_max_normalized_spike.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_max_normalized_sample.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_spike_max_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_sample_max_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_spike_avg_bg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_spike_max_bg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_sample_avg_bg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_RAW_1000_sample_max_bg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_spike_max_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_sample_max_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_spike_avg_bg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_spike_max_bg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_sample_avg_bg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TRADITIONAL_1000_sample_max_bg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_spike_max_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_sample_max_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_spike_avg_bg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_spike_max_bg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_sample_avg_bg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_CHIPRX_1000_sample_max_bg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_spike_max_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_sample_max_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_spike_avg_bg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_spike_max_bg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_sample_avg_bg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_TAGREMOVAL_1000_sample_max_bg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_spike_max_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_sample_max_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_spike_avg_bg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_spike_max_bg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_sample_avg_bg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_H3K79me2_0-100-25-75-50-50-75-25-100-0_SPIKCHIP_1000_sample_max_bg.txt
+[0m[1;32m%%%% Finishing Stage 5. Cleaning and Saving...[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Total running time (hours): 1.402  hours
+[0m[1;32m%%%% Total running time (minutes): 84.133  mins
+[0m[1;32m%%%% Total running time (seconds): 5048  secs[0m[1;32m [OK]
+[0m

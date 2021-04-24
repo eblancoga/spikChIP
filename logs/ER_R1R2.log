@@ -1,0 +1,654 @@
+[1;32m%%%% spikChIP.pl by Enrique Blanco @ CRG (2021)
+[0m[1;32m%%%% 
+[0m[1;32m%%%% [Sat Apr 24 02:20:59 2021] Stage 0.  Configuration of the pipeline
+[0m[1;32m%%%% Reading options of the command line
+[0m[1;32m%%%% Syntax is correct and options are acquired[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Checking for external software availability
+[0m[1;32m%%%% Searching samtools...[0m[1;32m [OK]
+[0m[1;32m%%%% Searching gawk...[0m[1;32m [OK]
+[0m[1;32m%%%% Searching R...[0m[1;32m [OK]
+[0m[1;32m%%%% Searching SeqCode |recoverChIPlevels...[0m[1;32m [OK]
+[0m[1;32m%%%% Searching SeqCode |matchpeaks...[0m[1;32m [OK]
+[0m[1;32m%%%% Closing external software check...[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Generating output folders (if necessary)
+[0m[1;32m%%%% Trying the results/ directory
+[0m[1;32m%%%% It is already existing
+[0m[1;32m%%%% Trying the Rscripts/ directory
+[0m[1;32m%%%% It is already existing
+[0m[1;32m%%%% Trying the plots/ directory
+[0m[1;32m%%%% It is already existing[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Checking information on chromosome sizes
+[0mchr1	249250621
+chr2	243199373
+chr3	198022430
+chr4	191154276
+chr5	180915260
+chr6	171115067
+chr7	159138663
+chr8	146364022
+chr9	141213431
+chr10	135534747
+chr11	135006516
+chr12	133851895
+chr13	115169878
+chr14	107349540
+chr15	102531392
+chr16	90354753
+chr17	81195210
+chr18	78077248
+chr19	59128983
+chr20	63025520
+chr21	48129895
+chr22	51304566
+chrX	155270560
+chrY	59373566
+chr2L_FLY	23011544
+chr2R_FLY	21146708
+chr3L_FLY	24543557
+chr3R_FLY	27905053
+chr4_FLY	1351857
+chrX_FLY	22422827
+[1;32m%%%% Closing ChromInfo file check...[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Establishing the bin size
+[0m[1;32m%%%% Effective bin size: 1000[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Establishing the palette
+[0m[1;32m%%%% Effective palette: c("white")[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Reading configuration file, calculating reads and down-sampling
+[0m[1;32m%%%% Processing the configuration file
+[0m[1;32m%%%% samtools flagstat map_files/ER_Ctrl_R1_sample.bam > results/ER_Ctrl1_sample_flagstat.txt
+[0m[1;32m%%%% (ER_Ctrl1, 5641783 reads) Confirming filename map_files/ER_Ctrl_R1_sample.bam
+[0m[1;32m%%%% samtools flagstat map_files/ER_Ctrl_R1_spike.bam > results/ER_Ctrl1_spike_flagstat.txt
+[0m[1;32m%%%% (ER_Ctrl1, 8680534 reads) Confirming filename map_files/ER_Ctrl_R1_spike.bam
+[0m[1;32m%%%% (ER_Ctrl1) Confirming filename peak_files/ER_Ctrl_R1_sample_peaks.bed
+[0m[1;32m%%%% (ER_Ctrl1) Confirming filename peak_files/ER_Ctrl_R1_spike_peaks.bed
+[0m[1;32m%%%% samtools flagstat map_files/ER_Fulv_R1_sample.bam > results/Fulv1_sample_flagstat.txt
+[0m[1;32m%%%% (Fulv1, 3269941 reads) Confirming filename map_files/ER_Fulv_R1_sample.bam
+[0m[1;32m%%%% samtools flagstat map_files/ER_Fulv_R1_spike.bam > results/Fulv1_spike_flagstat.txt
+[0m[1;32m%%%% (Fulv1, 10247137 reads) Confirming filename map_files/ER_Fulv_R1_spike.bam
+[0m[1;32m%%%% (Fulv1) Confirming filename peak_files/ER_Ctrl_R1_sample_peaks.bed
+[0m[1;32m%%%% (Fulv1) Confirming filename peak_files/ER_Ctrl_R1_spike_peaks.bed
+[0m[1;32m%%%% samtools flagstat map_files/ER_Ctrl_R2_sample.bam > results/Ctrl2_sample_flagstat.txt
+[0m[1;32m%%%% (Ctrl2, 9335630 reads) Confirming filename map_files/ER_Ctrl_R2_sample.bam
+[0m[1;32m%%%% samtools flagstat map_files/ER_Ctrl_R2_spike.bam > results/Ctrl2_spike_flagstat.txt
+[0m[1;32m%%%% (Ctrl2, 6760244 reads) Confirming filename map_files/ER_Ctrl_R2_spike.bam
+[0m[1;32m%%%% (Ctrl2) Confirming filename peak_files/ER_Ctrl_R1_sample_peaks.bed
+[0m[1;32m%%%% (Ctrl2) Confirming filename peak_files/ER_Ctrl_R1_spike_peaks.bed
+[0m[1;32m%%%% samtools flagstat map_files/ER_Fulv_R2_sample.bam > results/Fulv2_sample_flagstat.txt
+[0m[1;32m%%%% (Fulv2, 8924346 reads) Confirming filename map_files/ER_Fulv_R2_sample.bam
+[0m[1;32m%%%% samtools flagstat map_files/ER_Fulv_R2_spike.bam > results/Fulv2_spike_flagstat.txt
+[0m[1;32m%%%% (Fulv2, 7449117 reads) Confirming filename map_files/ER_Fulv_R2_spike.bam
+[0m[1;32m%%%% (Fulv2) Confirming filename peak_files/ER_Ctrl_R1_sample_peaks.bed
+[0m[1;32m%%%% (Fulv2) Confirming filename peak_files/ER_Ctrl_R1_spike_peaks.bed
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Starting downsampling of the experiments
+[0m[1;32m%%%% Minimum value of spike reads: 6760244
+[0m[1;32m%%%% ER_Ctrl1: factor of 0.778782042671568 = 6760244 / 8680534
+[0m[1;32m%%%% samtools view -h -b -s 0.778782042671568 -o map_files/ER_Ctrl_R1_spike_adjusted.bam map_files/ER_Ctrl_R1_spike.bam
+[0m[1;32m%%%% samtools flagstat map_files/ER_Ctrl_R1_spike_adjusted.bam > results/ER_Ctrl1_spike_adjusted_flagstat.txt
+[0m[1;32m%%%% (map_files/ER_Ctrl_R1_spike_adjusted.bam, 6762599) Final number of reads after downsampling
+[0m[1;32m%%%% samtools view -h -b -s 0.778782042671568 -o map_files/ER_Ctrl_R1_sample_adjusted.bam map_files/ER_Ctrl_R1_sample.bam
+[0m[1;32m%%%% samtools flagstat map_files/ER_Ctrl_R1_sample_adjusted.bam > results/ER_Ctrl1_sample_adjusted_flagstat.txt
+[0m[1;32m%%%% (map_files/ER_Ctrl_R1_sample_adjusted.bam, 4393307) Final number of reads after downsampling
+[0m[1;32m%%%% Fulv1: factor of 0.659720271135245 = 6760244 / 10247137
+[0m[1;32m%%%% samtools view -h -b -s 0.659720271135245 -o map_files/ER_Fulv_R1_spike_adjusted.bam map_files/ER_Fulv_R1_spike.bam
+[0m[1;32m%%%% samtools flagstat map_files/ER_Fulv_R1_spike_adjusted.bam > results/Fulv1_spike_adjusted_flagstat.txt
+[0m[1;32m%%%% (map_files/ER_Fulv_R1_spike_adjusted.bam, 6757697) Final number of reads after downsampling
+[0m[1;32m%%%% samtools view -h -b -s 0.659720271135245 -o map_files/ER_Fulv_R1_sample_adjusted.bam map_files/ER_Fulv_R1_sample.bam
+[0m[1;32m%%%% samtools flagstat map_files/ER_Fulv_R1_sample_adjusted.bam > results/Fulv1_sample_adjusted_flagstat.txt
+[0m[1;32m%%%% (map_files/ER_Fulv_R1_sample_adjusted.bam, 2157090) Final number of reads after downsampling
+[0m[1;32m%%%% Ctrl2: factor of 1.0 = 6760244 / 6760244
+[0m[1;32m%%%% samtools view -h -b -s 1.0 -o map_files/ER_Ctrl_R2_spike_adjusted.bam map_files/ER_Ctrl_R2_spike.bam
+[0m[1;32m%%%% samtools flagstat map_files/ER_Ctrl_R2_spike_adjusted.bam > results/Ctrl2_spike_adjusted_flagstat.txt
+[0m[1;32m%%%% (map_files/ER_Ctrl_R2_spike_adjusted.bam, 6760244) Final number of reads after downsampling
+[0m[1;32m%%%% samtools view -h -b -s 1.0 -o map_files/ER_Ctrl_R2_sample_adjusted.bam map_files/ER_Ctrl_R2_sample.bam
+[0m[1;32m%%%% samtools flagstat map_files/ER_Ctrl_R2_sample_adjusted.bam > results/Ctrl2_sample_adjusted_flagstat.txt
+[0m[1;32m%%%% (map_files/ER_Ctrl_R2_sample_adjusted.bam, 9335630) Final number of reads after downsampling
+[0m[1;32m%%%% Fulv2: factor of 0.907522864790552 = 6760244 / 7449117
+[0m[1;32m%%%% samtools view -h -b -s 0.907522864790552 -o map_files/ER_Fulv_R2_spike_adjusted.bam map_files/ER_Fulv_R2_spike.bam
+[0m[1;32m%%%% samtools flagstat map_files/ER_Fulv_R2_spike_adjusted.bam > results/Fulv2_spike_adjusted_flagstat.txt
+[0m[1;32m%%%% (map_files/ER_Fulv_R2_spike_adjusted.bam, 6761139) Final number of reads after downsampling
+[0m[1;32m%%%% samtools view -h -b -s 0.907522864790552 -o map_files/ER_Fulv_R2_sample_adjusted.bam map_files/ER_Fulv_R2_sample.bam
+[0m[1;32m%%%% samtools flagstat map_files/ER_Fulv_R2_sample_adjusted.bam > results/Fulv2_sample_adjusted_flagstat.txt
+[0m[1;32m%%%% (map_files/ER_Fulv_R2_sample_adjusted.bam, 8099253) Final number of reads after downsampling
+[0m[1;32m%%%% Finishing Stage 0. Configuration...[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% [Sat Apr 24 02:26:45 2021] Stage 1.  Producing the segmentation of both genomes in bins (1000 bps)
+[0m[1;32m%%%% grep FLY config/ChromInfo.txt | gawk 'BEGIN{OFS="\t";offset=1000;}{for(i=1;i<$2-offset;i=i+offset) print $1,i,i+offset;}' > results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_fly_1000.bed
+[0m[1;32m%%%% 120378 bins generated in the segmentation of the spike genome
+[0m[1;32m%%%% grep -v FLY config/ChromInfo.txt | gawk 'BEGIN{OFS="\t";offset=1000;}{for(i=1;i<$2-offset;i=i+offset) print $1,i,i+offset;}' > results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_human_1000.bed
+[0m[1;32m%%%% 3095665 bins generated in the segmentation of the sample genome[0m[1;32m [OK]
+[0m[1;32m%%%% Finishing Stage 1. Segmentation...[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% [Sat Apr 24 02:26:49 2021] Stage 2.  Processing each experiment with different normalization methods
+[0m[1;32m%%%% Total pairs of sample/spike experiments to be analyzed: 4
+[0m[1;32m%%%% Processing the ER_Ctrl1 experiment
+[0m[1;32m%%%% Starting RAW normalization...
+[0m[1;32m%%%% recoverChIPlevels -ns 1000000 config/ChromInfo.txt map_files/ER_Ctrl_R1_spike.bam results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_fly_1000.bed ER_Ctrl1_RAW_1000_spike
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' ER_Ctrl1_RAW_1000_spike_recoverChIPlevels/PEAKsignal_ER_Ctrl1_RAW_1000_spike.bed | sort > ER_Ctrl1_RAW_1000_spike_recoverChIPlevels/PEAKsignal_ER_Ctrl1_RAW_1000_spike_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' ER_Ctrl1_RAW_1000_spike_recoverChIPlevels/PEAKsignal_ER_Ctrl1_RAW_1000_spike.bed | sort > ER_Ctrl1_RAW_1000_spike_recoverChIPlevels/PEAKsignal_ER_Ctrl1_RAW_1000_spike_max.bed
+[0m[1;32m%%%% recoverChIPlevels -ns 1000000 config/ChromInfo.txt map_files/ER_Ctrl_R1_sample.bam results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_human_1000.bed ER_Ctrl1_RAW_1000_sample
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' ER_Ctrl1_RAW_1000_sample_recoverChIPlevels/PEAKsignal_ER_Ctrl1_RAW_1000_sample.bed | sort > ER_Ctrl1_RAW_1000_sample_recoverChIPlevels/PEAKsignal_ER_Ctrl1_RAW_1000_sample_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' ER_Ctrl1_RAW_1000_sample_recoverChIPlevels/PEAKsignal_ER_Ctrl1_RAW_1000_sample.bed | sort > ER_Ctrl1_RAW_1000_sample_recoverChIPlevels/PEAKsignal_ER_Ctrl1_RAW_1000_sample_max.bed[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Starting TRADITIONAL normalization...
+[0m[1;32m%%%% recoverChIPlevels -ns 14322317 config/ChromInfo.txt map_files/ER_Ctrl_R1_spike.bam results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_fly_1000.bed ER_Ctrl1_TRADITIONAL_1000_spike
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' ER_Ctrl1_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_ER_Ctrl1_TRADITIONAL_1000_spike.bed | sort > ER_Ctrl1_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_ER_Ctrl1_TRADITIONAL_1000_spike_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' ER_Ctrl1_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_ER_Ctrl1_TRADITIONAL_1000_spike.bed | sort > ER_Ctrl1_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_ER_Ctrl1_TRADITIONAL_1000_spike_max.bed
+[0m[1;32m%%%% recoverChIPlevels -ns 5641783 config/ChromInfo.txt map_files/ER_Ctrl_R1_sample.bam results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_human_1000.bed ER_Ctrl1_TRADITIONAL_1000_sample
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' ER_Ctrl1_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_ER_Ctrl1_TRADITIONAL_1000_sample.bed | sort > ER_Ctrl1_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_ER_Ctrl1_TRADITIONAL_1000_sample_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' ER_Ctrl1_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_ER_Ctrl1_TRADITIONAL_1000_sample.bed | sort > ER_Ctrl1_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_ER_Ctrl1_TRADITIONAL_1000_sample_max.bed[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Starting CHIP-RX normalization...
+[0m[1;32m%%%% recoverChIPlevels -ns 8680534 config/ChromInfo.txt map_files/ER_Ctrl_R1_spike.bam results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_fly_1000.bed ER_Ctrl1_CHIPRX_1000_spike
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' ER_Ctrl1_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_ER_Ctrl1_CHIPRX_1000_spike.bed | sort > ER_Ctrl1_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_ER_Ctrl1_CHIPRX_1000_spike_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' ER_Ctrl1_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_ER_Ctrl1_CHIPRX_1000_spike.bed | sort > ER_Ctrl1_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_ER_Ctrl1_CHIPRX_1000_spike_max.bed
+[0m[1;32m%%%% recoverChIPlevels -ns 8680534 config/ChromInfo.txt map_files/ER_Ctrl_R1_sample.bam results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_human_1000.bed ER_Ctrl1_CHIPRX_1000_sample
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' ER_Ctrl1_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_ER_Ctrl1_CHIPRX_1000_sample.bed | sort > ER_Ctrl1_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_ER_Ctrl1_CHIPRX_1000_sample_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' ER_Ctrl1_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_ER_Ctrl1_CHIPRX_1000_sample.bed | sort > ER_Ctrl1_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_ER_Ctrl1_CHIPRX_1000_sample_max.bed[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Starting TAG_REMOVAL normalization...
+[0m[1;32m%%%% recoverChIPlevels -ns 1000000 config/ChromInfo.txt map_files/ER_Ctrl_R1_spike_adjusted.bam results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_fly_1000.bed ER_Ctrl1_TAGREMOVAL_1000_spike
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' ER_Ctrl1_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_ER_Ctrl1_TAGREMOVAL_1000_spike.bed | sort > ER_Ctrl1_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_ER_Ctrl1_TAGREMOVAL_1000_spike_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' ER_Ctrl1_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_ER_Ctrl1_TAGREMOVAL_1000_spike.bed | sort > ER_Ctrl1_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_ER_Ctrl1_TAGREMOVAL_1000_spike_max.bed
+[0m[1;32m%%%% recoverChIPlevels -ns 1000000 config/ChromInfo.txt map_files/ER_Ctrl_R1_sample_adjusted.bam results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_human_1000.bed ER_Ctrl1_TAGREMOVAL_1000_sample
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' ER_Ctrl1_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_ER_Ctrl1_TAGREMOVAL_1000_sample.bed | sort > ER_Ctrl1_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_ER_Ctrl1_TAGREMOVAL_1000_sample_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' ER_Ctrl1_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_ER_Ctrl1_TAGREMOVAL_1000_sample.bed | sort > ER_Ctrl1_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_ER_Ctrl1_TAGREMOVAL_1000_sample_max.bed[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Processing the Fulv1 experiment
+[0m[1;32m%%%% Starting RAW normalization...
+[0m[1;32m%%%% recoverChIPlevels -ns 1000000 config/ChromInfo.txt map_files/ER_Fulv_R1_spike.bam results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_fly_1000.bed Fulv1_RAW_1000_spike
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' Fulv1_RAW_1000_spike_recoverChIPlevels/PEAKsignal_Fulv1_RAW_1000_spike.bed | sort > Fulv1_RAW_1000_spike_recoverChIPlevels/PEAKsignal_Fulv1_RAW_1000_spike_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' Fulv1_RAW_1000_spike_recoverChIPlevels/PEAKsignal_Fulv1_RAW_1000_spike.bed | sort > Fulv1_RAW_1000_spike_recoverChIPlevels/PEAKsignal_Fulv1_RAW_1000_spike_max.bed
+[0m[1;32m%%%% recoverChIPlevels -ns 1000000 config/ChromInfo.txt map_files/ER_Fulv_R1_sample.bam results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_human_1000.bed Fulv1_RAW_1000_sample
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' Fulv1_RAW_1000_sample_recoverChIPlevels/PEAKsignal_Fulv1_RAW_1000_sample.bed | sort > Fulv1_RAW_1000_sample_recoverChIPlevels/PEAKsignal_Fulv1_RAW_1000_sample_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' Fulv1_RAW_1000_sample_recoverChIPlevels/PEAKsignal_Fulv1_RAW_1000_sample.bed | sort > Fulv1_RAW_1000_sample_recoverChIPlevels/PEAKsignal_Fulv1_RAW_1000_sample_max.bed[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Starting TRADITIONAL normalization...
+[0m[1;32m%%%% recoverChIPlevels -ns 13517078 config/ChromInfo.txt map_files/ER_Fulv_R1_spike.bam results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_fly_1000.bed Fulv1_TRADITIONAL_1000_spike
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' Fulv1_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_Fulv1_TRADITIONAL_1000_spike.bed | sort > Fulv1_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_Fulv1_TRADITIONAL_1000_spike_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' Fulv1_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_Fulv1_TRADITIONAL_1000_spike.bed | sort > Fulv1_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_Fulv1_TRADITIONAL_1000_spike_max.bed
+[0m[1;32m%%%% recoverChIPlevels -ns 3269941 config/ChromInfo.txt map_files/ER_Fulv_R1_sample.bam results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_human_1000.bed Fulv1_TRADITIONAL_1000_sample
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' Fulv1_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_Fulv1_TRADITIONAL_1000_sample.bed | sort > Fulv1_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_Fulv1_TRADITIONAL_1000_sample_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' Fulv1_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_Fulv1_TRADITIONAL_1000_sample.bed | sort > Fulv1_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_Fulv1_TRADITIONAL_1000_sample_max.bed[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Starting CHIP-RX normalization...
+[0m[1;32m%%%% recoverChIPlevels -ns 10247137 config/ChromInfo.txt map_files/ER_Fulv_R1_spike.bam results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_fly_1000.bed Fulv1_CHIPRX_1000_spike
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' Fulv1_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_Fulv1_CHIPRX_1000_spike.bed | sort > Fulv1_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_Fulv1_CHIPRX_1000_spike_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' Fulv1_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_Fulv1_CHIPRX_1000_spike.bed | sort > Fulv1_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_Fulv1_CHIPRX_1000_spike_max.bed
+[0m[1;32m%%%% recoverChIPlevels -ns 10247137 config/ChromInfo.txt map_files/ER_Fulv_R1_sample.bam results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_human_1000.bed Fulv1_CHIPRX_1000_sample
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' Fulv1_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_Fulv1_CHIPRX_1000_sample.bed | sort > Fulv1_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_Fulv1_CHIPRX_1000_sample_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' Fulv1_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_Fulv1_CHIPRX_1000_sample.bed | sort > Fulv1_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_Fulv1_CHIPRX_1000_sample_max.bed[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Starting TAG_REMOVAL normalization...
+[0m[1;32m%%%% recoverChIPlevels -ns 1000000 config/ChromInfo.txt map_files/ER_Fulv_R1_spike_adjusted.bam results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_fly_1000.bed Fulv1_TAGREMOVAL_1000_spike
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' Fulv1_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_Fulv1_TAGREMOVAL_1000_spike.bed | sort > Fulv1_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_Fulv1_TAGREMOVAL_1000_spike_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' Fulv1_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_Fulv1_TAGREMOVAL_1000_spike.bed | sort > Fulv1_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_Fulv1_TAGREMOVAL_1000_spike_max.bed
+[0m[1;32m%%%% recoverChIPlevels -ns 1000000 config/ChromInfo.txt map_files/ER_Fulv_R1_sample_adjusted.bam results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_human_1000.bed Fulv1_TAGREMOVAL_1000_sample
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' Fulv1_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_Fulv1_TAGREMOVAL_1000_sample.bed | sort > Fulv1_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_Fulv1_TAGREMOVAL_1000_sample_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' Fulv1_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_Fulv1_TAGREMOVAL_1000_sample.bed | sort > Fulv1_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_Fulv1_TAGREMOVAL_1000_sample_max.bed[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Processing the Ctrl2 experiment
+[0m[1;32m%%%% Starting RAW normalization...
+[0m[1;32m%%%% recoverChIPlevels -ns 1000000 config/ChromInfo.txt map_files/ER_Ctrl_R2_spike.bam results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_fly_1000.bed Ctrl2_RAW_1000_spike
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' Ctrl2_RAW_1000_spike_recoverChIPlevels/PEAKsignal_Ctrl2_RAW_1000_spike.bed | sort > Ctrl2_RAW_1000_spike_recoverChIPlevels/PEAKsignal_Ctrl2_RAW_1000_spike_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' Ctrl2_RAW_1000_spike_recoverChIPlevels/PEAKsignal_Ctrl2_RAW_1000_spike.bed | sort > Ctrl2_RAW_1000_spike_recoverChIPlevels/PEAKsignal_Ctrl2_RAW_1000_spike_max.bed
+[0m[1;32m%%%% recoverChIPlevels -ns 1000000 config/ChromInfo.txt map_files/ER_Ctrl_R2_sample.bam results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_human_1000.bed Ctrl2_RAW_1000_sample
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' Ctrl2_RAW_1000_sample_recoverChIPlevels/PEAKsignal_Ctrl2_RAW_1000_sample.bed | sort > Ctrl2_RAW_1000_sample_recoverChIPlevels/PEAKsignal_Ctrl2_RAW_1000_sample_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' Ctrl2_RAW_1000_sample_recoverChIPlevels/PEAKsignal_Ctrl2_RAW_1000_sample.bed | sort > Ctrl2_RAW_1000_sample_recoverChIPlevels/PEAKsignal_Ctrl2_RAW_1000_sample_max.bed[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Starting TRADITIONAL normalization...
+[0m[1;32m%%%% recoverChIPlevels -ns 16095874 config/ChromInfo.txt map_files/ER_Ctrl_R2_spike.bam results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_fly_1000.bed Ctrl2_TRADITIONAL_1000_spike
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' Ctrl2_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_Ctrl2_TRADITIONAL_1000_spike.bed | sort > Ctrl2_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_Ctrl2_TRADITIONAL_1000_spike_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' Ctrl2_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_Ctrl2_TRADITIONAL_1000_spike.bed | sort > Ctrl2_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_Ctrl2_TRADITIONAL_1000_spike_max.bed
+[0m[1;32m%%%% recoverChIPlevels -ns 9335630 config/ChromInfo.txt map_files/ER_Ctrl_R2_sample.bam results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_human_1000.bed Ctrl2_TRADITIONAL_1000_sample
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' Ctrl2_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_Ctrl2_TRADITIONAL_1000_sample.bed | sort > Ctrl2_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_Ctrl2_TRADITIONAL_1000_sample_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' Ctrl2_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_Ctrl2_TRADITIONAL_1000_sample.bed | sort > Ctrl2_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_Ctrl2_TRADITIONAL_1000_sample_max.bed[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Starting CHIP-RX normalization...
+[0m[1;32m%%%% recoverChIPlevels -ns 6760244 config/ChromInfo.txt map_files/ER_Ctrl_R2_spike.bam results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_fly_1000.bed Ctrl2_CHIPRX_1000_spike
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' Ctrl2_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_Ctrl2_CHIPRX_1000_spike.bed | sort > Ctrl2_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_Ctrl2_CHIPRX_1000_spike_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' Ctrl2_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_Ctrl2_CHIPRX_1000_spike.bed | sort > Ctrl2_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_Ctrl2_CHIPRX_1000_spike_max.bed
+[0m[1;32m%%%% recoverChIPlevels -ns 6760244 config/ChromInfo.txt map_files/ER_Ctrl_R2_sample.bam results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_human_1000.bed Ctrl2_CHIPRX_1000_sample
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' Ctrl2_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_Ctrl2_CHIPRX_1000_sample.bed | sort > Ctrl2_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_Ctrl2_CHIPRX_1000_sample_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' Ctrl2_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_Ctrl2_CHIPRX_1000_sample.bed | sort > Ctrl2_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_Ctrl2_CHIPRX_1000_sample_max.bed[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Starting TAG_REMOVAL normalization...
+[0m[1;32m%%%% recoverChIPlevels -ns 1000000 config/ChromInfo.txt map_files/ER_Ctrl_R2_spike_adjusted.bam results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_fly_1000.bed Ctrl2_TAGREMOVAL_1000_spike
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' Ctrl2_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_Ctrl2_TAGREMOVAL_1000_spike.bed | sort > Ctrl2_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_Ctrl2_TAGREMOVAL_1000_spike_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' Ctrl2_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_Ctrl2_TAGREMOVAL_1000_spike.bed | sort > Ctrl2_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_Ctrl2_TAGREMOVAL_1000_spike_max.bed
+[0m[1;32m%%%% recoverChIPlevels -ns 1000000 config/ChromInfo.txt map_files/ER_Ctrl_R2_sample_adjusted.bam results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_human_1000.bed Ctrl2_TAGREMOVAL_1000_sample
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' Ctrl2_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_Ctrl2_TAGREMOVAL_1000_sample.bed | sort > Ctrl2_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_Ctrl2_TAGREMOVAL_1000_sample_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' Ctrl2_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_Ctrl2_TAGREMOVAL_1000_sample.bed | sort > Ctrl2_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_Ctrl2_TAGREMOVAL_1000_sample_max.bed[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Processing the Fulv2 experiment
+[0m[1;32m%%%% Starting RAW normalization...
+[0m[1;32m%%%% recoverChIPlevels -ns 1000000 config/ChromInfo.txt map_files/ER_Fulv_R2_spike.bam results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_fly_1000.bed Fulv2_RAW_1000_spike
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' Fulv2_RAW_1000_spike_recoverChIPlevels/PEAKsignal_Fulv2_RAW_1000_spike.bed | sort > Fulv2_RAW_1000_spike_recoverChIPlevels/PEAKsignal_Fulv2_RAW_1000_spike_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' Fulv2_RAW_1000_spike_recoverChIPlevels/PEAKsignal_Fulv2_RAW_1000_spike.bed | sort > Fulv2_RAW_1000_spike_recoverChIPlevels/PEAKsignal_Fulv2_RAW_1000_spike_max.bed
+[0m[1;32m%%%% recoverChIPlevels -ns 1000000 config/ChromInfo.txt map_files/ER_Fulv_R2_sample.bam results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_human_1000.bed Fulv2_RAW_1000_sample
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' Fulv2_RAW_1000_sample_recoverChIPlevels/PEAKsignal_Fulv2_RAW_1000_sample.bed | sort > Fulv2_RAW_1000_sample_recoverChIPlevels/PEAKsignal_Fulv2_RAW_1000_sample_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' Fulv2_RAW_1000_sample_recoverChIPlevels/PEAKsignal_Fulv2_RAW_1000_sample.bed | sort > Fulv2_RAW_1000_sample_recoverChIPlevels/PEAKsignal_Fulv2_RAW_1000_sample_max.bed[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Starting TRADITIONAL normalization...
+[0m[1;32m%%%% recoverChIPlevels -ns 16373463 config/ChromInfo.txt map_files/ER_Fulv_R2_spike.bam results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_fly_1000.bed Fulv2_TRADITIONAL_1000_spike
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' Fulv2_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_Fulv2_TRADITIONAL_1000_spike.bed | sort > Fulv2_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_Fulv2_TRADITIONAL_1000_spike_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' Fulv2_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_Fulv2_TRADITIONAL_1000_spike.bed | sort > Fulv2_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_Fulv2_TRADITIONAL_1000_spike_max.bed
+[0m[1;32m%%%% recoverChIPlevels -ns 8924346 config/ChromInfo.txt map_files/ER_Fulv_R2_sample.bam results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_human_1000.bed Fulv2_TRADITIONAL_1000_sample
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' Fulv2_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_Fulv2_TRADITIONAL_1000_sample.bed | sort > Fulv2_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_Fulv2_TRADITIONAL_1000_sample_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' Fulv2_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_Fulv2_TRADITIONAL_1000_sample.bed | sort > Fulv2_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_Fulv2_TRADITIONAL_1000_sample_max.bed[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Starting CHIP-RX normalization...
+[0m[1;32m%%%% recoverChIPlevels -ns 7449117 config/ChromInfo.txt map_files/ER_Fulv_R2_spike.bam results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_fly_1000.bed Fulv2_CHIPRX_1000_spike
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' Fulv2_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_Fulv2_CHIPRX_1000_spike.bed | sort > Fulv2_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_Fulv2_CHIPRX_1000_spike_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' Fulv2_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_Fulv2_CHIPRX_1000_spike.bed | sort > Fulv2_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_Fulv2_CHIPRX_1000_spike_max.bed
+[0m[1;32m%%%% recoverChIPlevels -ns 7449117 config/ChromInfo.txt map_files/ER_Fulv_R2_sample.bam results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_human_1000.bed Fulv2_CHIPRX_1000_sample
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' Fulv2_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_Fulv2_CHIPRX_1000_sample.bed | sort > Fulv2_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_Fulv2_CHIPRX_1000_sample_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' Fulv2_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_Fulv2_CHIPRX_1000_sample.bed | sort > Fulv2_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_Fulv2_CHIPRX_1000_sample_max.bed[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Starting TAG_REMOVAL normalization...
+[0m[1;32m%%%% recoverChIPlevels -ns 1000000 config/ChromInfo.txt map_files/ER_Fulv_R2_spike_adjusted.bam results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_fly_1000.bed Fulv2_TAGREMOVAL_1000_spike
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' Fulv2_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_Fulv2_TAGREMOVAL_1000_spike.bed | sort > Fulv2_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_Fulv2_TAGREMOVAL_1000_spike_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' Fulv2_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_Fulv2_TAGREMOVAL_1000_spike.bed | sort > Fulv2_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_Fulv2_TAGREMOVAL_1000_spike_max.bed
+[0m[1;32m%%%% recoverChIPlevels -ns 1000000 config/ChromInfo.txt map_files/ER_Fulv_R2_sample_adjusted.bam results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_human_1000.bed Fulv2_TAGREMOVAL_1000_sample
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$5}' Fulv2_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_Fulv2_TAGREMOVAL_1000_sample.bed | sort > Fulv2_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_Fulv2_TAGREMOVAL_1000_sample_avg.bed
+[0m[1;32m%%%% gawk '{print $1"*"$2"*"$3,$6}' Fulv2_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_Fulv2_TAGREMOVAL_1000_sample.bed | sort > Fulv2_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_Fulv2_TAGREMOVAL_1000_sample_max.bed[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Join raw data values from all experiments
+[0m[1;32m%%%% join ER_Ctrl1_RAW_1000_spike_recoverChIPlevels/PEAKsignal_ER_Ctrl1_RAW_1000_spike_avg.bed Fulv1_RAW_1000_spike_recoverChIPlevels/PEAKsignal_Fulv1_RAW_1000_spike_avg.bed  | join - Ctrl2_RAW_1000_spike_recoverChIPlevels/PEAKsignal_Ctrl2_RAW_1000_spike_avg.bed  | join - Fulv2_RAW_1000_spike_recoverChIPlevels/PEAKsignal_Fulv2_RAW_1000_spike_avg.bed  > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_spike_avg.txt
+[0m[1;32m%%%% join ER_Ctrl1_RAW_1000_spike_recoverChIPlevels/PEAKsignal_ER_Ctrl1_RAW_1000_spike_max.bed Fulv1_RAW_1000_spike_recoverChIPlevels/PEAKsignal_Fulv1_RAW_1000_spike_max.bed  | join - Ctrl2_RAW_1000_spike_recoverChIPlevels/PEAKsignal_Ctrl2_RAW_1000_spike_max.bed  | join - Fulv2_RAW_1000_spike_recoverChIPlevels/PEAKsignal_Fulv2_RAW_1000_spike_max.bed  > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_spike_max.txt
+[0m[1;32m%%%% join ER_Ctrl1_RAW_1000_sample_recoverChIPlevels/PEAKsignal_ER_Ctrl1_RAW_1000_sample_avg.bed Fulv1_RAW_1000_sample_recoverChIPlevels/PEAKsignal_Fulv1_RAW_1000_sample_avg.bed  | join - Ctrl2_RAW_1000_sample_recoverChIPlevels/PEAKsignal_Ctrl2_RAW_1000_sample_avg.bed  | join - Fulv2_RAW_1000_sample_recoverChIPlevels/PEAKsignal_Fulv2_RAW_1000_sample_avg.bed  > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_sample_avg.txt
+[0m[1;32m%%%% join ER_Ctrl1_RAW_1000_sample_recoverChIPlevels/PEAKsignal_ER_Ctrl1_RAW_1000_sample_max.bed Fulv1_RAW_1000_sample_recoverChIPlevels/PEAKsignal_Fulv1_RAW_1000_sample_max.bed  | join - Ctrl2_RAW_1000_sample_recoverChIPlevels/PEAKsignal_Ctrl2_RAW_1000_sample_max.bed  | join - Fulv2_RAW_1000_sample_recoverChIPlevels/PEAKsignal_Fulv2_RAW_1000_sample_max.bed  > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_sample_max.txt
+[0m[1;32m%%%% Removing SeqCode folders
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Join traditional data values from all experiments
+[0m[1;32m%%%% join ER_Ctrl1_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_ER_Ctrl1_TRADITIONAL_1000_spike_avg.bed Fulv1_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_Fulv1_TRADITIONAL_1000_spike_avg.bed  | join - Ctrl2_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_Ctrl2_TRADITIONAL_1000_spike_avg.bed  | join - Fulv2_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_Fulv2_TRADITIONAL_1000_spike_avg.bed  > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_spike_avg.txt
+[0m[1;32m%%%% join ER_Ctrl1_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_ER_Ctrl1_TRADITIONAL_1000_spike_max.bed Fulv1_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_Fulv1_TRADITIONAL_1000_spike_max.bed  | join - Ctrl2_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_Ctrl2_TRADITIONAL_1000_spike_max.bed  | join - Fulv2_TRADITIONAL_1000_spike_recoverChIPlevels/PEAKsignal_Fulv2_TRADITIONAL_1000_spike_max.bed  > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_spike_max.txt
+[0m[1;32m%%%% join ER_Ctrl1_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_ER_Ctrl1_TRADITIONAL_1000_sample_avg.bed Fulv1_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_Fulv1_TRADITIONAL_1000_sample_avg.bed  | join - Ctrl2_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_Ctrl2_TRADITIONAL_1000_sample_avg.bed  | join - Fulv2_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_Fulv2_TRADITIONAL_1000_sample_avg.bed  > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_sample_avg.txt
+[0m[1;32m%%%% join ER_Ctrl1_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_ER_Ctrl1_TRADITIONAL_1000_sample_max.bed Fulv1_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_Fulv1_TRADITIONAL_1000_sample_max.bed  | join - Ctrl2_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_Ctrl2_TRADITIONAL_1000_sample_max.bed  | join - Fulv2_TRADITIONAL_1000_sample_recoverChIPlevels/PEAKsignal_Fulv2_TRADITIONAL_1000_sample_max.bed  > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_sample_max.txt
+[0m[1;32m%%%% Removing SeqCode folders
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Join ChIP-RX data values from all experiments
+[0m[1;32m%%%% join ER_Ctrl1_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_ER_Ctrl1_CHIPRX_1000_spike_avg.bed Fulv1_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_Fulv1_CHIPRX_1000_spike_avg.bed  | join - Ctrl2_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_Ctrl2_CHIPRX_1000_spike_avg.bed  | join - Fulv2_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_Fulv2_CHIPRX_1000_spike_avg.bed  > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_spike_avg.txt
+[0m[1;32m%%%% join ER_Ctrl1_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_ER_Ctrl1_CHIPRX_1000_spike_max.bed Fulv1_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_Fulv1_CHIPRX_1000_spike_max.bed  | join - Ctrl2_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_Ctrl2_CHIPRX_1000_spike_max.bed  | join - Fulv2_CHIPRX_1000_spike_recoverChIPlevels/PEAKsignal_Fulv2_CHIPRX_1000_spike_max.bed  > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_spike_max.txt
+[0m[1;32m%%%% join ER_Ctrl1_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_ER_Ctrl1_CHIPRX_1000_sample_avg.bed Fulv1_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_Fulv1_CHIPRX_1000_sample_avg.bed  | join - Ctrl2_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_Ctrl2_CHIPRX_1000_sample_avg.bed  | join - Fulv2_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_Fulv2_CHIPRX_1000_sample_avg.bed  > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_sample_avg.txt
+[0m[1;32m%%%% join ER_Ctrl1_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_ER_Ctrl1_CHIPRX_1000_sample_max.bed Fulv1_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_Fulv1_CHIPRX_1000_sample_max.bed  | join - Ctrl2_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_Ctrl2_CHIPRX_1000_sample_max.bed  | join - Fulv2_CHIPRX_1000_sample_recoverChIPlevels/PEAKsignal_Fulv2_CHIPRX_1000_sample_max.bed  > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_sample_max.txt
+[0m[1;32m%%%% Removing SeqCode folders
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Join tag removal data values from all experiments
+[0m[1;32m%%%% join ER_Ctrl1_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_ER_Ctrl1_TAGREMOVAL_1000_spike_avg.bed Fulv1_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_Fulv1_TAGREMOVAL_1000_spike_avg.bed  | join - Ctrl2_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_Ctrl2_TAGREMOVAL_1000_spike_avg.bed  | join - Fulv2_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_Fulv2_TAGREMOVAL_1000_spike_avg.bed  > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_spike_avg.txt
+[0m[1;32m%%%% join ER_Ctrl1_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_ER_Ctrl1_TAGREMOVAL_1000_spike_max.bed Fulv1_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_Fulv1_TAGREMOVAL_1000_spike_max.bed  | join - Ctrl2_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_Ctrl2_TAGREMOVAL_1000_spike_max.bed  | join - Fulv2_TAGREMOVAL_1000_spike_recoverChIPlevels/PEAKsignal_Fulv2_TAGREMOVAL_1000_spike_max.bed  > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_spike_max.txt
+[0m[1;32m%%%% join ER_Ctrl1_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_ER_Ctrl1_TAGREMOVAL_1000_sample_avg.bed Fulv1_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_Fulv1_TAGREMOVAL_1000_sample_avg.bed  | join - Ctrl2_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_Ctrl2_TAGREMOVAL_1000_sample_avg.bed  | join - Fulv2_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_Fulv2_TAGREMOVAL_1000_sample_avg.bed  > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_sample_avg.txt
+[0m[1;32m%%%% join ER_Ctrl1_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_ER_Ctrl1_TAGREMOVAL_1000_sample_max.bed Fulv1_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_Fulv1_TAGREMOVAL_1000_sample_max.bed  | join - Ctrl2_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_Ctrl2_TAGREMOVAL_1000_sample_max.bed  | join - Fulv2_TAGREMOVAL_1000_sample_recoverChIPlevels/PEAKsignal_Fulv2_TAGREMOVAL_1000_sample_max.bed  > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_sample_max.txt
+[0m[1;32m%%%% Removing SeqCode folders
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Starting spikChIP local normalization...
+[0m[1;32m%%%% Prepare spikChIP data values for local normalization
+[0m[1;32m%%%% cat results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_spike_avg.txt results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_sample_avg.txt > results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_spike-sample_avg.txt
+[0m[1;32m%%%% gawk 'BEGIN{OFS="\t"}{print  $2, $3, $4, $5}' results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_spike-sample_avg.txt > results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_spike-sample_avg_values.txt
+[0m[1;32m%%%% gawk 'BEGIN{OFS="\t"}{print NR}' results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_spike-sample_avg.txt > results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_spike-sample_avg_names.txt
+[0m[1;32m%%%% gawk 'BEGIN{OFS="\t"}{print NR,$1}' results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_spike-sample_avg.txt > results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_spike-sample_avg_names2.txt
+[0m[1;32m%%%% cat results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_spike_max.txt results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_sample_max.txt > results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_spike-sample_max.txt
+[0m[1;32m%%%% gawk 'BEGIN{OFS="\t"}{print  $2, $3, $4, $5}' results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_spike-sample_max.txt > results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_spike-sample_max_values.txt
+[0m[1;32m%%%% gawk 'BEGIN{OFS="\t"}{print NR}' results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_spike-sample_max.txt > results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_spike-sample_max_names.txt
+[0m[1;32m%%%% gawk 'BEGIN{OFS="\t"}{print NR,$1}' results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_spike-sample_max.txt > results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_spike-sample_max_names2.txt
+[0m[1;32m%%%% Run local regression adjusting sample values with spike values
+[0m[1;32m%%%% Performing the analysis on average values
+[0m[1;32m%%%% R CMD BATCH Rscripts/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_1000_avg.R
+[0m[1;32m%%%% rm -f ER_Ctrl1-Fulv1-Ctrl2-Fulv2_1000_avg.Rout
+[0m[1;32m%%%% join results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_avg_normalized.txt results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_spike-sample_avg_names2.txt | grep FLY | gawk 'BEGIN{OFS="\t"}{print  $6, $2, $3, $4, $5}'> results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_avg_normalized_spike.txt
+[0m[1;32m%%%% join results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_avg_normalized.txt results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_spike-sample_avg_names2.txt | grep -v FLY | gawk 'BEGIN{OFS="\t"}{print  $6, $2, $3, $4, $5}'> results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_avg_normalized_sample.txt
+[0m[1;32m%%%% Performing the analysis on average values
+[0m[1;32m%%%% R CMD BATCH Rscripts/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_1000_max.R
+[0m[1;32m%%%% rm -f ER_Ctrl1-Fulv1-Ctrl2-Fulv2_1000_max.Rout
+[0m[1;32m%%%% join results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_max_normalized.txt results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_spike-sample_max_names2.txt | grep FLY | gawk 'BEGIN{OFS="\t"}{print  $6, $2, $3, $4, $5}'> results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_max_normalized_spike.txt
+[0m[1;32m%%%% join results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_max_normalized.txt results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_spike-sample_max_names2.txt | grep -v FLY | gawk 'BEGIN{OFS="\t"}{print  $6, $2, $3, $4, $5}'> results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_max_normalized_sample.txt[0m[1;32m [OK]
+[0m[1;32m%%%% Finishing Stage 2. Normalization...[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% [Sat Apr 24 02:54:21 2021] Stage 3.  Distinguishing bins of spike and sample genomes into peaks or bg according to peak files
+[0m[1;32m%%%% Generic classification of genome segmentations into peaks and bg
+[0m[1;32m%%%% Working with sample ER_Ctrl1: peaks Vs. bins of spike
+[0m[1;32m%%%% matchpeaks peak_files/ER_Ctrl_R1_spike_peaks.bed results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_fly_1000.bed binpeaks ER_Ctrl1_1000_spike_bins
+[0m[1;32m%%%% grep spike_bins binpeaks_ER_Ctrl1_1000_spike_bins_matchpeaks/common_binpeaks_ER_Ctrl1_1000_spike_bins.bed > results/ER_Ctrl1_1000_bins_spike_peaks.bed
+[0m[1;32m%%%% Removing SeqCode folder
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Working with sample ER_Ctrl1: peaks Vs. bins of sample
+[0m[1;32m%%%% matchpeaks peak_files/ER_Ctrl_R1_sample_peaks.bed results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_human_1000.bed binpeaks ER_Ctrl1_1000_sample_bins
+[0m[1;32m%%%% grep sample_bins binpeaks_ER_Ctrl1_1000_sample_bins_matchpeaks/common_binpeaks_ER_Ctrl1_1000_sample_bins.bed > results/ER_Ctrl1_1000_bins_sample_peaks.bed
+[0m[1;32m%%%% Removing SeqCode folder
+[0m[1;32m%%%% Working with sample Fulv1: peaks Vs. bins of spike
+[0m[1;32m%%%% matchpeaks peak_files/ER_Ctrl_R1_spike_peaks.bed results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_fly_1000.bed binpeaks Fulv1_1000_spike_bins
+[0m[1;32m%%%% grep spike_bins binpeaks_Fulv1_1000_spike_bins_matchpeaks/common_binpeaks_Fulv1_1000_spike_bins.bed > results/Fulv1_1000_bins_spike_peaks.bed
+[0m[1;32m%%%% Removing SeqCode folder
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Working with sample Fulv1: peaks Vs. bins of sample
+[0m[1;32m%%%% matchpeaks peak_files/ER_Ctrl_R1_sample_peaks.bed results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_human_1000.bed binpeaks Fulv1_1000_sample_bins
+[0m[1;32m%%%% grep sample_bins binpeaks_Fulv1_1000_sample_bins_matchpeaks/common_binpeaks_Fulv1_1000_sample_bins.bed > results/Fulv1_1000_bins_sample_peaks.bed
+[0m[1;32m%%%% Removing SeqCode folder
+[0m[1;32m%%%% Working with sample Ctrl2: peaks Vs. bins of spike
+[0m[1;32m%%%% matchpeaks peak_files/ER_Ctrl_R1_spike_peaks.bed results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_fly_1000.bed binpeaks Ctrl2_1000_spike_bins
+[0m[1;32m%%%% grep spike_bins binpeaks_Ctrl2_1000_spike_bins_matchpeaks/common_binpeaks_Ctrl2_1000_spike_bins.bed > results/Ctrl2_1000_bins_spike_peaks.bed
+[0m[1;32m%%%% Removing SeqCode folder
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Working with sample Ctrl2: peaks Vs. bins of sample
+[0m[1;32m%%%% matchpeaks peak_files/ER_Ctrl_R1_sample_peaks.bed results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_human_1000.bed binpeaks Ctrl2_1000_sample_bins
+[0m[1;32m%%%% grep sample_bins binpeaks_Ctrl2_1000_sample_bins_matchpeaks/common_binpeaks_Ctrl2_1000_sample_bins.bed > results/Ctrl2_1000_bins_sample_peaks.bed
+[0m[1;32m%%%% Removing SeqCode folder
+[0m[1;32m%%%% Working with sample Fulv2: peaks Vs. bins of spike
+[0m[1;32m%%%% matchpeaks peak_files/ER_Ctrl_R1_spike_peaks.bed results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_fly_1000.bed binpeaks Fulv2_1000_spike_bins
+[0m[1;32m%%%% grep spike_bins binpeaks_Fulv2_1000_spike_bins_matchpeaks/common_binpeaks_Fulv2_1000_spike_bins.bed > results/Fulv2_1000_bins_spike_peaks.bed
+[0m[1;32m%%%% Removing SeqCode folder
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Working with sample Fulv2: peaks Vs. bins of sample
+[0m[1;32m%%%% matchpeaks peak_files/ER_Ctrl_R1_sample_peaks.bed results/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_human_1000.bed binpeaks Fulv2_1000_sample_bins
+[0m[1;32m%%%% grep sample_bins binpeaks_Fulv2_1000_sample_bins_matchpeaks/common_binpeaks_Fulv2_1000_sample_bins.bed > results/Fulv2_1000_bins_sample_peaks.bed
+[0m[1;32m%%%% Removing SeqCode folder
+[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Processing values of each normalization strategy into peaks and bg
+[0m[1;32m%%%% Working with RAW values
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_spike_avg.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_RAW_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_spike_avg.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_RAW_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_sample_avg.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_RAW_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_sample_avg.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_RAW_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_spike_max.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_RAW_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_spike_max.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_RAW_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_sample_max.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_RAW_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_sample_max.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_RAW_1000_sample_max_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_spike_avg.txt | gawk '{print $1,$3;}' > results/Fulv1_RAW_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_spike_avg.txt | gawk '{print $1,$3;}' > results/Fulv1_RAW_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_sample_avg.txt | gawk '{print $1,$3;}' > results/Fulv1_RAW_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_sample_avg.txt | gawk '{print $1,$3;}' > results/Fulv1_RAW_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_spike_max.txt | gawk '{print $1,$3;}' > results/Fulv1_RAW_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_spike_max.txt | gawk '{print $1,$3;}' > results/Fulv1_RAW_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_sample_max.txt | gawk '{print $1,$3;}' > results/Fulv1_RAW_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_sample_max.txt | gawk '{print $1,$3;}' > results/Fulv1_RAW_1000_sample_max_bg.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_spike_avg.txt | gawk '{print $1,$4;}' > results/Ctrl2_RAW_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_spike_avg.txt | gawk '{print $1,$4;}' > results/Ctrl2_RAW_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_sample_avg.txt | gawk '{print $1,$4;}' > results/Ctrl2_RAW_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_sample_avg.txt | gawk '{print $1,$4;}' > results/Ctrl2_RAW_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_spike_max.txt | gawk '{print $1,$4;}' > results/Ctrl2_RAW_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_spike_max.txt | gawk '{print $1,$4;}' > results/Ctrl2_RAW_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_sample_max.txt | gawk '{print $1,$4;}' > results/Ctrl2_RAW_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_sample_max.txt | gawk '{print $1,$4;}' > results/Ctrl2_RAW_1000_sample_max_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_spike_avg.txt | gawk '{print $1,$5;}' > results/Fulv2_RAW_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_spike_avg.txt | gawk '{print $1,$5;}' > results/Fulv2_RAW_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_sample_avg.txt | gawk '{print $1,$5;}' > results/Fulv2_RAW_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_sample_avg.txt | gawk '{print $1,$5;}' > results/Fulv2_RAW_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_spike_max.txt | gawk '{print $1,$5;}' > results/Fulv2_RAW_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_spike_max.txt | gawk '{print $1,$5;}' > results/Fulv2_RAW_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_sample_max.txt | gawk '{print $1,$5;}' > results/Fulv2_RAW_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_sample_max.txt | gawk '{print $1,$5;}' > results/Fulv2_RAW_1000_sample_max_bg.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_RAW_1000_spike_avg_peaks.txt results/Fulv1_RAW_1000_spike_avg_peaks.txt  | join - results/Ctrl2_RAW_1000_spike_avg_peaks.txt  | join - results/Fulv2_RAW_1000_spike_avg_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_RAW_1000_spike_max_peaks.txt results/Fulv1_RAW_1000_spike_max_peaks.txt  | join - results/Ctrl2_RAW_1000_spike_max_peaks.txt  | join - results/Fulv2_RAW_1000_spike_max_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_spike_max_peaks.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_RAW_1000_sample_avg_peaks.txt results/Fulv1_RAW_1000_sample_avg_peaks.txt  | join - results/Ctrl2_RAW_1000_sample_avg_peaks.txt  | join - results/Fulv2_RAW_1000_sample_avg_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_RAW_1000_sample_max_peaks.txt results/Fulv1_RAW_1000_sample_max_peaks.txt  | join - results/Ctrl2_RAW_1000_sample_max_peaks.txt  | join - results/Fulv2_RAW_1000_sample_max_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_sample_max_peaks.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_RAW_1000_spike_avg_bg.txt results/Fulv1_RAW_1000_spike_avg_bg.txt  | join - results/Ctrl2_RAW_1000_spike_avg_bg.txt  | join - results/Fulv2_RAW_1000_spike_avg_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_spike_avg_bg.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_RAW_1000_spike_max_bg.txt results/Fulv1_RAW_1000_spike_max_bg.txt  | join - results/Ctrl2_RAW_1000_spike_max_bg.txt  | join - results/Fulv2_RAW_1000_spike_max_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_spike_max_bg.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_RAW_1000_sample_avg_bg.txt results/Fulv1_RAW_1000_sample_avg_bg.txt  | join - results/Ctrl2_RAW_1000_sample_avg_bg.txt  | join - results/Fulv2_RAW_1000_sample_avg_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_sample_avg_bg.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_RAW_1000_sample_max_bg.txt results/Fulv1_RAW_1000_sample_max_bg.txt  | join - results/Ctrl2_RAW_1000_sample_max_bg.txt  | join - results/Fulv2_RAW_1000_sample_max_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_sample_max_bg.txt[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Working with TRADITIONAL values
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_spike_avg.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_TRADITIONAL_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_spike_avg.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_TRADITIONAL_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_sample_avg.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_TRADITIONAL_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_sample_avg.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_TRADITIONAL_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_spike_max.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_TRADITIONAL_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_spike_max.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_TRADITIONAL_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_sample_max.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_TRADITIONAL_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_sample_max.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_TRADITIONAL_1000_sample_max_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_spike_avg.txt | gawk '{print $1,$3;}' > results/Fulv1_TRADITIONAL_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_spike_avg.txt | gawk '{print $1,$3;}' > results/Fulv1_TRADITIONAL_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_sample_avg.txt | gawk '{print $1,$3;}' > results/Fulv1_TRADITIONAL_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_sample_avg.txt | gawk '{print $1,$3;}' > results/Fulv1_TRADITIONAL_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_spike_max.txt | gawk '{print $1,$3;}' > results/Fulv1_TRADITIONAL_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_spike_max.txt | gawk '{print $1,$3;}' > results/Fulv1_TRADITIONAL_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_sample_max.txt | gawk '{print $1,$3;}' > results/Fulv1_TRADITIONAL_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_sample_max.txt | gawk '{print $1,$3;}' > results/Fulv1_TRADITIONAL_1000_sample_max_bg.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_spike_avg.txt | gawk '{print $1,$4;}' > results/Ctrl2_TRADITIONAL_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_spike_avg.txt | gawk '{print $1,$4;}' > results/Ctrl2_TRADITIONAL_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_sample_avg.txt | gawk '{print $1,$4;}' > results/Ctrl2_TRADITIONAL_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_sample_avg.txt | gawk '{print $1,$4;}' > results/Ctrl2_TRADITIONAL_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_spike_max.txt | gawk '{print $1,$4;}' > results/Ctrl2_TRADITIONAL_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_spike_max.txt | gawk '{print $1,$4;}' > results/Ctrl2_TRADITIONAL_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_sample_max.txt | gawk '{print $1,$4;}' > results/Ctrl2_TRADITIONAL_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_sample_max.txt | gawk '{print $1,$4;}' > results/Ctrl2_TRADITIONAL_1000_sample_max_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_spike_avg.txt | gawk '{print $1,$5;}' > results/Fulv2_TRADITIONAL_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_spike_avg.txt | gawk '{print $1,$5;}' > results/Fulv2_TRADITIONAL_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_sample_avg.txt | gawk '{print $1,$5;}' > results/Fulv2_TRADITIONAL_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_sample_avg.txt | gawk '{print $1,$5;}' > results/Fulv2_TRADITIONAL_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_spike_max.txt | gawk '{print $1,$5;}' > results/Fulv2_TRADITIONAL_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_spike_max.txt | gawk '{print $1,$5;}' > results/Fulv2_TRADITIONAL_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_sample_max.txt | gawk '{print $1,$5;}' > results/Fulv2_TRADITIONAL_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_sample_max.txt | gawk '{print $1,$5;}' > results/Fulv2_TRADITIONAL_1000_sample_max_bg.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_TRADITIONAL_1000_spike_avg_peaks.txt results/Fulv1_TRADITIONAL_1000_spike_avg_peaks.txt  | join - results/Ctrl2_TRADITIONAL_1000_spike_avg_peaks.txt  | join - results/Fulv2_TRADITIONAL_1000_spike_avg_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_TRADITIONAL_1000_spike_max_peaks.txt results/Fulv1_TRADITIONAL_1000_spike_max_peaks.txt  | join - results/Ctrl2_TRADITIONAL_1000_spike_max_peaks.txt  | join - results/Fulv2_TRADITIONAL_1000_spike_max_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_spike_max_peaks.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_TRADITIONAL_1000_sample_avg_peaks.txt results/Fulv1_TRADITIONAL_1000_sample_avg_peaks.txt  | join - results/Ctrl2_TRADITIONAL_1000_sample_avg_peaks.txt  | join - results/Fulv2_TRADITIONAL_1000_sample_avg_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_TRADITIONAL_1000_sample_max_peaks.txt results/Fulv1_TRADITIONAL_1000_sample_max_peaks.txt  | join - results/Ctrl2_TRADITIONAL_1000_sample_max_peaks.txt  | join - results/Fulv2_TRADITIONAL_1000_sample_max_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_sample_max_peaks.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_TRADITIONAL_1000_spike_avg_bg.txt results/Fulv1_TRADITIONAL_1000_spike_avg_bg.txt  | join - results/Ctrl2_TRADITIONAL_1000_spike_avg_bg.txt  | join - results/Fulv2_TRADITIONAL_1000_spike_avg_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_spike_avg_bg.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_TRADITIONAL_1000_spike_max_bg.txt results/Fulv1_TRADITIONAL_1000_spike_max_bg.txt  | join - results/Ctrl2_TRADITIONAL_1000_spike_max_bg.txt  | join - results/Fulv2_TRADITIONAL_1000_spike_max_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_spike_max_bg.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_TRADITIONAL_1000_sample_avg_bg.txt results/Fulv1_TRADITIONAL_1000_sample_avg_bg.txt  | join - results/Ctrl2_TRADITIONAL_1000_sample_avg_bg.txt  | join - results/Fulv2_TRADITIONAL_1000_sample_avg_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_sample_avg_bg.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_TRADITIONAL_1000_sample_max_bg.txt results/Fulv1_TRADITIONAL_1000_sample_max_bg.txt  | join - results/Ctrl2_TRADITIONAL_1000_sample_max_bg.txt  | join - results/Fulv2_TRADITIONAL_1000_sample_max_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_sample_max_bg.txt[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Working with CHIPRX values
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_spike_avg.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_CHIPRX_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_spike_avg.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_CHIPRX_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_sample_avg.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_CHIPRX_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_sample_avg.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_CHIPRX_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_spike_max.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_CHIPRX_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_spike_max.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_CHIPRX_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_sample_max.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_CHIPRX_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_sample_max.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_CHIPRX_1000_sample_max_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_spike_avg.txt | gawk '{print $1,$3;}' > results/Fulv1_CHIPRX_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_spike_avg.txt | gawk '{print $1,$3;}' > results/Fulv1_CHIPRX_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_sample_avg.txt | gawk '{print $1,$3;}' > results/Fulv1_CHIPRX_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_sample_avg.txt | gawk '{print $1,$3;}' > results/Fulv1_CHIPRX_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_spike_max.txt | gawk '{print $1,$3;}' > results/Fulv1_CHIPRX_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_spike_max.txt | gawk '{print $1,$3;}' > results/Fulv1_CHIPRX_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_sample_max.txt | gawk '{print $1,$3;}' > results/Fulv1_CHIPRX_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_sample_max.txt | gawk '{print $1,$3;}' > results/Fulv1_CHIPRX_1000_sample_max_bg.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_spike_avg.txt | gawk '{print $1,$4;}' > results/Ctrl2_CHIPRX_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_spike_avg.txt | gawk '{print $1,$4;}' > results/Ctrl2_CHIPRX_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_sample_avg.txt | gawk '{print $1,$4;}' > results/Ctrl2_CHIPRX_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_sample_avg.txt | gawk '{print $1,$4;}' > results/Ctrl2_CHIPRX_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_spike_max.txt | gawk '{print $1,$4;}' > results/Ctrl2_CHIPRX_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_spike_max.txt | gawk '{print $1,$4;}' > results/Ctrl2_CHIPRX_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_sample_max.txt | gawk '{print $1,$4;}' > results/Ctrl2_CHIPRX_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_sample_max.txt | gawk '{print $1,$4;}' > results/Ctrl2_CHIPRX_1000_sample_max_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_spike_avg.txt | gawk '{print $1,$5;}' > results/Fulv2_CHIPRX_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_spike_avg.txt | gawk '{print $1,$5;}' > results/Fulv2_CHIPRX_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_sample_avg.txt | gawk '{print $1,$5;}' > results/Fulv2_CHIPRX_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_sample_avg.txt | gawk '{print $1,$5;}' > results/Fulv2_CHIPRX_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_spike_max.txt | gawk '{print $1,$5;}' > results/Fulv2_CHIPRX_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_spike_max.txt | gawk '{print $1,$5;}' > results/Fulv2_CHIPRX_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_sample_max.txt | gawk '{print $1,$5;}' > results/Fulv2_CHIPRX_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_sample_max.txt | gawk '{print $1,$5;}' > results/Fulv2_CHIPRX_1000_sample_max_bg.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_CHIPRX_1000_spike_avg_peaks.txt results/Fulv1_CHIPRX_1000_spike_avg_peaks.txt  | join - results/Ctrl2_CHIPRX_1000_spike_avg_peaks.txt  | join - results/Fulv2_CHIPRX_1000_spike_avg_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_CHIPRX_1000_spike_max_peaks.txt results/Fulv1_CHIPRX_1000_spike_max_peaks.txt  | join - results/Ctrl2_CHIPRX_1000_spike_max_peaks.txt  | join - results/Fulv2_CHIPRX_1000_spike_max_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_spike_max_peaks.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_CHIPRX_1000_sample_avg_peaks.txt results/Fulv1_CHIPRX_1000_sample_avg_peaks.txt  | join - results/Ctrl2_CHIPRX_1000_sample_avg_peaks.txt  | join - results/Fulv2_CHIPRX_1000_sample_avg_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_CHIPRX_1000_sample_max_peaks.txt results/Fulv1_CHIPRX_1000_sample_max_peaks.txt  | join - results/Ctrl2_CHIPRX_1000_sample_max_peaks.txt  | join - results/Fulv2_CHIPRX_1000_sample_max_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_sample_max_peaks.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_CHIPRX_1000_spike_avg_bg.txt results/Fulv1_CHIPRX_1000_spike_avg_bg.txt  | join - results/Ctrl2_CHIPRX_1000_spike_avg_bg.txt  | join - results/Fulv2_CHIPRX_1000_spike_avg_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_spike_avg_bg.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_CHIPRX_1000_spike_max_bg.txt results/Fulv1_CHIPRX_1000_spike_max_bg.txt  | join - results/Ctrl2_CHIPRX_1000_spike_max_bg.txt  | join - results/Fulv2_CHIPRX_1000_spike_max_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_spike_max_bg.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_CHIPRX_1000_sample_avg_bg.txt results/Fulv1_CHIPRX_1000_sample_avg_bg.txt  | join - results/Ctrl2_CHIPRX_1000_sample_avg_bg.txt  | join - results/Fulv2_CHIPRX_1000_sample_avg_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_sample_avg_bg.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_CHIPRX_1000_sample_max_bg.txt results/Fulv1_CHIPRX_1000_sample_max_bg.txt  | join - results/Ctrl2_CHIPRX_1000_sample_max_bg.txt  | join - results/Fulv2_CHIPRX_1000_sample_max_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_sample_max_bg.txt[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Working with TAGREMOVAL values
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_spike_avg.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_TAGREMOVAL_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_spike_avg.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_TAGREMOVAL_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_sample_avg.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_TAGREMOVAL_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_sample_avg.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_TAGREMOVAL_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_spike_max.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_TAGREMOVAL_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_spike_max.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_TAGREMOVAL_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_sample_max.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_TAGREMOVAL_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_sample_max.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_TAGREMOVAL_1000_sample_max_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_spike_avg.txt | gawk '{print $1,$3;}' > results/Fulv1_TAGREMOVAL_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_spike_avg.txt | gawk '{print $1,$3;}' > results/Fulv1_TAGREMOVAL_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_sample_avg.txt | gawk '{print $1,$3;}' > results/Fulv1_TAGREMOVAL_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_sample_avg.txt | gawk '{print $1,$3;}' > results/Fulv1_TAGREMOVAL_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_spike_max.txt | gawk '{print $1,$3;}' > results/Fulv1_TAGREMOVAL_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_spike_max.txt | gawk '{print $1,$3;}' > results/Fulv1_TAGREMOVAL_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_sample_max.txt | gawk '{print $1,$3;}' > results/Fulv1_TAGREMOVAL_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_sample_max.txt | gawk '{print $1,$3;}' > results/Fulv1_TAGREMOVAL_1000_sample_max_bg.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_spike_avg.txt | gawk '{print $1,$4;}' > results/Ctrl2_TAGREMOVAL_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_spike_avg.txt | gawk '{print $1,$4;}' > results/Ctrl2_TAGREMOVAL_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_sample_avg.txt | gawk '{print $1,$4;}' > results/Ctrl2_TAGREMOVAL_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_sample_avg.txt | gawk '{print $1,$4;}' > results/Ctrl2_TAGREMOVAL_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_spike_max.txt | gawk '{print $1,$4;}' > results/Ctrl2_TAGREMOVAL_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_spike_max.txt | gawk '{print $1,$4;}' > results/Ctrl2_TAGREMOVAL_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_sample_max.txt | gawk '{print $1,$4;}' > results/Ctrl2_TAGREMOVAL_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_sample_max.txt | gawk '{print $1,$4;}' > results/Ctrl2_TAGREMOVAL_1000_sample_max_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_spike_avg.txt | gawk '{print $1,$5;}' > results/Fulv2_TAGREMOVAL_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_spike_avg.txt | gawk '{print $1,$5;}' > results/Fulv2_TAGREMOVAL_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_sample_avg.txt | gawk '{print $1,$5;}' > results/Fulv2_TAGREMOVAL_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_sample_avg.txt | gawk '{print $1,$5;}' > results/Fulv2_TAGREMOVAL_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_spike_max.txt | gawk '{print $1,$5;}' > results/Fulv2_TAGREMOVAL_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_spike_max.txt | gawk '{print $1,$5;}' > results/Fulv2_TAGREMOVAL_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_sample_max.txt | gawk '{print $1,$5;}' > results/Fulv2_TAGREMOVAL_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_sample_max.txt | gawk '{print $1,$5;}' > results/Fulv2_TAGREMOVAL_1000_sample_max_bg.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_TAGREMOVAL_1000_spike_avg_peaks.txt results/Fulv1_TAGREMOVAL_1000_spike_avg_peaks.txt  | join - results/Ctrl2_TAGREMOVAL_1000_spike_avg_peaks.txt  | join - results/Fulv2_TAGREMOVAL_1000_spike_avg_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_TAGREMOVAL_1000_spike_max_peaks.txt results/Fulv1_TAGREMOVAL_1000_spike_max_peaks.txt  | join - results/Ctrl2_TAGREMOVAL_1000_spike_max_peaks.txt  | join - results/Fulv2_TAGREMOVAL_1000_spike_max_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_spike_max_peaks.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_TAGREMOVAL_1000_sample_avg_peaks.txt results/Fulv1_TAGREMOVAL_1000_sample_avg_peaks.txt  | join - results/Ctrl2_TAGREMOVAL_1000_sample_avg_peaks.txt  | join - results/Fulv2_TAGREMOVAL_1000_sample_avg_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_TAGREMOVAL_1000_sample_max_peaks.txt results/Fulv1_TAGREMOVAL_1000_sample_max_peaks.txt  | join - results/Ctrl2_TAGREMOVAL_1000_sample_max_peaks.txt  | join - results/Fulv2_TAGREMOVAL_1000_sample_max_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_sample_max_peaks.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_TAGREMOVAL_1000_spike_avg_bg.txt results/Fulv1_TAGREMOVAL_1000_spike_avg_bg.txt  | join - results/Ctrl2_TAGREMOVAL_1000_spike_avg_bg.txt  | join - results/Fulv2_TAGREMOVAL_1000_spike_avg_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_spike_avg_bg.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_TAGREMOVAL_1000_spike_max_bg.txt results/Fulv1_TAGREMOVAL_1000_spike_max_bg.txt  | join - results/Ctrl2_TAGREMOVAL_1000_spike_max_bg.txt  | join - results/Fulv2_TAGREMOVAL_1000_spike_max_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_spike_max_bg.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_TAGREMOVAL_1000_sample_avg_bg.txt results/Fulv1_TAGREMOVAL_1000_sample_avg_bg.txt  | join - results/Ctrl2_TAGREMOVAL_1000_sample_avg_bg.txt  | join - results/Fulv2_TAGREMOVAL_1000_sample_avg_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_sample_avg_bg.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_TAGREMOVAL_1000_sample_max_bg.txt results/Fulv1_TAGREMOVAL_1000_sample_max_bg.txt  | join - results/Ctrl2_TAGREMOVAL_1000_sample_max_bg.txt  | join - results/Fulv2_TAGREMOVAL_1000_sample_max_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_sample_max_bg.txt[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Working with SPIKCHIP values
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_avg_normalized_spike.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_SPIKCHIP_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_avg_normalized_spike.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_SPIKCHIP_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_avg_normalized_sample.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_SPIKCHIP_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_avg_normalized_sample.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_SPIKCHIP_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_max_normalized_spike.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_SPIKCHIP_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_max_normalized_spike.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_SPIKCHIP_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_max_normalized_sample.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_SPIKCHIP_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/ER_Ctrl1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_max_normalized_sample.txt | gawk '{print $1,$2;}' > results/ER_Ctrl1_SPIKCHIP_1000_sample_max_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_avg_normalized_spike.txt | gawk '{print $1,$3;}' > results/Fulv1_SPIKCHIP_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_avg_normalized_spike.txt | gawk '{print $1,$3;}' > results/Fulv1_SPIKCHIP_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_avg_normalized_sample.txt | gawk '{print $1,$3;}' > results/Fulv1_SPIKCHIP_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_avg_normalized_sample.txt | gawk '{print $1,$3;}' > results/Fulv1_SPIKCHIP_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_max_normalized_spike.txt | gawk '{print $1,$3;}' > results/Fulv1_SPIKCHIP_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_max_normalized_spike.txt | gawk '{print $1,$3;}' > results/Fulv1_SPIKCHIP_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_max_normalized_sample.txt | gawk '{print $1,$3;}' > results/Fulv1_SPIKCHIP_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv1_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_max_normalized_sample.txt | gawk '{print $1,$3;}' > results/Fulv1_SPIKCHIP_1000_sample_max_bg.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_avg_normalized_spike.txt | gawk '{print $1,$4;}' > results/Ctrl2_SPIKCHIP_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_avg_normalized_spike.txt | gawk '{print $1,$4;}' > results/Ctrl2_SPIKCHIP_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_avg_normalized_sample.txt | gawk '{print $1,$4;}' > results/Ctrl2_SPIKCHIP_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_avg_normalized_sample.txt | gawk '{print $1,$4;}' > results/Ctrl2_SPIKCHIP_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_max_normalized_spike.txt | gawk '{print $1,$4;}' > results/Ctrl2_SPIKCHIP_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_max_normalized_spike.txt | gawk '{print $1,$4;}' > results/Ctrl2_SPIKCHIP_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_max_normalized_sample.txt | gawk '{print $1,$4;}' > results/Ctrl2_SPIKCHIP_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/Ctrl2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_max_normalized_sample.txt | gawk '{print $1,$4;}' > results/Ctrl2_SPIKCHIP_1000_sample_max_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_avg_normalized_spike.txt | gawk '{print $1,$5;}' > results/Fulv2_SPIKCHIP_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_avg_normalized_spike.txt | gawk '{print $1,$5;}' > results/Fulv2_SPIKCHIP_1000_spike_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_avg_normalized_sample.txt | gawk '{print $1,$5;}' > results/Fulv2_SPIKCHIP_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_avg_normalized_sample.txt | gawk '{print $1,$5;}' > results/Fulv2_SPIKCHIP_1000_sample_avg_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_max_normalized_spike.txt | gawk '{print $1,$5;}' > results/Fulv2_SPIKCHIP_1000_spike_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_spike_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_max_normalized_spike.txt | gawk '{print $1,$5;}' > results/Fulv2_SPIKCHIP_1000_spike_max_bg.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_max_normalized_sample.txt | gawk '{print $1,$5;}' > results/Fulv2_SPIKCHIP_1000_sample_max_peaks.txt
+[0m[1;32m%%%% grep -v track results/Fulv2_1000_bins_sample_peaks.bed | gawk '{print $1"*"$2"*"$3}' | sort | join -v 2 - results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_max_normalized_sample.txt | gawk '{print $1,$5;}' > results/Fulv2_SPIKCHIP_1000_sample_max_bg.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_SPIKCHIP_1000_spike_avg_peaks.txt results/Fulv1_SPIKCHIP_1000_spike_avg_peaks.txt  | join - results/Ctrl2_SPIKCHIP_1000_spike_avg_peaks.txt  | join - results/Fulv2_SPIKCHIP_1000_spike_avg_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_SPIKCHIP_1000_spike_max_peaks.txt results/Fulv1_SPIKCHIP_1000_spike_max_peaks.txt  | join - results/Ctrl2_SPIKCHIP_1000_spike_max_peaks.txt  | join - results/Fulv2_SPIKCHIP_1000_spike_max_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_spike_max_peaks.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_SPIKCHIP_1000_sample_avg_peaks.txt results/Fulv1_SPIKCHIP_1000_sample_avg_peaks.txt  | join - results/Ctrl2_SPIKCHIP_1000_sample_avg_peaks.txt  | join - results/Fulv2_SPIKCHIP_1000_sample_avg_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_SPIKCHIP_1000_sample_max_peaks.txt results/Fulv1_SPIKCHIP_1000_sample_max_peaks.txt  | join - results/Ctrl2_SPIKCHIP_1000_sample_max_peaks.txt  | join - results/Fulv2_SPIKCHIP_1000_sample_max_peaks.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_sample_max_peaks.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_SPIKCHIP_1000_spike_avg_bg.txt results/Fulv1_SPIKCHIP_1000_spike_avg_bg.txt  | join - results/Ctrl2_SPIKCHIP_1000_spike_avg_bg.txt  | join - results/Fulv2_SPIKCHIP_1000_spike_avg_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_spike_avg_bg.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_SPIKCHIP_1000_spike_max_bg.txt results/Fulv1_SPIKCHIP_1000_spike_max_bg.txt  | join - results/Ctrl2_SPIKCHIP_1000_spike_max_bg.txt  | join - results/Fulv2_SPIKCHIP_1000_spike_max_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_spike_max_bg.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_SPIKCHIP_1000_sample_avg_bg.txt results/Fulv1_SPIKCHIP_1000_sample_avg_bg.txt  | join - results/Ctrl2_SPIKCHIP_1000_sample_avg_bg.txt  | join - results/Fulv2_SPIKCHIP_1000_sample_avg_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_sample_avg_bg.txt
+[0m[1;32m%%%% join results/ER_Ctrl1_SPIKCHIP_1000_sample_max_bg.txt results/Fulv1_SPIKCHIP_1000_sample_max_bg.txt  | join - results/Ctrl2_SPIKCHIP_1000_sample_max_bg.txt  | join - results/Fulv2_SPIKCHIP_1000_sample_max_bg.txt  | gawk '{if ($2 !=0 && $3 !=0 && $4 !=0 && $5 !=0) print $0}' > results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_sample_max_bg.txt[0m[1;32m [OK]
+[0m[1;32m%%%% Finishing Stage 3. Segregation...[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% [Sat Apr 24 03:11:33 2021] Stage 4.  Generating the final boxplots of values
+[0m[1;32m%%%% Boxplots using the average values
+[0m[1;32m%%%% R CMD BATCH Rscripts/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_1000_spike_avg_boxplot.R
+[0m[1;32m%%%% rm -f ER_Ctrl1-Fulv1-Ctrl2-Fulv2_1000_spike_avg_boxplot.Rout
+[0m[1;32m%%%% R CMD BATCH Rscripts/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_1000_spike_avg_boxplot_nolabels.R
+[0m[1;32m%%%% rm -f ER_Ctrl1-Fulv1-Ctrl2-Fulv2_1000_spike_avg_boxplot_nolabels.Rout[0m[1;32m%%%% R CMD BATCH Rscripts/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_1000_sample_avg_boxplot.R
+[0m[1;32m%%%% rm -f ER_Ctrl1-Fulv1-Ctrl2-Fulv2_1000_sample_avg_boxplot.Rout
+[0m[1;32m%%%% R CMD BATCH Rscripts/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_1000_sample_avg_boxplot_nolabels.R
+[0m[1;32m%%%% rm -f ER_Ctrl1-Fulv1-Ctrl2-Fulv2_1000_sample_avg_boxplot_nolabels.Rout[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Boxplots using the maximum values
+[0m[1;32m%%%% R CMD BATCH Rscripts/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_1000_spike_max_boxplot.R
+[0m[1;32m%%%% rm -f ER_Ctrl1-Fulv1-Ctrl2-Fulv2_1000_spike_max_boxplot.Rout
+[0m[1;32m%%%% R CMD BATCH Rscripts/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_1000_spike_max_boxplot_nolabels.R
+[0m[1;32m%%%% rm -f ER_Ctrl1-Fulv1-Ctrl2-Fulv2_1000_spike_max_boxplot_nolabels.Rout[0m[1;32m%%%% R CMD BATCH Rscripts/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_1000_sample_max_boxplot.R
+[0m[1;32m%%%% rm -f ER_Ctrl1-Fulv1-Ctrl2-Fulv2_1000_sample_max_boxplot.Rout
+[0m[1;32m%%%% R CMD BATCH Rscripts/ER_Ctrl1-Fulv1-Ctrl2-Fulv2_1000_sample_max_boxplot_nolabels.R
+[0m[1;32m%%%% rm -f ER_Ctrl1-Fulv1-Ctrl2-Fulv2_1000_sample_max_boxplot_nolabels.Rout[0m[1;32m [OK]
+[0m[1;32m%%%% Finishing Stage 4. Drawing...[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% [Sat Apr 24 03:18:26 2021] Stage 5.  Successfully finishing the work
+[0m[1;32m%%%% Cleaning temporary files[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Saving final files (gzip)
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_spike_avg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_spike_max.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_sample_avg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_sample_max.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_spike_avg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_spike_max.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_sample_avg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_sample_max.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_spike_avg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_spike_max.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_sample_avg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_sample_max.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_spike_avg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_spike_max.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_sample_avg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_sample_max.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_avg_normalized_spike.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_avg_normalized_sample.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_max_normalized_spike.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_max_normalized_sample.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_spike_max_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_sample_max_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_spike_avg_bg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_spike_max_bg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_sample_avg_bg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_RAW_1000_sample_max_bg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_spike_max_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_sample_max_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_spike_avg_bg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_spike_max_bg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_sample_avg_bg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TRADITIONAL_1000_sample_max_bg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_spike_max_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_sample_max_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_spike_avg_bg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_spike_max_bg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_sample_avg_bg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_CHIPRX_1000_sample_max_bg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_spike_max_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_sample_max_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_spike_avg_bg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_spike_max_bg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_sample_avg_bg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_TAGREMOVAL_1000_sample_max_bg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_spike_avg_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_spike_max_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_sample_avg_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_sample_max_peaks.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_spike_avg_bg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_spike_max_bg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_sample_avg_bg.txt
+[0m[1;32m%%%% gzip -f results/FINAL_ER_Ctrl1-Fulv1-Ctrl2-Fulv2_SPIKCHIP_1000_sample_max_bg.txt
+[0m[1;32m%%%% Finishing Stage 5. Cleaning and Saving...[0m[1;32m [OK]
+[0m[1;32m%%%% 
+[0m[1;32m%%%% Total running time (hours): 1.001  hours
+[0m[1;32m%%%% Total running time (minutes): 60.066  mins
+[0m[1;32m%%%% Total running time (seconds): 3604  secs[0m[1;32m [OK]
+[0m
