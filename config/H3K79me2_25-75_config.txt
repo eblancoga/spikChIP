@@ -1,0 +1,3 @@
+#sample	bam_sample	bam_spike	peaks_sample	peaks_spike
+H3K79me2_25-75	map_files/25-75_sample.bam	map_files/25-75_spike.bam	peak_files/25-75_sample_peaks.bed	peak_files/25-75_spike_peaks.bed
+75-25	map_files/75-25_sample.bam	map_files/75-25_spike.bam	peak_files/25-75_sample_peaks.bed	peak_files/25-75_spike_peaks.bed

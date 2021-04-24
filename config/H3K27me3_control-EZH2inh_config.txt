@@ -1,0 +1,3 @@
+#sample	bam_sample	bam_spike	peaks_sample	peaks_spike
+H3K27me3_control	map_files/H3K27me3_control_sample.bam	map_files/H3K27me3_control_spike.bam	peak_files/H3K27me3_control_sample_peaks.bed	peak_files/H3K27me3_control_spike_peaks.bed
+EZH2inh	map_files/H3K27me3_EZH2inh_sample.bam	map_files/H3K27me3_EZH2inh_spike.bam	peak_files/H3K27me3_control_sample_peaks.bed	peak_files/H3K27me3_control_spike_peaks.bed

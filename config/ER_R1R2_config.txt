@@ -1,0 +1,5 @@
+#sample	bam_sample	bam_spike	peaks_sample	peaks_spike
+ER_Ctrl1	map_files/ER_Ctrl_R1_sample.bam	map_files/ER_Ctrl_R1_spike.bam	peak_files/ER_Ctrl_R1_sample_peaks.bed	peak_files/ER_Ctrl_R1_spike_peaks.bed
+Fulv1	map_files/ER_Fulv_R1_sample.bam	map_files/ER_Fulv_R1_spike.bam	peak_files/ER_Ctrl_R1_sample_peaks.bed	peak_files/ER_Ctrl_R1_spike_peaks.bed
+Ctrl2	map_files/ER_Ctrl_R2_sample.bam	map_files/ER_Ctrl_R2_spike.bam	peak_files/ER_Ctrl_R1_sample_peaks.bed	peak_files/ER_Ctrl_R1_spike_peaks.bed
+Fulv2	map_files/ER_Fulv_R2_sample.bam	map_files/ER_Fulv_R2_spike.bam	peak_files/ER_Ctrl_R1_sample_peaks.bed	peak_files/ER_Ctrl_R1_spike_peaks.bed
