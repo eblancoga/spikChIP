@@ -1575,17 +1575,17 @@ sub GenerateBoxplot
     print RFILE "notch=TRUE,\n";
     print RFILE "main=\"($experiment,$value) ".join(",",@NAMES)."\")\n";
 
-    $expression = "rep(c(";
+    $expression = "c(";
     for($j=0; $j<$n_experiments-1; $j++)
     {
 	$expression = $expression."\"".$NAMES[$j]."\",";
     }
-    $expression = $expression."\"".$NAMES[$j]."\"),10,)";
+    $expression = $expression."\"".$NAMES[$j]."\")";
 
     print RFILE "labels <- $expression\n";
+    print RFILE "legend(\"topright\",labels,fill=rev(p($n_experiments)))\n";
+    
     print RFILE "axis(1, labels = FALSE,tick=FALSE)\n";
-    print RFILE "text(x =  seq_along(labels), y = -1, srt = 90, adj = 1, labels = labels, xpd = TRUE,cex=0.5,col=\"blue\")\n";
-
     $midpoint = ($n_experiments*$N_STRATEGIES) + 0.5;
     print RFILE "lines(c($midpoint,$midpoint),c(10,-10),lwd=1,col=\"darkblue\")\n";
     #
