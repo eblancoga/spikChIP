@@ -18,30 +18,24 @@ of the normalization over the background.
 
 ### How to run spikChIP
 
-spikChIP is a command line that runs in Linux and Mac OS-X environments.
+spikChIP is a command line that runs in Linux and Mac OS-X environments:
 
-./spikChIP -vck <bin_size_kbp> -p <0|1|2|3> <configuration_file> <chrominfo_file>
+    ./spikChIP -vck <bin_size_kbp> -p <0|1|2|3> <configuration_file> <chrominfo_file>
 
-* Options to configure the behavior of the program:
+Users can configure the behavior of the program with the following options:
 
-  -v: verbose (show messages about the processing of the samples)
- 
-  -c: remove intermediate files to reduce the size of the output folder
- 
-  -k: number of bp of the bins for the segmentation of the genomes
- 
-  -p: palette of colors for boxplots (0: black and white, 1: reds, 2: greens, 3: blues)
+    -v: verbose (show messages about the processing of the samples)
+    -c: remove intermediate files to reduce the size of the output folder
+    -k: number of bp of the bins for the segmentation of the genome
+    -p: palette of colors for boxplots (0: black and white, 1: reds, 2: greens, 3: blues)
 
-* The configuration file of spikChIP is a plain-text file in which each line
+The configuration file of spikChIP is a plain-text file in which each line
 contains the information about the files of a particular experimental condition:
 
-#sample	 bam_sample	bam_spike	peaks_sample	peaks_spike
-
-condition1	map_files/1_sample.bam	map_files/1_spike.bam	peak_files/1_sample_peaks.bed	peak_files/1_spike_peaks.bed
-
-condition2	map_files/2_sample.bam	map_files/2_spike.bam	peak_files/2_sample_peaks.bed	peak_files/2_spike_peaks.bed
-
-...
+    #sample	 bam_sample	bam_spike	peaks_sample	peaks_spike
+    condition1	map_files/1_sample.bam	map_files/1_spike.bam	peak_files/1_sample_peaks.bed	peak_files/1_spike_peaks.bed
+    condition2	map_files/2_sample.bam	map_files/2_spike.bam	peak_files/2_sample_peaks.bed	peak_files/2_spike_peaks.bed
+    ...
 
 BAM files of each sample/spike genome (e.g. human reads and fruit fly reads) must be
 generated with a mapping tool prior to running spikChIP by the user. Peak files in
@@ -49,69 +43,40 @@ BED format must be also generated with a peak calling tool before too. We employ
 Bowtie for mapping (multi-locus reads discarded, http://bowtie-bio.sourceforge.net)
 and MACS2 for peak calling (broad peaks, https://pypi.org/project/MACS2).
 
-* The ChromInfo file is a plain-text file with the list of chromosomes from the
+The ChromInfo file is a plain-text file with the list of chromosomes from the
 sample and spike-in genomes. This is an example for such a genome type made
 of human (hg19) and fruit fly (dm3):
 
-chr1	249250621
-
-chr2	243199373
-
-chr3	198022430
-
-chr4	191154276
-
-chr5	180915260
-
-chr6	171115067
-
-chr7	159138663
-
-chr8	146364022
-
-chr9	141213431
-
-chr10	135534747
-
-chr11	135006516
-
-chr12	133851895
-
-chr13	115169878
-
-chr14	107349540
-
-chr15	102531392
-
-chr16	90354753
-
-chr17	81195210
-
-chr18	78077248
-
-chr19	59128983
-
-chr20	63025520
-
-chr21	48129895
-
-chr22	51304566
-
-chrX	155270560
-
-chrY	59373566
-
-chr2L_FLY	23011544
-
-chr2R_FLY	21146708
-
-chr3L_FLY	24543557
-
-chr3R_FLY	27905053
-
-chr4_FLY	1351857
-
-chrX_FLY	22422827
+    chr1	249250621
+    chr2	243199373
+    chr3	198022430
+    chr4	191154276
+    chr5	180915260
+    chr6	171115067
+    chr7	159138663
+    chr8	146364022
+    chr9	141213431
+    chr10	135534747
+    chr11	135006516
+    chr12	133851895
+    chr13	115169878
+    chr14	107349540
+    chr15	102531392
+    chr16	90354753
+    chr17	81195210
+    chr18	78077248
+    chr19	59128983
+    chr20	63025520
+    chr21	48129895
+    chr22	51304566
+    chrX	155270560
+    chrY	59373566
+    chr2L_FLY	23011544
+    chr2R_FLY	21146708
+    chr3L_FLY	24543557
+    chr3R_FLY	27905053
+    chr4_FLY	1351857
+    chrX_FLY	22422827
 
 Please, notice that we use the "FLY" suffix to denote the chromosomes of the spike-in species.
 Moreover, it is mandatory that such chromosome names are identically written to describe the location
@@ -173,15 +138,15 @@ spikChIP strategy. This is the list of files (average values):
 with the values normalized using the SPIKCHIP (RAW, TRADITIONAL, CHIPRX and TAG
 REMOVAL are other normalization approaches also calculated by the program):
 
-FINAL_H3K79me2_25-75-75-25_SPIKCHIP_1000_avg_normalized_sample.txt.gz
-FINAL_H3K79me2_25-75-75-25_SPIKCHIP_1000_avg_normalized_spike.txt.gz
+    FINAL_H3K79me2_25-75-75-25_SPIKCHIP_1000_avg_normalized_sample.txt.gz
+    FINAL_H3K79me2_25-75-75-25_SPIKCHIP_1000_avg_normalized_spike.txt.gz
 
 (2) List of non-null bins belonging to peaks or background regions in samples/spike-ins:
 
-FINAL_H3K79me2_25-75-75-25_SPIKCHIP_1000_sample_avg_bg.txt.gz
-FINAL_H3K79me2_25-75-75-25_SPIKCHIP_1000_sample_avg_peaks.txt.gz
-FINAL_H3K79me2_25-75-75-25_SPIKCHIP_1000_spike_avg_bg.txt.gz
-FINAL_H3K79me2_25-75-75-25_SPIKCHIP_1000_spike_avg_peaks.txt.gz
+    FINAL_H3K79me2_25-75-75-25_SPIKCHIP_1000_sample_avg_bg.txt.gz
+    FINAL_H3K79me2_25-75-75-25_SPIKCHIP_1000_sample_avg_peaks.txt.gz
+    FINAL_H3K79me2_25-75-75-25_SPIKCHIP_1000_spike_avg_bg.txt.gz
+    FINAL_H3K79me2_25-75-75-25_SPIKCHIP_1000_spike_avg_peaks.txt.gz
 
 * plots/
 
@@ -224,41 +189,30 @@ Cleaning temporary files and compressing resulting final files of all normalizat
 Users can generate custom tracks in BedGraph format from the final files of genome-wide bins. Below,
 we show how to generate the human genome track from the spikChIP results:
 
-- FINAL_H3K79me2_25-75-75-25_SPIKCHIP_1000_avg_normalized_sample.txt.gz
+    FINAL_H3K79me2_25-75-75-25_SPIKCHIP_1000_avg_normalized_sample.txt.gz
 
-chr1*1*1001	0.0997764035926034	0.100224097481314
+    chr1*1*1001	0.0997764035926034	0.100224097481314
+    chr1*100000001*100001001	0.11228442208177	0.107762054394226
+    chr1*10000001*10001001	0.191068011376152	0.15125504155222
+    ...
 
-chr1*100000001*100001001	0.11228442208177	0.107762054394226
+    zcat results/FINAL_H3K79me2_25-75-75-25_SPIKCHIP_1000_avg_normalized_sample.txt.gz | sed 's/\*/ /g' | gawk 'BEGIN{print "track type=bedGraph name=ALL_AVG_SPIKCHIP_25 description=ALL_AVG_SPIKCHIP_25 visibility=full maxHeightPixels=60 color=200,0,0";OFS="\t"}{print $1,$2,$3,$4}' > UCSCtracks/SPIKCHIP_25.bg; gzip UCSCtracks/SPIKCHIP_25.bg;
 
-chr1*10000001*10001001	0.191068011376152	0.15125504155222
+    track type=bedGraph name=ALL_AVG_SPIKCHIP_25 description=ALL_AVG_SPIKCHIP_25 visibility=full maxHeightPixels=60 color=200,0,0
+    chr1	1	1001	0.0997764035926034
+    chr1	100000001	100001001	0.11228442208177
+    chr1	10000001	10001001	0.191068011376152
+    ...
 
-...
+    zcat results/FINAL_H3K79me2_25-75-75-25_SPIKCHIP_1000_avg_normalized_sample.txt.gz | sed 's/\*/ /g' | gawk 'BEGIN{print "track type=bedGraph name=ALL_AVG_SPIKCHIP_75 description=ALL_AVG_SPIKCHIP_75 visibility=full maxHeightPixels=60 color=255,100,100";OFS="\t"}{print $1,$2,$3,$5}' > UCSCtracks/SPIKCHIP_75.bg; gzip UCSCtracks/SPIKCHIP_75.bg;
 
-zcat results/FINAL_H3K79me2_25-75-75-25_SPIKCHIP_1000_avg_normalized_sample.txt.gz | sed 's/\*/ /g' | gawk 'BEGIN{print "track type=bedGraph name=ALL_AVG_SPIKCHIP_25 description=ALL_AVG_SPIKCHIP_25 visibility=full maxHeightPixels=60 color=200,0,0";OFS="\t"}{print $1,$2,$3,$4}' > UCSCtracks/SPIKCHIP_25.bg; gzip UCSCtracks/SPIKCHIP_25.bg;
+    track type=bedGraph name=ALL_AVG_SPIKCHIP_75 description=ALL_AVG_SPIKCHIP_75 visibility=full maxHeightPixels=60 color=255,100,100
+    chr1	1	1001	0.100224097481314
+    chr1	100000001	100001001	0.107762054394226
+    chr1	10000001	10001001	0.15125504155222
+    ...
 
-track type=bedGraph name=ALL_AVG_SPIKCHIP_25 description=ALL_AVG_SPIKCHIP_25 visibility=full maxHeightPixels=60 color=200,0,0
-
-chr1	1	1001	0.0997764035926034
-
-chr1	100000001	100001001	0.11228442208177
-
-chr1	10000001	10001001	0.191068011376152
-
-...
-
-zcat results/FINAL_H3K79me2_25-75-75-25_SPIKCHIP_1000_avg_normalized_sample.txt.gz | sed 's/\*/ /g' | gawk 'BEGIN{print "track type=bedGraph name=ALL_AVG_SPIKCHIP_75 description=ALL_AVG_SPIKCHIP_75 visibility=full maxHeightPixels=60 color=255,100,100";OFS="\t"}{print $1,$2,$3,$5}' > UCSCtracks/SPIKCHIP_75.bg; gzip UCSCtracks/SPIKCHIP_75.bg;
-
-track type=bedGraph name=ALL_AVG_SPIKCHIP_75 description=ALL_AVG_SPIKCHIP_75 visibility=full maxHeightPixels=60 color=255,100,100
-
-chr1	1	1001	0.100224097481314
-
-chr1	100000001	100001001	0.107762054394226
-
-chr1	10000001	10001001	0.15125504155222
-
-...
-
-UCSC session with all tracks generated by spikChIP using all normalization strategies:
+We have created a UCSC session with all tracks generated by spikChIP using all normalization strategies:
 
 https://genome.ucsc.edu/s/DiCroceLab/spikChIP_NAR%2DGB_2021
 
