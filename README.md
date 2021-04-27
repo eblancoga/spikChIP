@@ -235,7 +235,7 @@ https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM1465005
 
 https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM1465007
 
-./spikChIP.pl -vcp 1 config/H3K79me2_25-75_config.txt config/ChromInfo.txt 2> logs/H3K79me2_25-75.log;
+    ./spikChIP.pl -vcp 1 config/H3K79me2_25-75_config.txt config/ChromInfo.txt 2> logs/H3K79me2_25-75.log;
 
 * H3K79me2: five samples
 
@@ -264,7 +264,7 @@ https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM1465007
 
 https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM1465008
 
-./spikChIP.pl -vcp 1 config/H3K79me2_0-25-50-75-100_config.txt config/ChromInfo.txt 2> logs/H3K79me2_0-25-50-75-100.log;
+    ./spikChIP.pl -vcp 1 config/H3K79me2_0-25-50-75-100_config.txt config/ChromInfo.txt 2> logs/H3K79me2_0-25-50-75-100.log;
 
 * H3K27me3: two samples
 
@@ -282,7 +282,7 @@ https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM1890165
 
 https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM1890166
 
-./spikChIP.pl -vcp 3 config/H3K27me3_control-EZH2inh_config.txt config/ChromInfo.txt 2> logs/H3K27me3_control-EZH2inh.log;
+    ./spikChIP.pl -vcp 3 config/H3K27me3_control-EZH2inh_config.txt config/ChromInfo.txt 2> logs/H3K27me3_control-EZH2inh.log;
 
 * ER: two samples
 
@@ -307,7 +307,7 @@ https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM2747694
 
 https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM2747693
 
-./spikChIP.pl -vcp 0 config/ER_R1R2_config.txt config/ChromInfo.txt 2> logs/ER_R1R2.log;
+    ./spikChIP.pl -vcp 0 config/ER_R1R2_config.txt config/ChromInfo.txt 2> logs/ER_R1R2.log;
 
 ### Examples of running messages of spikChIP for multiple datasets
 
