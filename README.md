@@ -1,8 +1,6 @@
-# spikChIP
+# SpikChIP
 
-### Comparative ChIP-seq with spike-in (spikChIP): 
-
-### a novel computational methodology for comparative ChIP-seq genome-wide analysis
+### A novel computational methodology to compare multiple ChIP-seq using spike-in chromatin
 
 ### Enrique Blanco, Luciano Di Croce, Sergi Aranda
 
