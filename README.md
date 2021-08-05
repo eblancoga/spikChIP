@@ -316,11 +316,12 @@ processing each dataset.
 
 SpikChIP: a novel computational methodology to compare multiple ChIP-seq using spike-in chromatin
 Enrique Blanco, Luciano Di Croce, Sergi Aranda.
-NAR Genom Bioinform. (2021) Jul 27;3(3):lqab064
+NAR Genom Bioinform. (2021) Jul 27;3(3):lqab064.
+
 https://pubmed.ncbi.nlm.nih.gov/34327329/
 
 Comparative ChIP-seq (Comp-ChIP-seq): a novel computational methodology for genome-wide analysis.
 Enrique Blanco, Luciano Di Croce, Sergi Aranda.
-bioRxiv 532622 (2019); doi: https://doi.org/10.1101/532622 
+bioRxiv 532622 (2019). 
 
 https://www.biorxiv.org/content/10.1101/532622v2
