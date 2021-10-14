@@ -71,9 +71,10 @@ my @SAVE_PROCEDURE;
 # -k: bin size (in kbps)
 # -p: palette (1 for reds, 2 for greens, 3 for blues and 0 for B&W)
 # -c: clean intermediate files of results to save space
-(getopts('vk:p:c',\%opt)) or print_error("COMMAND LINE: Problems reading options\n");
+(getopts('hvk:p:c',\%opt)) or print_error("COMMAND LINE: Problems reading options\n");
 
 print_mess("$PROGRAM.pl by Enrique Blanco @ CRG (2021)\n");
+print_help();
 print_mess("\n");
 
 # 0.1 Save the starting time
@@ -84,7 +85,7 @@ $date = localtime();
 print_mess("[$date] Stage 0.  Configuration of the pipeline\n");
 print_mess("Reading options of the command line\n");
 $n_files = $#ARGV+1;
-($n_files == 2) or print_error("USAGE: Two arguments are required but $n_files are provided!\n$PROGRAM -vck <bin_size_kbp> -p <0|1|2|3> <configuration_file> <chrominfo_file>\n");
+($n_files == 2) or print_error("ERROR: Two arguments are required but $n_files are provided!\n$PROGRAM -vhcdk <bin_size_kbp> -p <0|1|2|3> <configuration_file> <chrominfo_file>\nPlease, type spikChIP -h for further assistance or spikChIP -v for verbose mode\n");
 ($configuration_filename,$chrominfo_file) = @ARGV;
 print_mess("Syntax is correct and options are acquired");
 print_ok();
@@ -348,6 +349,31 @@ exit(0);
 
 ############################### Subroutines ###############################
 
+sub print_help
+{
+    if (exists($opt{h}))
+    {
+	print STDERR color("bold blue"),"spikChIP_v1.0\t\t\t\tUser commands\t\t\t\tspikChIP\n\n";
+	print STDERR color("bold blue"),"NAME\n\tspikChIP, a tool to normalize ChIP-seq experiments by spike-in correction\n\n";
+	print STDERR color("bold blue"),"SYNOPSIS:\n\t$PROGRAM -vcdk <bin_size_kbp> -p <0|1|2|3> <configuration_file> <chrominfo_file>\n\n";
+	print STDERR color("bold blue"),"OPTIONS:\n";
+	print STDERR color("bold blue"),"\t-c: clean intermediate files of results to save space\n";
+	print STDERR color("bold blue"),"\t-d: allow the process of BAM files of < 1 Million reads\n";
+	print STDERR color("bold blue"),"\t-k: bin size (in kbps)\n";
+	print STDERR color("bold blue"),"\t-p: palette (1 for reds, 2 for greens, 3 for blues and 0 for B&W)\n";
+	print STDERR color("bold blue"),"\t-h: short help\n";
+	print STDERR color("bold blue"),"\t-v: verbose option\n\n";
+	print STDERR color("bold blue"),"SEE ALSO\n";
+	print STDERR color("bold blue"),"\tGitHub source code: https://github.com/eblancoga/spikChIP\n\n";
+	print STDERR color("bold blue"),"AUTHORS\n";
+	print STDERR color("bold blue"),"\tWritten by Enrique Blanco, Luciano Di Croce and Sergi Aranda (2021)\n\n";
+	print STDERR color("bold blue"),"spikChIP_v1.0\t\t\t\tUser commands\t\t\t\tspikChIP\n";
+	print STDERR color("reset");
+
+	exit(0);
+    }
+}
+
 sub print_mess
 {
         my @mess = @_;
@@ -431,6 +457,11 @@ sub CalculateReads
 	{
 	    @record = split(/\s+/,$line);
 	    $n_reads = $record[0];
+
+	    if ($n_reads < $MEGA && !exists($opt{d}))
+	    {
+		print_error("The number of reads is lower than $MEGA reads. Please, run again spikChIP with the option -d");
+	    }
 	}
     }
     close(FILEFLAG);
@@ -716,7 +747,15 @@ sub NormalizationRaw
 
     # Fly bins
     $out_name = $NAMES[$i]."_".$RAW_TOKEN."_".$bin_size."_spike";
-    $command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_spike $fly_bins $out_name";
+
+    if (exists($opt{d}))
+    {
+	$command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_spike $fly_bins $out_name";
+    }
+    else
+    {
+	$command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_spike $fly_bins $out_name";
+    }
     print_mess("$command\n");
     system($command);
     #
@@ -732,7 +771,15 @@ sub NormalizationRaw
 
     # Human bins
     $out_name = $NAMES[$i]."_".$RAW_TOKEN."_".$bin_size."_sample";
-    $command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_sample $human_bins $out_name";
+
+    if (exists($opt{d}))
+    {
+	$command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_sample $human_bins $out_name";
+    }
+    else
+    {
+	$command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_sample $human_bins $out_name";
+    }
     print_mess("$command\n");
     system($command);
     #
@@ -763,7 +810,15 @@ sub NormalizationTraditional
 
     # Fly bins
     $out_name = $NAMES[$i]."_".$TRADITIONAL_TOKEN."_".$bin_size."_spike";
-    $command = "recoverChIPlevels -ns $total_reads $chrominfo_file $bam_spike $fly_bins $out_name";
+
+    if (exists($opt{d}))
+    {
+	$command = "recoverChIPlevels -dns $total_reads $chrominfo_file $bam_spike $fly_bins $out_name";
+    }
+    else
+    {
+	$command = "recoverChIPlevels -ns $total_reads $chrominfo_file $bam_spike $fly_bins $out_name";
+    }
     print_mess("$command\n");
     system($command);
     #
@@ -779,7 +834,15 @@ sub NormalizationTraditional
 
     # Human bins
     $out_name = $NAMES[$i]."_".$TRADITIONAL_TOKEN."_".$bin_size."_sample";
-    $command = "recoverChIPlevels -ns ".$READS_SAMPLES[$i]." $chrominfo_file $bam_sample $human_bins $out_name";
+
+    if (exists($opt{d}))
+    {
+	$command = "recoverChIPlevels -dns ".$READS_SAMPLES[$i]." $chrominfo_file $bam_sample $human_bins $out_name";
+    }
+    else
+    {
+	$command = "recoverChIPlevels -ns ".$READS_SAMPLES[$i]." $chrominfo_file $bam_sample $human_bins $out_name";
+    }
     print_mess("$command\n");
     system($command);
     #
@@ -810,7 +873,15 @@ sub NormalizationChIPRX
 
     # Fly bins
     $out_name = $NAMES[$i]."_".$CHIPRX_TOKEN."_".$bin_size."_spike";
-    $command = "recoverChIPlevels -ns ".$READS_SPIKES[$i]." $chrominfo_file $bam_spike $fly_bins $out_name";
+
+    if (exists($opt{d}))
+    {
+	$command = "recoverChIPlevels -dns ".$READS_SPIKES[$i]." $chrominfo_file $bam_spike $fly_bins $out_name";
+    }
+    else
+    {
+	$command = "recoverChIPlevels -ns ".$READS_SPIKES[$i]." $chrominfo_file $bam_spike $fly_bins $out_name";
+    }
     print_mess("$command\n");
     system($command);
     #
@@ -826,7 +897,15 @@ sub NormalizationChIPRX
 
     # Human bins
     $out_name = $NAMES[$i]."_".$CHIPRX_TOKEN."_".$bin_size."_sample";
-    $command = "recoverChIPlevels -ns ".$READS_SPIKES[$i]." $chrominfo_file $bam_sample $human_bins $out_name";
+
+    if (exists($opt{d}))
+    {
+	$command = "recoverChIPlevels -dns ".$READS_SPIKES[$i]." $chrominfo_file $bam_sample $human_bins $out_name";
+    }
+    else
+    {
+	$command = "recoverChIPlevels -ns ".$READS_SPIKES[$i]." $chrominfo_file $bam_sample $human_bins $out_name";
+    }
     print_mess("$command\n");
     system($command);
     #
@@ -855,7 +934,15 @@ sub NormalizationTagRemoval
 
     # Fly bins
     $out_name = $NAMES[$i]."_".$TAGREMOVAL_TOKEN."_".$bin_size."_spike";
-    $command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_spike $fly_bins $out_name";
+
+    if (exists($opt{d}))
+    {
+	$command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_spike $fly_bins $out_name";
+    }
+    else
+    {
+	$command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_spike $fly_bins $out_name";
+    }
     print_mess("$command\n");
     system($command);
     #
@@ -871,7 +958,15 @@ sub NormalizationTagRemoval
 
     # Human bins
     $out_name = $NAMES[$i]."_".$TAGREMOVAL_TOKEN."_".$bin_size."_sample";
-    $command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_sample $human_bins $out_name";
+
+    if (exists($opt{d}))
+    {
+	$command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_sample $human_bins $out_name";
+    }
+    else
+    {
+	$command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_sample $human_bins $out_name";
+    }
     print_mess("$command\n");
     system($command);
     #
