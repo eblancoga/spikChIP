@@ -22,10 +22,12 @@ spikChIP is a command line that runs in Linux and Mac OS-X environments:
 
 Users can configure the behavior of the program with the following options:
 
-    -v: verbose (show messages about the processing of the samples)
     -c: remove intermediate files to reduce the size of the output folder
+    -d: allow the process of BAM files of < 1 Million reads
     -k: number of bp of the bins for the segmentation of the genome
     -p: palette of colors for boxplots (0: black and white, 1: reds, 2: greens, 3: blues)
+    -v: verbose (show messages about the processing of the samples)
+    -h: short help
 
 The configuration file of spikChIP is a plain-text file in which each line
 contains the information about the files of a particular experimental condition:
