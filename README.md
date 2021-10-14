@@ -18,7 +18,7 @@ of the normalization over the background.
 
 spikChIP is a command line that runs in Linux and Mac OS-X environments:
 
-    ./spikChIP -vck <bin_size_kbp> -p <0|1|2|3> <configuration_file> <chrominfo_file>
+    ./spikChIP -vhcdk <bin_size_kbp> -p <0|1|2|3> <configuration_file> <chrominfo_file>
 
 Users can configure the behavior of the program with the following options:
 
