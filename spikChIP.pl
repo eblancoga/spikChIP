@@ -21,8 +21,8 @@ my $PROGRAM = "spikChIP";
 my $TRUE = 1;
 my $FALSE = 0;
 my $SUCCESS = 0;
-my $DEFAULT_BIN_SIZE = 1000;
-my $MIN_BIN_SIZE = 500;
+my $DEFAULT_BIN_SIZE = 10000;
+my $MIN_BIN_SIZE = 1000;
 my $MAX_BIN_SIZE = 100000;
 my $DEFAULT_PALETTE = 1;
 my $MIN_PALETTE = 0;
@@ -66,12 +66,14 @@ my $newdir;
 my @CLEAN_PROCEDURE;
 my @SAVE_PROCEDURE;
 
-
-# -v: verbose option
-# -k: bin size (in kbps)
-# -p: palette (1 for reds, 2 for greens, 3 for blues and 0 for B&W)
 # -c: clean intermediate files of results to save space
-(getopts('hvk:p:c',\%opt)) or print_error("COMMAND LINE: Problems reading options\n");
+# -d: allow the process of BAM files of < 1 Million reads
+# -k: bin size (default: 10000 bps)
+# -p: palette (1 for reds, 2 for greens, 3 for blues and 0 for B&W)
+# -h: short help
+# -v: verbose option
+
+(getopts('hvk:p:cd',\%opt)) or print_error("COMMAND LINE: Problems reading options\n");
 
 print_mess("$PROGRAM.pl by Enrique Blanco @ CRG (2021)\n");
 print_help();
@@ -148,10 +150,10 @@ print_ok();
 print_mess("\n");
 
 
-# Step 1. Generating the segmentation of the human and fly genomes
+# Step 1. Generating the segmentation of the sample and spike genomes
 my $command;
-my ($fly_bins,$human_bins);
-my ($n_fly_bins,$n_human_bins);
+my ($spike_bins,$sample_bins);
+my ($n_spike_bins,$n_sample_bins);
 my $line;
 
 
@@ -159,38 +161,38 @@ $date = localtime();
 print_mess("[$date] Stage 1.  Producing the segmentation of both genomes in bins ($bin_size bps)\n");
 
 # spike segmentation
-$fly_bins = $RESULTS.join("-",@NAMES)."_"."fly_".$bin_size.".bed";
-$command = "grep FLY $chrominfo_file | gawk 'BEGIN{OFS=\"\\t\";offset=$bin_size;}{for(i=1;i<\$2-offset;i=i+offset) print \$1,i,i+offset;}' > $fly_bins";
+$spike_bins = $RESULTS.join("-",@NAMES)."_"."spike_".$bin_size.".bed";
+$command = "grep FLY $chrominfo_file | gawk 'BEGIN{OFS=\"\\t\";offset=$bin_size;}{for(i=1;i<\$2-offset;i=i+offset) print \$1,i,i+offset;}' > $spike_bins";
 print_mess("$command\n");
 system($command);
 
-# count the number of fly bins
-$n_fly_bins = 0;
-(open(FILEBINS,$fly_bins)) or print_error("FLY BINS: FILE $fly_bins file can not be opened");
+# count the number of spike bins
+$n_spike_bins = 0;
+(open(FILEBINS,$spike_bins)) or print_error("SPIKE BINS: FILE $spike_bins file can not be opened");
 while($line=<FILEBINS>)
 {
-    $n_fly_bins++;
+    $n_spike_bins++;
 }
 close(FILEBINS);
-print_mess("$n_fly_bins bins generated in the segmentation of the spike genome\n");
+print_mess("$n_spike_bins bins generated in the segmentation of the spike genome\n");
 
 # sample genome segmentation
-$human_bins = $RESULTS.join("-",@NAMES)."_"."human_".$bin_size.".bed";
-$command = "grep -v FLY $chrominfo_file | gawk 'BEGIN{OFS=\"\\t\";offset=$bin_size;}{for(i=1;i<\$2-offset;i=i+offset) print \$1,i,i+offset;}' > $human_bins";
+$sample_bins = $RESULTS.join("-",@NAMES)."_"."sample_".$bin_size.".bed";
+$command = "grep -v FLY $chrominfo_file | gawk 'BEGIN{OFS=\"\\t\";offset=$bin_size;}{for(i=1;i<\$2-offset;i=i+offset) print \$1,i,i+offset;}' > $sample_bins";
 print_mess("$command\n");
 system($command);
 
-# count the number of human bins
-$n_human_bins = 0;
-(open(FILEBINS,$human_bins)) or print_error("HUMAN BINS: FILE $human_bins file can not be opened");
+# count the number of sample bins
+$n_sample_bins = 0;
+(open(FILEBINS,$sample_bins)) or print_error("SAMPLE BINS: FILE $sample_bins file can not be opened");
 while($line=<FILEBINS>)
 {
-    $n_human_bins++;
+    $n_sample_bins++;
 }
 close(FILEBINS);
-print_mess("$n_human_bins bins generated in the segmentation of the sample genome");
-CleanFile($fly_bins);
-CleanFile($human_bins);
+print_mess("$n_sample_bins bins generated in the segmentation of the sample genome");
+CleanFile($spike_bins);
+CleanFile($sample_bins);
 #
 print_ok();
 print_mess("Finishing Stage 1. Segmentation...");
@@ -359,7 +361,7 @@ sub print_help
 	print STDERR color("bold blue"),"OPTIONS:\n";
 	print STDERR color("bold blue"),"\t-c: clean intermediate files of results to save space\n";
 	print STDERR color("bold blue"),"\t-d: allow the process of BAM files of < 1 Million reads\n";
-	print STDERR color("bold blue"),"\t-k: bin size (in kbps)\n";
+	print STDERR color("bold blue"),"\t-k: bin size (default: 10000 bps)\n";
 	print STDERR color("bold blue"),"\t-p: palette (1 for reds, 2 for greens, 3 for blues and 0 for B&W)\n";
 	print STDERR color("bold blue"),"\t-h: short help\n";
 	print STDERR color("bold blue"),"\t-v: verbose option\n\n";
@@ -745,16 +747,16 @@ sub NormalizationRaw
     $bam_sample = $BAM_SAMPLES[$i];
     $bam_spike = $BAM_SPIKES[$i];
 
-    # Fly bins
+    # Spike bins
     $out_name = $NAMES[$i]."_".$RAW_TOKEN."_".$bin_size."_spike";
 
     if (exists($opt{d}))
     {
-	$command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_spike $fly_bins $out_name";
+	$command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_spike $spike_bins $out_name";
     }
     else
     {
-	$command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_spike $fly_bins $out_name";
+	$command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_spike $spike_bins $out_name";
     }
     print_mess("$command\n");
     system($command);
@@ -769,16 +771,16 @@ sub NormalizationRaw
     print_mess("$command\n");
     system($command);
 
-    # Human bins
+    # Sample bins
     $out_name = $NAMES[$i]."_".$RAW_TOKEN."_".$bin_size."_sample";
 
     if (exists($opt{d}))
     {
-	$command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_sample $human_bins $out_name";
+	$command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_sample $sample_bins $out_name";
     }
     else
     {
-	$command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_sample $human_bins $out_name";
+	$command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_sample $sample_bins $out_name";
     }
     print_mess("$command\n");
     system($command);
@@ -808,16 +810,16 @@ sub NormalizationTraditional
     $bam_spike = $BAM_SPIKES[$i];
     $total_reads = $READS_SAMPLES[$i] + $READS_SPIKES[$i];
 
-    # Fly bins
+    # Spike bins
     $out_name = $NAMES[$i]."_".$TRADITIONAL_TOKEN."_".$bin_size."_spike";
 
     if (exists($opt{d}))
     {
-	$command = "recoverChIPlevels -dns $total_reads $chrominfo_file $bam_spike $fly_bins $out_name";
+	$command = "recoverChIPlevels -dns $total_reads $chrominfo_file $bam_spike $spike_bins $out_name";
     }
     else
     {
-	$command = "recoverChIPlevels -ns $total_reads $chrominfo_file $bam_spike $fly_bins $out_name";
+	$command = "recoverChIPlevels -ns $total_reads $chrominfo_file $bam_spike $spike_bins $out_name";
     }
     print_mess("$command\n");
     system($command);
@@ -832,16 +834,16 @@ sub NormalizationTraditional
     print_mess("$command\n");
     system($command);
 
-    # Human bins
+    # Sample bins
     $out_name = $NAMES[$i]."_".$TRADITIONAL_TOKEN."_".$bin_size."_sample";
 
     if (exists($opt{d}))
     {
-	$command = "recoverChIPlevels -dns ".$READS_SAMPLES[$i]." $chrominfo_file $bam_sample $human_bins $out_name";
+	$command = "recoverChIPlevels -dns ".$READS_SAMPLES[$i]." $chrominfo_file $bam_sample $sample_bins $out_name";
     }
     else
     {
-	$command = "recoverChIPlevels -ns ".$READS_SAMPLES[$i]." $chrominfo_file $bam_sample $human_bins $out_name";
+	$command = "recoverChIPlevels -ns ".$READS_SAMPLES[$i]." $chrominfo_file $bam_sample $sample_bins $out_name";
     }
     print_mess("$command\n");
     system($command);
@@ -871,16 +873,16 @@ sub NormalizationChIPRX
     $bam_spike = $BAM_SPIKES[$i];
     $total_reads = $READS_SAMPLES[$i] + $READS_SPIKES[$i];
 
-    # Fly bins
+    # Spike bins
     $out_name = $NAMES[$i]."_".$CHIPRX_TOKEN."_".$bin_size."_spike";
 
     if (exists($opt{d}))
     {
-	$command = "recoverChIPlevels -dns ".$READS_SPIKES[$i]." $chrominfo_file $bam_spike $fly_bins $out_name";
+	$command = "recoverChIPlevels -dns ".$READS_SPIKES[$i]." $chrominfo_file $bam_spike $spike_bins $out_name";
     }
     else
     {
-	$command = "recoverChIPlevels -ns ".$READS_SPIKES[$i]." $chrominfo_file $bam_spike $fly_bins $out_name";
+	$command = "recoverChIPlevels -ns ".$READS_SPIKES[$i]." $chrominfo_file $bam_spike $spike_bins $out_name";
     }
     print_mess("$command\n");
     system($command);
@@ -895,16 +897,16 @@ sub NormalizationChIPRX
     print_mess("$command\n");
     system($command);
 
-    # Human bins
+    # Sample bins
     $out_name = $NAMES[$i]."_".$CHIPRX_TOKEN."_".$bin_size."_sample";
 
     if (exists($opt{d}))
     {
-	$command = "recoverChIPlevels -dns ".$READS_SPIKES[$i]." $chrominfo_file $bam_sample $human_bins $out_name";
+	$command = "recoverChIPlevels -dns ".$READS_SPIKES[$i]." $chrominfo_file $bam_sample $sample_bins $out_name";
     }
     else
     {
-	$command = "recoverChIPlevels -ns ".$READS_SPIKES[$i]." $chrominfo_file $bam_sample $human_bins $out_name";
+	$command = "recoverChIPlevels -ns ".$READS_SPIKES[$i]." $chrominfo_file $bam_sample $sample_bins $out_name";
     }
     print_mess("$command\n");
     system($command);
@@ -932,16 +934,16 @@ sub NormalizationTagRemoval
     $bam_sample = $BAM_SAMPLES_DOWN[$i];
     $bam_spike = $BAM_SPIKES_DOWN[$i];
 
-    # Fly bins
+    # Spike bins
     $out_name = $NAMES[$i]."_".$TAGREMOVAL_TOKEN."_".$bin_size."_spike";
 
     if (exists($opt{d}))
     {
-	$command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_spike $fly_bins $out_name";
+	$command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_spike $spike_bins $out_name";
     }
     else
     {
-	$command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_spike $fly_bins $out_name";
+	$command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_spike $spike_bins $out_name";
     }
     print_mess("$command\n");
     system($command);
@@ -956,16 +958,16 @@ sub NormalizationTagRemoval
     print_mess("$command\n");
     system($command);
 
-    # Human bins
+    # Sample bins
     $out_name = $NAMES[$i]."_".$TAGREMOVAL_TOKEN."_".$bin_size."_sample";
 
     if (exists($opt{d}))
     {
-	$command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_sample $human_bins $out_name";
+	$command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_sample $sample_bins $out_name";
     }
     else
     {
-	$command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_sample $human_bins $out_name";
+	$command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_sample $sample_bins $out_name";
     }
     print_mess("$command\n");
     system($command);
@@ -1005,8 +1007,8 @@ sub JoinNormValues
     $out_name1 = $NAMES[1]."_".$token."_".$bin_size."_spike";
     $file_avg1 = "$out_name1"."_recoverChIPlevels/PEAKsignal_"."$out_name1"."_avg.bed";
     $file_max1 = "$out_name1"."_recoverChIPlevels/PEAKsignal_"."$out_name1"."_max.bed";
-    $commandAVG = "join $file_avg0 $file_avg1 ";
-    $commandMAX = "join $file_max0 $file_max1 ";
+    $commandAVG = "JoinNFiles.pl -v $file_avg0 $file_avg1 ";
+    $commandMAX = "JoinNFiles.pl -v $file_max0 $file_max1 ";
 
     # the rest of experiments (if any)
     for($i=2; $i<$n_experiments; $i++)
@@ -1014,17 +1016,17 @@ sub JoinNormValues
 	$out_name = $NAMES[$i]."_".$token."_".$bin_size."_spike";
 	$file_avg = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
 	$file_max = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
-	$commandAVG = $commandAVG." | join - $file_avg ";
-	$commandMAX = $commandMAX." | join - $file_max ";
+	$commandAVG = $commandAVG." $file_avg ";
+	$commandMAX = $commandMAX." $file_max ";
     }
 
     $final_avg = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$bin_size."_spike_avg.txt";
     $final_max = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$bin_size."_spike_max.txt";
     #
-    $commandAVG = $commandAVG." > $final_avg";
+    $commandAVG = $commandAVG." | sort -k 1,1 > $final_avg";
     print_mess("$commandAVG\n");
     system($commandAVG);
-    $commandMAX = $commandMAX." > $final_max";
+    $commandMAX = $commandMAX." | sort -k 1,1 > $final_max";
     print_mess("$commandMAX\n");
     system($commandMAX);  
     #
@@ -1039,8 +1041,8 @@ sub JoinNormValues
     $out_name1 = $NAMES[1]."_".$token."_".$bin_size."_sample";
     $file_avg1 = "$out_name1"."_recoverChIPlevels/PEAKsignal_"."$out_name1"."_avg.bed";
     $file_max1 = "$out_name1"."_recoverChIPlevels/PEAKsignal_"."$out_name1"."_max.bed";
-    $commandAVG = "join $file_avg0 $file_avg1 ";
-    $commandMAX = "join $file_max0 $file_max1 ";
+    $commandAVG = "JoinNFiles.pl -v $file_avg0 $file_avg1 ";
+    $commandMAX = "JoinNFiles.pl -v $file_max0 $file_max1 ";
 
     # the rest of experiments (if any)
     for($i=2; $i<$n_experiments; $i++)
@@ -1048,17 +1050,17 @@ sub JoinNormValues
 	$out_name = $NAMES[$i]."_".$token."_".$bin_size."_sample";
 	$file_avg = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
 	$file_max = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
-	$commandAVG = $commandAVG." | join - $file_avg ";
-	$commandMAX = $commandMAX." | join - $file_max ";
+	$commandAVG = $commandAVG." $file_avg ";
+	$commandMAX = $commandMAX." $file_max ";
     }
 
     $final_avg = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$bin_size."_sample_avg.txt";
     $final_max = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$bin_size."_sample_max.txt";
     #
-    $commandAVG = $commandAVG." > $final_avg";
+    $commandAVG = $commandAVG." | sort -k 1,1 > $final_avg";
     print_mess("$commandAVG\n");
     system($commandAVG);
-    $commandMAX = $commandMAX." > $final_max";
+    $commandMAX = $commandMAX." | sort -k 1,1 > $final_max";
     print_mess("$commandMAX\n");
     system($commandMAX);
     #
@@ -1187,7 +1189,7 @@ sub RunspikChIPValues
     SaveFile($final_avg_spike);
     SaveFile($final_avg_sample);
     #
-    $n_total_bins = $n_fly_bins + $n_human_bins;
+    $n_total_bins = $n_spike_bins + $n_sample_bins;
     #
     # R code to perform the loess regression on the whole set of bins in all conditions
     (open(RFILE,'>',$Rfile)) or print_error("R SCRIPT: FILE $Rfile file can not be opened to write");
@@ -1198,7 +1200,7 @@ sub RunspikChIPValues
     print RFILE "m <-matrix(c,$n_total_bins,$n_experiments,byrow=TRUE)\n";
     print RFILE "d <- read.table(\"$output_file3\")\n";
     print RFILE "rownames(m) <- d[,1]\n";
-    print RFILE "s <- seq(1,$n_fly_bins)\n";
+    print RFILE "s <- seq(1,$n_spike_bins)\n";
     print RFILE "mn <- normalize.loess(m,subset=s)\n";
     print RFILE "write.table(mn,file=\"$final_avg\",sep=\"\\t\",row.names=TRUE,col.names=FALSE,quote=FALSE)\n";
     close(RFILE);
@@ -1257,7 +1259,7 @@ sub RunspikChIPValues
     SaveFile($final_max_spike);
     SaveFile($final_max_sample);
     #
-    $n_total_bins = $n_fly_bins + $n_human_bins;
+    $n_total_bins = $n_spike_bins + $n_sample_bins;
     #
     # R code to perform the loess regression on the whole set of bins in all conditions
     (open(RFILE,'>',$Rfile)) or print_error("R SCRIPT: FILE $Rfile file can not be opened to write");
@@ -1268,7 +1270,7 @@ sub RunspikChIPValues
     print RFILE "m <-matrix(c,$n_total_bins,$n_experiments,byrow=TRUE)\n";
     print RFILE "d <- read.table(\"$output_file3\")\n";
     print RFILE "rownames(m) <- d[,1]\n";
-    print RFILE "s <- seq(1,$n_fly_bins)\n";
+    print RFILE "s <- seq(1,$n_spike_bins)\n";
     print RFILE "mn <- normalize.loess(m,subset=s)\n";
     print RFILE "write.table(mn,file=\"$final_max\",sep=\"\\t\",row.names=TRUE,col.names=FALSE,quote=FALSE)\n";
     close(RFILE);
@@ -1314,7 +1316,7 @@ sub ClassifyBins
     {
 	print_mess("Working with sample $NAMES[$i]: peaks Vs. bins of spike\n");
 	
-	# use SeqCode to identify the fly bins overlapping with fly peaks
+	# use SeqCode to identify the spike bins overlapping with spike peaks
 	$out_name = $NAMES[$i]."_".$bin_size."_spike_bins";
 	$folder = $PEAKS_TOKEN."_".$out_name."_matchpeaks";
 	$out_common = $folder."/common_".$PEAKS_TOKEN."_".$out_name.".bed";
@@ -1323,7 +1325,7 @@ sub ClassifyBins
 	#
 	CleanFile($out_peaks_file);
 	#
-	$command = "matchpeaks $PEAKS_SPIKES[$i] $fly_bins $PEAKS_TOKEN $out_name";
+	$command = "matchpeaks -v $PEAKS_SPIKES[$i] $spike_bins $PEAKS_TOKEN $out_name";
 	print_mess("$command\n");
 	system($command);
 	$command = "grep spike_bins $out_common > $out_peaks_file";
@@ -1337,7 +1339,7 @@ sub ClassifyBins
 	#
 	print_mess("Working with sample $NAMES[$i]: peaks Vs. bins of sample\n");
 	
-	# use SeqCode to identify the human bins overlapping with human peaks
+	# use SeqCode to identify the sample bins overlapping with sample peaks
 	$out_name = $NAMES[$i]."_".$bin_size."_sample_bins";
 	$folder = $PEAKS_TOKEN."_".$out_name."_matchpeaks";
 	$out_common = $folder."/common_".$PEAKS_TOKEN."_".$out_name.".bed";
@@ -1346,7 +1348,7 @@ sub ClassifyBins
 	#
 	CleanFile($out_peaks_file);
 	#
-	$command = "matchpeaks $PEAKS_SAMPLES[$i] $human_bins $PEAKS_TOKEN $out_name";
+	$command = "matchpeaks -v $PEAKS_SAMPLES[$i] $sample_bins $PEAKS_TOKEN $out_name";
 	print_mess("$command\n");
 	system($command);
 	$command = "grep sample_bins $out_common > $out_peaks_file";
