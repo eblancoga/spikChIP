@@ -149,7 +149,6 @@ DownsamplingOperations();
 print_mess("Finishing Stage 0. Configuration...");
 print_ok();
 print_mess("\n");
-exit 42;
 
 # Step 1. Generating the segmentation of the sample and spike genomes
 my $command;
@@ -184,7 +183,7 @@ print_mess("$n_spike_bins bins generated in the segmentation of the spike genome
 
 # sample genome segmentation
 $sample_bins = $RESULTS.join("-",@NAMES)."_"."sample_".$bin_size.".bed";
-if(!(-e $spike_bins) or exists($opt{w}))
+if(!(-e $sample_bins) or exists($opt{w}))
 {
     $command = "grep -v FLY $chrominfo_file | gawk 'BEGIN{OFS=\"\\t\";offset=$bin_size;}{for(i=1;i<\$2-offset;i=i+offset) print \$1,i,i+offset;}' > $sample_bins";
     print_mess("$command\n");
@@ -209,7 +208,7 @@ print_ok();
 print_mess("Finishing Stage 1. Segmentation...");
 print_ok();
 print_mess("\n");
-
+exit 42;
 
 # Step 2. Processing each experiment using distinct normalization strategies
 my $i;
