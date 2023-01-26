@@ -208,7 +208,6 @@ print_ok();
 print_mess("Finishing Stage 1. Segmentation...");
 print_ok();
 print_mess("\n");
-exit 42;
 
 # Step 2. Processing each experiment using distinct normalization strategies
 my $i;
@@ -231,6 +230,7 @@ for($i=0; $i<$n_experiments; $i++)
     NormalizationRaw($i);
     print_ok();
     print_mess("\n");
+    exit 42;
     #
     print_mess("Starting TRADITIONAL normalization...\n");
     NormalizationTraditional($i);
