@@ -163,9 +163,14 @@ print_mess("[$date] Stage 1.  Producing the segmentation of both genomes in bins
 
 # spike segmentation
 $spike_bins = $RESULTS.join("-",@NAMES)."_"."spike_".$bin_size.".bed";
-$command = "grep FLY $chrominfo_file | gawk 'BEGIN{OFS=\"\\t\";offset=$bin_size;}{for(i=1;i<\$2-offset;i=i+offset) print \$1,i,i+offset;}' > $spike_bins";
-print_mess("$command\n");
-system($command);
+if(!(-e $spike_bins) or exists($opt{w}))
+{
+    $command = "grep FLY $chrominfo_file | gawk 'BEGIN{OFS=\"\\t\";offset=$bin_size;}{for(i=1;i<\$2-offset;i=i+offset) print \$1,i,i+offset;}' > $spike_bins";
+    print_mess("$command\n");
+    system($command);
+}else{
+    print_mess("\t The file ", $spike_bins, " already exist. Skipping spike segmentation\n");
+}
 
 # count the number of spike bins
 $n_spike_bins = 0;
@@ -179,9 +184,14 @@ print_mess("$n_spike_bins bins generated in the segmentation of the spike genome
 
 # sample genome segmentation
 $sample_bins = $RESULTS.join("-",@NAMES)."_"."sample_".$bin_size.".bed";
-$command = "grep -v FLY $chrominfo_file | gawk 'BEGIN{OFS=\"\\t\";offset=$bin_size;}{for(i=1;i<\$2-offset;i=i+offset) print \$1,i,i+offset;}' > $sample_bins";
-print_mess("$command\n");
-system($command);
+if(!(-e $spike_bins) or exists($opt{w}))
+{
+    $command = "grep -v FLY $chrominfo_file | gawk 'BEGIN{OFS=\"\\t\";offset=$bin_size;}{for(i=1;i<\$2-offset;i=i+offset) print \$1,i,i+offset;}' > $sample_bins";
+    print_mess("$command\n");
+    system($command);
+}else{
+    print_mess("\t The file ", $sample_bins, " already exist. Skipping sample segmentation\n");
+}
 
 # count the number of sample bins
 $n_sample_bins = 0;
@@ -457,7 +467,7 @@ sub CalculateReads
         print_mess("$command\n");
         system($command);
     }else{
-        print_mess("The file ", $name."_flagstat.txt", " already exist. Skipping samtools flagstats\n")
+        print_mess("\t The file ", $name."_flagstat.txt", " already exist. Skipping samtools flagstats\n");
     }
 
     (open(FILEFLAG,$out_file)) or print_error("SAMTOOLS FLAGSTAT: FILE $out_file file can not be opened");
@@ -593,7 +603,7 @@ sub DownsamplingOperations
         print_mess("$command\n");
         system($command);
     }else{
-        print_mess("The file ", $output_file, " already exist. Skipping down-sampling\n")
+        print_mess("\t The file ", $output_file, " already exist. Skipping down-sampling\n");
     }
 	
 	
@@ -611,7 +621,7 @@ sub DownsamplingOperations
         print_mess("$command\n");
         system($command);
     }else{
-        print_mess("The file ", $output_file, " already exist. Skipping down-sampling\n")
+        print_mess("\t The file ", $output_file, " already exist. Skipping down-sampling\n");
     }
 	
 	$n_reads = CalculateReads($output_file,$NAMES[$i]."_sample_adjusted");
@@ -770,17 +780,27 @@ sub NormalizationRaw
 
     # Spike bins
     $out_name = $NAMES[$i]."_".$RAW_TOKEN."_".$bin_size."_spike";
-
-    if (exists($opt{d}))
+    if(!(-e $output_name) or exists($opt{w}))
     {
-	$command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_spike $spike_bins $out_name";
-    }
-    else
-    {
-	$command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_spike $spike_bins $out_name";
-    }
+        if (exists($opt{d}))
+        {
+            $command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_spike $spike_bins $out_name";
+        }
+        else
+        {
+            $command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_spike $spike_bins $out_name";
+        }
     print_mess("$command\n");
     system($command);
+    }else{
+        print_mess("\t The file ", $out_name, " already exist. Skipping the spike Raw Normalization\n");
+    }
+
+
+
+
+
+
     #
     $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
     $file_avg = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
