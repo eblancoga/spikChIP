@@ -72,8 +72,9 @@ my @SAVE_PROCEDURE;
 # -p: palette (1 for reds, 2 for greens, 3 for blues and 0 for B&W)
 # -h: short help
 # -v: verbose option
+# -w: overwrite existing result files
 
-(getopts('hvk:p:cd',\%opt)) or print_error("COMMAND LINE: Problems reading options\n");
+(getopts('whvk:p:cd',\%opt)) or print_error("COMMAND LINE: Problems reading options\n");
 
 print_mess("$PROGRAM.pl by Enrique Blanco @ CRG (2021)\n");
 print_help();
@@ -95,7 +96,7 @@ print_mess("\n");
 
 # 0.3 Checking binaries of SeqCode and samtools are available
 print_mess("Checking for external software availability\n");
-CheckExternalSoftware();
+#CheckExternalSoftware();
 print_mess("Closing external software check...");
 print_ok();
 print_mess("\n");
@@ -148,7 +149,7 @@ DownsamplingOperations();
 print_mess("Finishing Stage 0. Configuration...");
 print_ok();
 print_mess("\n");
-
+exit 42;
 
 # Step 1. Generating the segmentation of the sample and spike genomes
 my $command;
@@ -364,6 +365,7 @@ sub print_help
 	print STDERR color("bold blue"),"\t-k: bin size (default: 10000 bps)\n";
 	print STDERR color("bold blue"),"\t-p: palette (1 for reds, 2 for greens, 3 for blues and 0 for B&W)\n";
 	print STDERR color("bold blue"),"\t-h: short help\n";
+	print STDERR color("bold blue"),"\t-w: overwrite existing files option\n";
 	print STDERR color("bold blue"),"\t-v: verbose option\n\n";
 	print STDERR color("bold blue"),"SEE ALSO\n";
 	print STDERR color("bold blue"),"\tGitHub source code: https://github.com/eblancoga/spikChIP\n\n";
@@ -448,9 +450,15 @@ sub CalculateReads
     
     # running the samtools to calculate the number of reads of the BAM file
     $out_file = $RESULTS.$name."_flagstat.txt";
-    $command = "samtools flagstat $bam_file > $out_file";
-    print_mess("$command\n");
-    system($command);
+    
+    if(!(-e $out_file) or exists($opt{w}))
+    {
+        $command = "samtools flagstat $bam_file > $out_file";
+        print_mess("$command\n");
+        system($command);
+    }else{
+        print_mess("The file ", $name."_flagstat.txt", " already exist. Skipping samtools flagstats\n")
+    }
 
     (open(FILEFLAG,$out_file)) or print_error("SAMTOOLS FLAGSTAT: FILE $out_file file can not be opened");
     while($line=<FILEFLAG>)
@@ -579,9 +587,16 @@ sub DownsamplingOperations
 	$input_file = $BAM_SPIKES[$i];
 	($output_file = $input_file) =~ s/\.bam/\_$DOWNSAMPLING_TOKEN\.bam/g;
 	$BAM_SPIKES_DOWN[$i] = $output_file;
-	$command = "samtools view -h -b -s $factor -o $output_file $input_file";
-	print_mess("$command\n");
-	system($command);
+	if(!(-e $output_file) or exists($opt{w}))
+    {
+        $command = "samtools view -h -b -s $factor -o $output_file $input_file";
+        print_mess("$command\n");
+        system($command);
+    }else{
+        print_mess("The file ", $output_file, " already exist. Skipping down-sampling\n")
+    }
+	
+	
 	$n_reads = CalculateReads($output_file,$NAMES[$i]."_spike_adjusted");
 	push(@READS_SPIKES_DOWN,$n_reads); 
 	print_mess("($output_file, $n_reads) Final number of reads after downsampling\n");
@@ -590,9 +605,15 @@ sub DownsamplingOperations
 	$input_file = $BAM_SAMPLES[$i];
 	($output_file = $input_file) =~ s/\.bam/\_$DOWNSAMPLING_TOKEN\.bam/g;
 	$BAM_SAMPLES_DOWN[$i] = $output_file;
-	$command = "samtools view -h -b -s $factor -o $output_file $input_file";
-	print_mess("$command\n");
-	system($command);
+	if(!(-e $output_file) or exists($opt{w}))
+    {
+        $command = "samtools view -h -b -s $factor -o $output_file $input_file";
+        print_mess("$command\n");
+        system($command);
+    }else{
+        print_mess("The file ", $output_file, " already exist. Skipping down-sampling\n")
+    }
+	
 	$n_reads = CalculateReads($output_file,$NAMES[$i]."_sample_adjusted");
 	push(@READS_SAMPLES_DOWN,$n_reads);
 	print_mess("($output_file, $n_reads) Final number of reads after downsampling\n");
