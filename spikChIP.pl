@@ -240,14 +240,13 @@ for($i=0; $i<$n_experiments; $i++)
     NormalizationChIPRX($i);
     print_ok();
     print_mess("\n");
-    exit 42;
     #
     print_mess("Starting TAG_REMOVAL normalization...\n");
     NormalizationTagRemoval($i);
     print_ok();
     print_mess("\n");
 }
-
+exit 42;
 # join the values of all experiments in a single file per normalization class
 print_mess("Join raw data values from all experiments\n");
 JoinNormValues($RAW_TOKEN);
@@ -1177,15 +1176,26 @@ sub JoinNormValues
     $final_avg = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$bin_size."_spike_avg.txt";
     $final_max = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$bin_size."_spike_max.txt";
     #
-    $commandAVG = $commandAVG." | sort -k 1,1 > $final_avg";
-    print_mess("$commandAVG\n");
-    system($commandAVG);
-    $commandMAX = $commandMAX." | sort -k 1,1 > $final_max";
-    print_mess("$commandMAX\n");
-    system($commandMAX);  
+    if(!(-e $final_avg) or exists($opt{w}))
+    {
+        $commandAVG = $commandAVG." | sort -k 1,1 > $final_avg";
+        print_mess("$commandAVG\n");
+        system($commandAVG);
+    }else{
+        print_mess("\t The file", $final_avg, "already exist. Skipping joining the spike files for avg\n");
+    }
+    if(!(-e $final_max) or exists($opt{w}))
+    {
+        $commandMAX = $commandMAX." | sort -k 1,1 > $final_max";
+        print_mess("$commandMAX\n");
+        system($commandMAX);
+    }else{
+        print_mess("\t The file", $final_max, "already exist. Skipping joining the spike files for max\n");
+    }
     #
     SaveFile($final_avg);
     SaveFile($final_max);
+
 
     # Second, sample values
     # at least, two experiments
@@ -1211,12 +1221,22 @@ sub JoinNormValues
     $final_avg = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$bin_size."_sample_avg.txt";
     $final_max = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$bin_size."_sample_max.txt";
     #
-    $commandAVG = $commandAVG." | sort -k 1,1 > $final_avg";
-    print_mess("$commandAVG\n");
-    system($commandAVG);
-    $commandMAX = $commandMAX." | sort -k 1,1 > $final_max";
-    print_mess("$commandMAX\n");
-    system($commandMAX);
+    if(!(-e $final_avg) or exists($opt{w}))
+    {
+        $commandAVG = $commandAVG." | sort -k 1,1 > $final_avg";
+        print_mess("$commandAVG\n");
+        system($commandAVG);
+    }else{
+        print_mess("\t The file", $final_avg, "already exist. Skipping joining the sample files for avg\n");
+    }
+    if(!(-e $final_max) or exists($opt{w}))
+    {
+        $commandMAX = $commandMAX." | sort -k 1,1 > $final_max";
+        print_mess("$commandMAX\n");
+        system($commandMAX);
+    }else{
+        print_mess("\t The file", $final_max, "already exist. Skipping joining the sample files for max\n");
+    }
     #
     SaveFile($final_avg);
     SaveFile($final_max);
@@ -1227,10 +1247,14 @@ sub JoinNormValues
     {
 	$folder = $NAMES[$i]."_".$token."_".$bin_size."_spike_recoverChIPlevels/";
 	$command = "rm -rf $folder";
-	system($command);
+	if(-e $folder){
+	    system($command);
+	}
 	$folder = $NAMES[$i]."_".$token."_".$bin_size."_sample_recoverChIPlevels/";
 	$command = "rm -rf $folder";
-	system($command);
+	if(-e $folder){
+        system($command);
+    }
     }
 }
 
