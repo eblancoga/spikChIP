@@ -250,7 +250,6 @@ for($i=0; $i<$n_experiments; $i++)
 print_mess("Join raw data values from all experiments\n");
 JoinNormValues($RAW_TOKEN);
 print_mess("\n");
-exit 42;
 print_mess("Join traditional data values from all experiments\n");
 JoinNormValues($TRADITIONAL_TOKEN);
 print_mess("\n");
@@ -261,9 +260,11 @@ print_mess("Join tag removal data values from all experiments\n");
 JoinNormValues($TAGREMOVAL_TOKEN);
 print_mess("\n");
 
+
 print_mess("Starting $PROGRAM local normalization...\n");
 print_mess("Prepare $PROGRAM data values for local normalization\n");
 PreparespikChIPValues();
+exit 42;
 print_mess("Run local regression adjusting sample values with spike values\n");
 RunspikChIPValues();
 print_ok();
@@ -1278,9 +1279,12 @@ sub PreparespikChIPValues
     CleanFile($output_file3);
     CleanFile($output_file4);
     
-    $command = "cat $spike_values $sample_values > $output_file1";
-    print_mess("$command\n");
-    system($command);
+    if(!(-e $output_file1) or exists($opt{w}))
+    {
+        $command = "cat $spike_values $sample_values > $output_file1";
+        print_mess("$command\n");
+        system($command);
+    }
     
     # extract all the columns with values (one per experiment)
     $fields = "";
@@ -1290,17 +1294,26 @@ sub PreparespikChIPValues
     }
     $fields = $fields." \$".($i+2);
     
-    $command = "gawk 'BEGIN{OFS=\"\\t\"}{print $fields}' $output_file1 > $output_file2";
-    print_mess("$command\n");
-    system($command);
+    if(!(-e $output_file2) or exists($opt{w}))
+    {
+        $command = "gawk 'BEGIN{OFS=\"\\t\"}{print $fields}' $output_file1 > $output_file2";
+        print_mess("$command\n");
+        system($command);
+    }
 
-    $command = "gawk 'BEGIN{OFS=\"\\t\"}{print NR}' $output_file1 > $output_file3";
-    print_mess("$command\n");
-    system($command);
+    if(!(-e $output_file3) or exists($opt{w}))
+    {
+        $command = "gawk 'BEGIN{OFS=\"\\t\"}{print NR}' $output_file1 > $output_file3";
+        print_mess("$command\n");
+        system($command);
+    }
 
-    $command = "gawk 'BEGIN{OFS=\"\\t\"}{print NR,\$1}' $output_file1 > $output_file4";
-    print_mess("$command\n");
-    system($command);
+    if(!(-e $output_file4) or exists($opt{w}))
+    {
+        $command = "gawk 'BEGIN{OFS=\"\\t\"}{print NR,\$1}' $output_file1 > $output_file4";
+        print_mess("$command\n");
+        system($command);
+    }
 
     # (B) normalization based in max values
     $spike_values = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$TRADITIONAL_TOKEN."_".$bin_size."_spike_max.txt";
@@ -1317,21 +1330,33 @@ sub PreparespikChIPValues
     CleanFile($output_file3);
     CleanFile($output_file4);
     
-    $command = "cat $spike_values $sample_values > $output_file1";
-    print_mess("$command\n");
-    system($command);
+    if(!(-e $output_file1) or exists($opt{w}))
+    {
+        $command = "cat $spike_values $sample_values > $output_file1";
+        print_mess("$command\n");
+        system($command);
+    }
 
-    $command = "gawk 'BEGIN{OFS=\"\\t\"}{print $fields}' $output_file1 > $output_file2";
-    print_mess("$command\n");
-    system($command);
+    if(!(-e $output_file2) or exists($opt{w}))
+    {
+        $command = "gawk 'BEGIN{OFS=\"\\t\"}{print $fields}' $output_file1 > $output_file2";
+        print_mess("$command\n");
+        system($command);
+    }
 
-    $command = "gawk 'BEGIN{OFS=\"\\t\"}{print NR}' $output_file1 > $output_file3";
-    print_mess("$command\n");
-    system($command);
+    if(!(-e $output_file3) or exists($opt{w}))
+    {
+        $command = "gawk 'BEGIN{OFS=\"\\t\"}{print NR}' $output_file1 > $output_file3";
+        print_mess("$command\n");
+        system($command);
+    }
 
-    $command = "gawk 'BEGIN{OFS=\"\\t\"}{print NR,\$1}' $output_file1 > $output_file4";
-    print_mess("$command\n");
-    system($command);
+    if(!(-e $output_file4) or exists($opt{w}))
+    {
+        $command = "gawk 'BEGIN{OFS=\"\\t\"}{print NR,\$1}' $output_file1 > $output_file4";
+        print_mess("$command\n");
+        system($command);
+    }
 }
 
 sub RunspikChIPValues
