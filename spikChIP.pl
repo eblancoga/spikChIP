@@ -1279,6 +1279,10 @@ sub PreparespikChIPValues
     CleanFile($output_file3);
     CleanFile($output_file4);
     
+    if(-e $output_file1 and -e $output_file2 and -e $output_file3 and -e $output_file4){
+        print_mess("\t The files are already prepared for spike\n")
+    }
+    
     if(!(-e $output_file1) or exists($opt{w}))
     {
         $command = "cat $spike_values $sample_values > $output_file1";
@@ -1330,6 +1334,10 @@ sub PreparespikChIPValues
     CleanFile($output_file3);
     CleanFile($output_file4);
     
+    if(-e $output_file1 and -e $output_file2 and -e $output_file3 and -e $output_file4){
+        print_mess("\t The files are already prepared for sample\n")
+    }
+
     if(!(-e $output_file1) or exists($opt{w}))
     {
         $command = "cat $spike_values $sample_values > $output_file1";
