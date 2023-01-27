@@ -778,7 +778,8 @@ sub NormalizationRaw
 
     # Spike bins
     $out_name = $NAMES[$i]."_".$RAW_TOKEN."_".$bin_size."_spike";
-    if(!(-e $out_name) or exists($opt{w}))
+    $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
+    if(!(-e $file_all) or exists($opt{w}))
     {
         if (exists($opt{d}))
         {
@@ -791,10 +792,9 @@ sub NormalizationRaw
     print_mess("$command\n");
     system($command);
     }else{
-        print_mess("\t The file ", $out_name, " already exist. Skipping the spike Raw Normalization\n");
+        print_mess("\t The file", $file_all, "already exist. Skipping the spike Raw Normalization\n");
     }
     #
-    $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
     $file_avg = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
     $file_max = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
     
@@ -804,7 +804,7 @@ sub NormalizationRaw
         print_mess("$command\n");
         system($command);
     }else{
-        print_mess("\t The file ", $file_avg, " already exist. Skipping creation of the spike avg\n");
+        print_mess("\t The file", $file_avg, "already exist. Skipping creation of the spike avg\n");
     }
 
     if(!(-e $file_max) or exists($opt{w}))
@@ -813,13 +813,13 @@ sub NormalizationRaw
         print_mess("$command\n");
         system($command);
     }else{
-        print_mess("\t The file ", $file_max, " already exist. Skipping creation of the spike max\n");
+        print_mess("\t The file", $file_max, "already exist. Skipping creation of the spike max\n");
     }
-    
 
     # Sample bins
     $out_name = $NAMES[$i]."_".$RAW_TOKEN."_".$bin_size."_sample";
-    if(!(-e $out_name) or exists($opt{w}))
+    $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
+    if(!(-e $file_all) or exists($opt{w}))
     {
         if (exists($opt{d}))
         {
@@ -832,11 +832,10 @@ sub NormalizationRaw
     print_mess("$command\n");
     system($command);
     }else{
-        print_mess("\t The file ", $out_name, " already exist. Skipping the sample Raw Normalization\n");
+        print_mess("\t The file", $out_name, "already exist. Skipping the sample Raw Normalization\n");
     }
 
     #
-    $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
     $file_avg = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
     $file_max = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
     
@@ -846,7 +845,7 @@ sub NormalizationRaw
         print_mess("$command\n");
         system($command);
     }else{
-        print_mess("\t The file ", $file_avg, " already exist. Skipping creation of the sample avg\n");
+        print_mess("\t The file", $file_avg, "already exist. Skipping creation of the sample avg\n");
     }
 
     if(!(-e $file_max) or exists($opt{w}))
@@ -855,7 +854,7 @@ sub NormalizationRaw
         print_mess("$command");
         system($command);
     }else{
-        print_mess("\t The file ", $file_max, " already exist. Skipping creation of the sample max\n");
+        print_mess("\t The file", $file_max, "already exist. Skipping creation of the sample max\n");
     }
 }
 
