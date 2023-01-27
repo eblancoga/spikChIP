@@ -246,11 +246,11 @@ for($i=0; $i<$n_experiments; $i++)
     print_ok();
     print_mess("\n");
 }
-exit 42;
 # join the values of all experiments in a single file per normalization class
 print_mess("Join raw data values from all experiments\n");
 JoinNormValues($RAW_TOKEN);
 print_mess("\n");
+exit 42;
 print_mess("Join traditional data values from all experiments\n");
 JoinNormValues($TRADITIONAL_TOKEN);
 print_mess("\n");
@@ -1246,14 +1246,12 @@ sub JoinNormValues
     for($i=0; $i<$n_experiments; $i++)
     {
 	$folder = $NAMES[$i]."_".$token."_".$bin_size."_spike_recoverChIPlevels/";
-	$command = "rm -rf $folder";
 	if(-e $folder){
-	    system($command);
+	    CleanFolder($folder);
 	}
 	$folder = $NAMES[$i]."_".$token."_".$bin_size."_sample_recoverChIPlevels/";
-	$command = "rm -rf $folder";
 	if(-e $folder){
-        system($command);
+        CleanFolder($folder);
     }
     }
 }
@@ -1981,6 +1979,15 @@ sub CleanFile
     
     # info for cleaning intermediate files (option -c)
     $command = "rm -f $file";
+    push(@CLEAN_PROCEDURE,$command);
+}
+
+sub CleanFolder
+{
+    my $folder = $_[0];
+    my $command;
+    # info for cleaning intermediate folders (option -c)
+    $command = "rm -rf $folder";
     push(@CLEAN_PROCEDURE,$command);
 }
 
