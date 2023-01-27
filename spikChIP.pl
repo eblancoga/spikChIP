@@ -1242,7 +1242,6 @@ sub JoinNormValues
     SaveFile($final_max);
     
     # remove the seqcode folders (spike and sample)
-    print_mess("Removing SeqCode folders\n");
     for($i=0; $i<$n_experiments; $i++)
     {
 	$folder = $NAMES[$i]."_".$token."_".$bin_size."_spike_recoverChIPlevels/";
