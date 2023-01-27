@@ -972,51 +972,82 @@ sub NormalizationChIPRX
 
     # Spike bins
     $out_name = $NAMES[$i]."_".$CHIPRX_TOKEN."_".$bin_size."_spike";
-
-    if (exists($opt{d}))
+    $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
+    if(!(-e $file_all) or exists($opt{w}))
     {
-	$command = "recoverChIPlevels -dns ".$READS_SPIKES[$i]." $chrominfo_file $bam_spike $spike_bins $out_name";
-    }
-    else
-    {
-	$command = "recoverChIPlevels -ns ".$READS_SPIKES[$i]." $chrominfo_file $bam_spike $spike_bins $out_name";
-    }
+      if (exists($opt{d}))
+      {
+          $command = "recoverChIPlevels -dns ".$READS_SPIKES[$i]." $chrominfo_file $bam_spike $spike_bins $out_name";
+      }
+      else
+      {
+          $command = "recoverChIPlevels -ns ".$READS_SPIKES[$i]." $chrominfo_file $bam_spike $spike_bins $out_name";
+      }
     print_mess("$command\n");
     system($command);
+    }else{
+        print_mess("\t The file", $file_all, "already exist. Skipping the spike ChIPRX Normalization\n");
+    }
+    
     #
-    $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
     $file_avg = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
     $file_max = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
-    $command = "gawk '{print \$1\"*\"\$2\"*\"\$3,\$5}' $file_all | sort > $file_avg";
-    print_mess("$command\n");
-    system($command);
-    $command = "gawk '{print \$1\"*\"\$2\"*\"\$3,\$6}' $file_all | sort > $file_max";
-    print_mess("$command\n");
-    system($command);
+    if(!(-e $file_avg) or exists($opt{w}))
+    {
+        $command = "gawk '{print \$1\"*\"\$2\"*\"\$3,\$5}' $file_all | sort > $file_avg";
+        print_mess("$command\n");
+        system($command);
+    }else{
+        print_mess("\t The file", $file_avg, "already exist. Skipping creation of the spike avg\n");
+    }
+    if(!(-e $file_max) or exists($opt{w}))
+    {
+        $command = "gawk '{print \$1\"*\"\$2\"*\"\$3,\$6}' $file_all | sort > $file_max";
+        print_mess("$command\n");
+        system($command);
+    }else{
+        print_mess("\t The file", $file_max, "already exist. Skipping creation of the spike max\n");
+    }
 
     # Sample bins
     $out_name = $NAMES[$i]."_".$CHIPRX_TOKEN."_".$bin_size."_sample";
-
-    if (exists($opt{d}))
+    $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
+    if(!(-e $file_all) or exists($opt{w}))
     {
-	$command = "recoverChIPlevels -dns ".$READS_SPIKES[$i]." $chrominfo_file $bam_sample $sample_bins $out_name";
-    }
-    else
-    {
-	$command = "recoverChIPlevels -ns ".$READS_SPIKES[$i]." $chrominfo_file $bam_sample $sample_bins $out_name";
-    }
+      if (exists($opt{d}))
+      {
+          $command = "recoverChIPlevels -dns ".$READS_SPIKES[$i]." $chrominfo_file $bam_sample $sample_bins $out_name";
+      }
+      else
+      {
+          $command = "recoverChIPlevels -ns ".$READS_SPIKES[$i]." $chrominfo_file $bam_sample $sample_bins $out_name";
+      }
     print_mess("$command\n");
     system($command);
+    }else{
+        print_mess("\t The file", $file_all, "already exist. Skipping the sample ChIPRX Normalization\n");
+    }
+    
     #
-    $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
     $file_avg = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
     $file_max = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
-    $command = "gawk '{print \$1\"*\"\$2\"*\"\$3,\$5}' $file_all | sort > $file_avg";
-    print_mess("$command\n");
-    system($command);
-    $command = "gawk '{print \$1\"*\"\$2\"*\"\$3,\$6}' $file_all | sort > $file_max";
-    print_mess("$command");
-    system($command);
+    
+    if(!(-e $file_avg) or exists($opt{w}))
+    {
+        $command = "gawk '{print \$1\"*\"\$2\"*\"\$3,\$5}' $file_all | sort > $file_avg";
+        print_mess("$command\n");
+        system($command);
+    }else{
+        print_mess("\t The file", $file_avg, "already exist. Skipping creation of the sample avg\n");
+    }
+    if(!(-e $file_max) or exists($opt{w}))
+    {
+        $command = "gawk '{print \$1\"*\"\$2\"*\"\$3,\$6}' $file_all | sort > $file_max";
+        print_mess("$command\n");
+        system($command);
+    }else{
+        print_mess("\t The file", $file_max, "already exist. Skipping creation of the sample max\n");
+    }
 }
 
 sub NormalizationTagRemoval
