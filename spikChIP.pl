@@ -64,26 +64,6 @@ my $newdir;
 my @CLEAN_PROCEDURE;
 my @SAVE_PROCEDURE;
 
-
-
-
-
-
-
-
-
-
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-# -c: clean intermediate files of results to save space
-# -d: allow the process of BAM files of < 1 Million reads
-# -k: bin size (default: 10000 bps)
-# -p: palette (1 for reds, 2 for greens, 3 for blues and 0 for B&W)
-# -h: short help
-# -v: verbose option
-# -w: overwrite existing result files
-
-
 # --clean|-c: clean intermediate files of results to save space
 # --lessMillion|-l: allow the process of BAM files of < 1 Million reads
 # --binsize|-b: bin size (default: 10000 bps)
@@ -91,25 +71,27 @@ my @SAVE_PROCEDURE;
 # --help|-h: short help
 # --verbose|-v: verbose option
 # --overwrite|-w: overwrite existing result files
-# --raw: Perform the raw normalization
-# --traditional: Perform the traditional normalization
-# --chiprx: Perform the ChIPRx normalization
-# --tagremoval: Perform the tag removal normalization
-# --spikchip: Perform the spikchip normalization with loess
+# --raw|-r: Perform the raw normalization
+# --traditional|-t: Perform the traditional normalization
+# --chiprx|-x: Perform the ChIPRx normalization
+# --tagremoval|-g: Perform the tag removal normalization
+# --spikchip|s: Perform the spikchip normalization with loess
 
-my $CLEAN = '';
-my $LESSMILLION = '';
+my $CLEAN = 0;
+my $LESSMILLION = 0;
 my $BIN_SIZE = $DEFAULT_BIN_SIZE;
 my $PALETTE = $DEFAULT_PALETTE;
-my $HELP = '';
-my $VERBOSE = '';
-my $OVERWRITE = '';
-my $RAW = '';
-my $TRADITIONAL = '';
-my $CHIPRX = '';
-my $TAGREMOVAL = '';
-my $SPIKCHIP = '';
+my $HELP = 0;
+my $VERBOSE = 0;
+my $OVERWRITE = 0;
+my $RAW = 0;
+my $TRADITIONAL = 0;
+my $CHIPRX = 0;
+my $TAGREMOVAL = 0;
+my $SPIKCHIP = 0;
 
+
+# 0.1 Acquire options
 Getopt::Long::GetOptions(
     
     'clean|c' => \$CLEAN,
@@ -119,44 +101,28 @@ Getopt::Long::GetOptions(
     'help|h' => \$HELP,
     'verbose|v' => \$VERBOSE,
     'overwrite|w' => \$OVERWRITE,
-    'raw' => \$RAW,
-    'traditional' => \$TRADITIONAL,
-    'chiprx' => \$CHIPRX,
-    'tagremoval' => \$TAGREMOVAL,
-    'spikchip' => \$SPIKCHIP,
-   );
+    'raw|r' => \$RAW,
+    'traditional|t' => \$TRADITIONAL,
+    'chiprx|x' => \$CHIPRX,
+    'tagremoval|g' => \$TAGREMOVAL,
+    'spikchip|s' => \$SPIKCHIP,
+);
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-print_mess("$PROGRAM.pl by Enrique Blanco @ CRG (2021)\n");
+print_mess("$PROGRAM.pl by Enrique Blanco @ CRG (2021)");
 print_help();
 print_mess("\n");
 
-# 0.1 Save the starting time
+# 0.2 Save the starting time
 $start = time();
 $date = localtime();
 
-# 0.2 Acquire options and arguments
+if(!$RAW and !$TRADITIONAL and !$CHIPRX and !$TAGREMOVAL and !$SPIKCHIP){
+        print_error("\t No normalization method was selected. Run $PROGRAM -h to see available options.")
+}
+
+# 0.3 Acquire options and arguments
 print_mess("[$date] Stage 0.  Configuration of the pipeline\n");
-print_mess("Reading options of the command line\n");
+print_mess("Reading arguments of the command line\n");
 $n_files = $#ARGV+1;
 ($n_files == 2) or print_error("ERROR: Two arguments are required but $n_files are provided!\n$PROGRAM -vhcdk <bin_size_kbp> -p <0|1|2|3> <configuration_file> <chrominfo_file>\nPlease, type spikChIP -h for further assistance or spikChIP -v for verbose mode\n");
 ($configuration_filename,$chrominfo_file) = @ARGV;
@@ -164,52 +130,52 @@ print_mess("Syntax is correct and options are acquired");
 print_ok();
 print_mess("\n");
 
-# 0.3 Checking binaries of SeqCode and samtools are available
-print_mess("Checking for external software availability\n");
-#CheckExternalSoftware();
+# 0.4 Checking binaries of SeqCode and samtools are available
+print_mess("Checking for external software availability");
+CheckExternalSoftware();
 print_mess("Closing external software check...");
 print_ok();
 print_mess("\n");
 
-# 0.4 Prepare the output folders
-print_mess("Generating output folders (if necessary)\n");
+# 0.5 Prepare the output folders
+print_mess("Generating output folders (if necessary)");
 # create the results/ folder
 $newdir = $RESULTS;
-print_mess("Trying the $RESULTS directory\n");
-mkdir($newdir) or print_mess("It is already existing\n");
+print_mess("Trying the $RESULTS directory");
+mkdir($newdir) or print_mess("It is already existing");
 # create the Rscripts/ folder
 $newdir = $RSCRIPTS;
-print_mess("Trying the $RSCRIPTS directory\n");
-mkdir($newdir) or print_mess("It is already existing\n");
+print_mess("Trying the $RSCRIPTS directory");
+mkdir($newdir) or print_mess("It is already existing");
 # create the plots/ folder
 $newdir = $PLOTS;
-print_mess("Trying the $PLOTS directory\n");
+print_mess("Trying the $PLOTS directory");
 mkdir($newdir) or print_mess("It is already existing");
 print_ok();
 print_mess("\n");
 
-# 0.5 Check the chrominfo file 
-print_mess("Checking information on chromosome sizes\n");
+# 0.6 Check the chrominfo file 
+print_mess("Checking information on chromosome sizes");
 CheckChromInfoFile($chrominfo_file);
 print_mess("Closing ChromInfo file check...");
 print_ok();
 print_mess("\n");
 
-# 0.6 Checking bin size option (if selected)
+# 0.7 Checking bin size option (if selected)
 print_mess("Establishing the bin size\n");
 $BIN_SIZE = SettingBinsize();
 print_mess("Effective bin size: $BIN_SIZE");
 print_ok();
 print_mess("\n");
 
-# 0.7 Checking palette (if selected)
+# 0.8 Checking palette (if selected)
 print_mess("Establishing the palette\n");
 $PALETTE = SettingPalette();
 print_mess("Effective palette: $PALETTE");
 print_ok();
 print_mess("\n");
 
-# 0.8 Loading filenames from configuration file
+# 0.9 Loading filenames from configuration file
 print_mess("Reading configuration file, calculating reads and down-sampling\n");
 print_mess("Processing the configuration file\n");
 ReadingConfigurationFile($configuration_filename);
@@ -219,6 +185,7 @@ DownsamplingOperations();
 print_mess("Finishing Stage 0. Configuration...");
 print_ok();
 print_mess("\n");
+
 
 # Step 1. Generating the segmentation of the sample and spike genomes
 my $command;
@@ -232,7 +199,7 @@ print_mess("[$date] Stage 1.  Producing the segmentation of both genomes in bins
 
 # spike segmentation
 $spike_bins = $RESULTS.join("-",@NAMES)."_"."spike_".$BIN_SIZE.".bed";
-if(!(-e $spike_bins) or exists($opt{w}))
+if(!(-e $spike_bins) or $OVERWRITE)
 {
     $command = "grep FLY $chrominfo_file | gawk 'BEGIN{OFS=\"\\t\";offset=$BIN_SIZE;}{for(i=1;i<\$2-offset;i=i+offset) print \$1,i,i+offset;}' > $spike_bins";
     print_mess("$command\n");
@@ -253,7 +220,7 @@ print_mess("$n_spike_bins bins generated in the segmentation of the spike genome
 
 # sample genome segmentation
 $sample_bins = $RESULTS.join("-",@NAMES)."_"."sample_".$BIN_SIZE.".bed";
-if(!(-e $sample_bins) or exists($opt{w}))
+if(!(-e $sample_bins) or $OVERWRITE)
 {
     $command = "grep -v FLY $chrominfo_file | gawk 'BEGIN{OFS=\"\\t\";offset=$BIN_SIZE;}{for(i=1;i<\$2-offset;i=i+offset) print \$1,i,i+offset;}' > $sample_bins";
     print_mess("$command\n");
@@ -296,26 +263,41 @@ for($i=0; $i<$n_experiments; $i++)
     $name = $NAMES[$i];
     print_mess("Processing the $name experiment\n");
     #
-    print_mess("Starting RAW normalization...\n");
-    NormalizationRaw($i);
-    print_ok();
-    print_mess("\n");
+    if($RAW)
+    {
+        print_mess("Starting RAW normalization...\n");
+        NormalizationRaw($i);
+        print_ok();
+        print_mess("\n");
+    }
     #
-    print_mess("Starting TRADITIONAL normalization...\n");
-    NormalizationTraditional($i);
-    print_ok();
-    print_mess("\n");
+    if($TRADITIONAL){
+        print_mess("Starting TRADITIONAL normalization...\n");
+        NormalizationTraditional($i);
+        print_ok();
+        print_mess("\n");
+    }
     #
-    print_mess("Starting CHIP-RX normalization...\n");
-    NormalizationChIPRX($i);
-    print_ok();
-    print_mess("\n");
+    if($CHIPRX){
+        print_mess("Starting CHIP-RX normalization...\n");
+        NormalizationChIPRX($i);
+        print_ok();
+        print_mess("\n");
+    }
     #
-    print_mess("Starting TAG_REMOVAL normalization...\n");
-    NormalizationTagRemoval($i);
-    print_ok();
-    print_mess("\n");
+    if($TAGREMOVAL){
+        print_mess("Starting TAG_REMOVAL normalization...\n");
+        NormalizationTagRemoval($i);
+        print_ok();
+        print_mess("\n");
+    }
+
+    if(!$RAW and !$TRADITIONAL and !$CHIPRX and !$TAGREMOVAL){
+        print_mess("\t None of the following normalization were selected: raw, traditional, chiprx, or tag removal.")
+    }
 }
+exit 42;
+
 # join the values of all experiments in a single file per normalization class
 print_mess("Join raw data values from all experiments\n");
 JoinNormValues($RAW_TOKEN);
@@ -336,7 +318,6 @@ print_mess("Prepare $PROGRAM data values for local normalization\n");
 PreparespikChIPValues();
 print_mess("Run local regression adjusting sample values with spike values\n");
 RunspikChIPValues();
-exit 42;
 print_ok();
 print_mess("Finishing Stage 2. Normalization...");
 print_ok();
@@ -433,26 +414,24 @@ exit(0);
 
 sub print_help
 {
-    if (exists($opt{h}))
+    if ($HELP)
     {
-	print STDERR color("bold blue"),"spikChIP_v1.0\t\t\t\tUser commands\t\t\t\tspikChIP\n\n";
-	print STDERR color("bold blue"),"NAME\n\tspikChIP, a tool to normalize ChIP-seq experiments by spike-in correction\n\n";
-	print STDERR color("bold blue"),"SYNOPSIS:\n\t$PROGRAM -vcdk <bin_size_kbp> -p <0|1|2|3> <configuration_file> <chrominfo_file>\n\n";
-	print STDERR color("bold blue"),"OPTIONS:\n";
-	print STDERR color("bold blue"),"\t-c: clean intermediate files of results to save space\n";
-	print STDERR color("bold blue"),"\t-d: allow the process of BAM files of < 1 Million reads\n";
-	print STDERR color("bold blue"),"\t-k: bin size (default: 10000 bps)\n";
-	print STDERR color("bold blue"),"\t-p: palette (1 for reds, 2 for greens, 3 for blues and 0 for B&W)\n";
-	print STDERR color("bold blue"),"\t-h: short help\n";
-	print STDERR color("bold blue"),"\t-w: overwrite existing files option\n";
-	print STDERR color("bold blue"),"\t-v: verbose option\n\n";
-	print STDERR color("bold blue"),"SEE ALSO\n";
-	print STDERR color("bold blue"),"\tGitHub source code: https://github.com/eblancoga/spikChIP\n\n";
-	print STDERR color("bold blue"),"AUTHORS\n";
-	print STDERR color("bold blue"),"\tWritten by Enrique Blanco, Luciano Di Croce and Sergi Aranda (2021)\n\n";
-	print STDERR color("bold blue"),"spikChIP_v1.0\t\t\t\tUser commands\t\t\t\tspikChIP\n";
-	print STDERR color("reset");
-
+        print STDERR color("bold blue"),"spikChIP_v1.0\t\t\t\tUser commands\t\t\t\tspikChIP\n\n";
+        print STDERR color("bold blue"),"NAME\n\tspikChIP, a tool to normalize ChIP-seq experiments by spike-in correction\n\n";
+        print STDERR color("bold blue"),"SYNOPSIS:\n\t$PROGRAM -rtxgs -vclw -b <bin_size_kbp> -p <0|1|2|3> <configuration_file> <chrominfo_file>\n\n";
+        print STDERR color("bold blue"),"OPTIONS:\n";
+        print STDERR color("bold blue"),"\t--clean|-c: clean intermediate files of results to save space\n";
+        print STDERR color("bold blue"),"\t--lessMillion|-l: allow the process of BAM files of < 1 Million reads\n";
+        print STDERR color("bold blue"),"\t--binsize|-b: bin size (default: 10000 bps)\n";
+        print STDERR color("bold blue"),"\t--palette|-p: palette (1 for reds, 2 for greens, 3 for blues and 0 for B&W)\n";
+        print STDERR color("bold blue"),"\t--help|-h: short help\n";
+        print STDERR color("bold blue"),"\t--verbose|-v: verbose option\n";
+        print STDERR color("bold blue"),"\t--overwrite|-w: overwrite existing result files\n";
+        print STDERR color("bold blue"),"\t--raw|-r: Perform the raw normalization\n";
+        print STDERR color("bold blue"),"\t--traditional|-t: Perform the traditional normalization\n";
+        print STDERR color("bold blue"),"\t--chiprx|-x: Perform the ChIPRx normalization\n";
+        print STDERR color("bold blue"),"\t--tagremoval|-g: Perform the tag removal normalization\n";
+        print STDERR color("bold blue"),"\t--spikchip|s: Perform the spikchip normalization with loess\n";
 	exit(0);
     }
 }
@@ -460,18 +439,17 @@ sub print_help
 sub print_mess
 {
         my @mess = @_;
-
-        print STDERR color("bold green"),"%%%% @mess" if (exists($opt{v}));
-	print STDERR color("reset");
+        print STDERR color("bold green"),"%%%% @mess\n" if $VERBOSE;
+        print STDERR color("reset");
 }
 
 sub print_error
 {
-        my @mess = @_;
+    my @mess = @_;
 	my $stop;
 	my ($hours,$mins,$secs);
 	
-        print STDERR color("bold red"),"%%%% @mess\n\n";
+    print STDERR color("bold red"),"%%%% @mess\n\n";
 	print STDERR color("reset");
 
 	$date = localtime();
@@ -530,7 +508,7 @@ sub CalculateReads
     # running the samtools to calculate the number of reads of the BAM file
     $out_file = $RESULTS.$name."_flagstat.txt";
     
-    if(!(-e $out_file) or exists($opt{w}))
+    if(!(-e $out_file) or $OVERWRITE)
     {
         $command = "samtools flagstat $bam_file > $out_file";
         print_mess("$command\n");
@@ -547,7 +525,7 @@ sub CalculateReads
 	    @record = split(/\s+/,$line);
 	    $n_reads = $record[0];
 
-	    if ($n_reads < $MEGA && $LESSMILLION)
+	    if ($n_reads < $MEGA && !$LESSMILLION)
 	    {
 		print_error("The number of reads is lower than $MEGA reads. Please, run again spikChIP with the option -d");
 	    }
@@ -666,7 +644,7 @@ sub DownsamplingOperations
 	$input_file = $BAM_SPIKES[$i];
 	($output_file = $input_file) =~ s/\.bam/\_$DOWNSAMPLING_TOKEN\.bam/g;
 	$BAM_SPIKES_DOWN[$i] = $output_file;
-	if(!(-e $output_file) or exists($opt{w}))
+	if(!(-e $output_file) or $OVERWRITE)
     {
         $command = "samtools view -h -b -s $factor -o $output_file $input_file";
         print_mess("$command\n");
@@ -684,7 +662,7 @@ sub DownsamplingOperations
 	$input_file = $BAM_SAMPLES[$i];
 	($output_file = $input_file) =~ s/\.bam/\_$DOWNSAMPLING_TOKEN\.bam/g;
 	$BAM_SAMPLES_DOWN[$i] = $output_file;
-	if(!(-e $output_file) or exists($opt{w}))
+	if(!(-e $output_file) or $OVERWRITE)
     {
         $command = "samtools view -h -b -s $factor -o $output_file $input_file";
         print_mess("$command\n");
@@ -828,7 +806,8 @@ sub NormalizationRaw
     # Spike bins
     $out_name = $NAMES[$i]."_".$RAW_TOKEN."_".$BIN_SIZE."_spike";
     $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
-    if(!(-e $file_all) or exists($opt{w}))
+    
+    if(!(-e $file_all) or $OVERWRITE)
     {
         if ($LESSMILLION)
         {
@@ -847,7 +826,7 @@ sub NormalizationRaw
     $file_avg = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
     $file_max = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
     
-    if(!(-e $file_avg) or exists($opt{w}))
+    if(!(-e $file_avg) or $OVERWRITE)
     {
         $command = "gawk '{print \$1\"*\"\$2\"*\"\$3,\$5}' $file_all | sort > $file_avg";
         print_mess("$command\n");
@@ -856,7 +835,7 @@ sub NormalizationRaw
         print_mess("\t The file", $file_avg, "already exist. Skipping creation of the spike avg\n");
     }
 
-    if(!(-e $file_max) or exists($opt{w}))
+    if(!(-e $file_max) or $OVERWRITE)
     {
         $command = "gawk '{print \$1\"*\"\$2\"*\"\$3,\$6}' $file_all | sort > $file_max";
         print_mess("$command\n");
@@ -868,7 +847,7 @@ sub NormalizationRaw
     # Sample bins
     $out_name = $NAMES[$i]."_".$RAW_TOKEN."_".$BIN_SIZE."_sample";
     $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
-    if(!(-e $file_all) or exists($opt{w}))
+    if(!(-e $file_all) or $OVERWRITE)
     {
         if ($LESSMILLION)
         {
@@ -888,7 +867,7 @@ sub NormalizationRaw
     $file_avg = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
     $file_max = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
     
-    if(!(-e $file_avg) or exists($opt{w}))
+    if(!(-e $file_avg) or $OVERWRITE)
     {
         $command = "gawk '{print \$1\"*\"\$2\"*\"\$3,\$5}' $file_all | sort > $file_avg";
         print_mess("$command\n");
@@ -897,7 +876,7 @@ sub NormalizationRaw
         print_mess("\t The file", $file_avg, "already exist. Skipping creation of the sample avg\n");
     }
 
-    if(!(-e $file_max) or exists($opt{w}))
+    if(!(-e $file_max) or $OVERWRITE)
     {
         $command = "gawk '{print \$1\"*\"\$2\"*\"\$3,\$6}' $file_all | sort > $file_max";
         print_mess("$command");
@@ -924,7 +903,7 @@ sub NormalizationTraditional
     # Spike bins
     $out_name = $NAMES[$i]."_".$TRADITIONAL_TOKEN."_".$BIN_SIZE."_spike";
     $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
-    if(!(-e $file_all) or exists($opt{w}))
+    if(!(-e $file_all) or $OVERWRITE)
     {
         if ($LESSMILLION)
         {
@@ -944,7 +923,7 @@ sub NormalizationTraditional
     $file_avg = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
     $file_max = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
     
-    if(!(-e $file_avg) or exists($opt{w}))
+    if(!(-e $file_avg) or $OVERWRITE)
     {
         $command = "gawk '{print \$1\"*\"\$2\"*\"\$3,\$5}' $file_all | sort > $file_avg";
         print_mess("$command\n");
@@ -953,7 +932,7 @@ sub NormalizationTraditional
         print_mess("\t The file", $file_avg, "already exist. Skipping creation of the spike avg\n");
     }
 
-    if(!(-e $file_max) or exists($opt{w}))
+    if(!(-e $file_max) or $OVERWRITE)
     {
         $command = "gawk '{print \$1\"*\"\$2\"*\"\$3,\$6}' $file_all | sort > $file_max";
         print_mess("$command\n");
@@ -965,7 +944,7 @@ sub NormalizationTraditional
     # Sample bins
     $out_name = $NAMES[$i]."_".$TRADITIONAL_TOKEN."_".$BIN_SIZE."_sample";
     $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
-    if(!(-e $file_all) or exists($opt{w}))
+    if(!(-e $file_all) or $OVERWRITE)
     {
       if ($LESSMILLION)
       {
@@ -985,7 +964,7 @@ sub NormalizationTraditional
     $file_avg = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
     $file_max = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
     
-    if(!(-e $file_avg) or exists($opt{w}))
+    if(!(-e $file_avg) or $OVERWRITE)
     {
         $command = "gawk '{print \$1\"*\"\$2\"*\"\$3,\$5}' $file_all | sort > $file_avg";
         print_mess("$command\n");
@@ -994,7 +973,7 @@ sub NormalizationTraditional
         print_mess("\t The file", $file_avg, "already exist. Skipping creation of the sample avg\n");
     }
 
-    if(!(-e $file_max) or exists($opt{w}))
+    if(!(-e $file_max) or $OVERWRITE)
     {
         $command = "gawk '{print \$1\"*\"\$2\"*\"\$3,\$6}' $file_all | sort > $file_max";
         print_mess("$command");
@@ -1021,7 +1000,7 @@ sub NormalizationChIPRX
     # Spike bins
     $out_name = $NAMES[$i]."_".$CHIPRX_TOKEN."_".$BIN_SIZE."_spike";
     $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
-    if(!(-e $file_all) or exists($opt{w}))
+    if(!(-e $file_all) or $OVERWRITE)
     {
       if ($LESSMILLION)
       {
@@ -1040,7 +1019,7 @@ sub NormalizationChIPRX
     #
     $file_avg = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
     $file_max = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
-    if(!(-e $file_avg) or exists($opt{w}))
+    if(!(-e $file_avg) or $OVERWRITE)
     {
         $command = "gawk '{print \$1\"*\"\$2\"*\"\$3,\$5}' $file_all | sort > $file_avg";
         print_mess("$command\n");
@@ -1048,7 +1027,7 @@ sub NormalizationChIPRX
     }else{
         print_mess("\t The file", $file_avg, "already exist. Skipping creation of the spike avg\n");
     }
-    if(!(-e $file_max) or exists($opt{w}))
+    if(!(-e $file_max) or $OVERWRITE)
     {
         $command = "gawk '{print \$1\"*\"\$2\"*\"\$3,\$6}' $file_all | sort > $file_max";
         print_mess("$command\n");
@@ -1060,7 +1039,7 @@ sub NormalizationChIPRX
     # Sample bins
     $out_name = $NAMES[$i]."_".$CHIPRX_TOKEN."_".$BIN_SIZE."_sample";
     $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
-    if(!(-e $file_all) or exists($opt{w}))
+    if(!(-e $file_all) or $OVERWRITE)
     {
       if ($LESSMILLION)
       {
@@ -1079,7 +1058,7 @@ sub NormalizationChIPRX
     #
     $file_avg = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
     $file_max = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
-    if(!(-e $file_avg) or exists($opt{w}))
+    if(!(-e $file_avg) or $OVERWRITE)
     {
         $command = "gawk '{print \$1\"*\"\$2\"*\"\$3,\$5}' $file_all | sort > $file_avg";
         print_mess("$command\n");
@@ -1087,7 +1066,7 @@ sub NormalizationChIPRX
     }else{
         print_mess("\t The file", $file_avg, "already exist. Skipping creation of the sample avg\n");
     }
-    if(!(-e $file_max) or exists($opt{w}))
+    if(!(-e $file_max) or $OVERWRITE)
     {
         $command = "gawk '{print \$1\"*\"\$2\"*\"\$3,\$6}' $file_all | sort > $file_max";
         print_mess("$command\n");
@@ -1112,7 +1091,7 @@ sub NormalizationTagRemoval
     # Spike bins
     $out_name = $NAMES[$i]."_".$TAGREMOVAL_TOKEN."_".$BIN_SIZE."_spike";
     $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
-    if(!(-e $file_all) or exists($opt{w}))
+    if(!(-e $file_all) or $OVERWRITE)
     {
       if ($LESSMILLION)
       {
@@ -1130,7 +1109,7 @@ sub NormalizationTagRemoval
     #
     $file_avg = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
     $file_max = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
-    if(!(-e $file_avg) or exists($opt{w}))
+    if(!(-e $file_avg) or $OVERWRITE)
     {
         $command = "gawk '{print \$1\"*\"\$2\"*\"\$3,\$5}' $file_all | sort > $file_avg";
         print_mess("$command\n");
@@ -1138,7 +1117,7 @@ sub NormalizationTagRemoval
     }else{
         print_mess("\t The file", $file_avg, "already exist. Skipping creation of the spike avg\n");
     }
-    if(!(-e $file_max) or exists($opt{w}))
+    if(!(-e $file_max) or $OVERWRITE)
     {
         $command = "gawk '{print \$1\"*\"\$2\"*\"\$3,\$6}' $file_all | sort > $file_max";
         print_mess("$command\n");
@@ -1150,7 +1129,7 @@ sub NormalizationTagRemoval
     # Sample bins
     $out_name = $NAMES[$i]."_".$TAGREMOVAL_TOKEN."_".$BIN_SIZE."_sample";
     $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
-    if(!(-e $file_all) or exists($opt{w}))
+    if(!(-e $file_all) or $OVERWRITE)
     {
       if ($LESSMILLION)
       {
@@ -1168,7 +1147,7 @@ sub NormalizationTagRemoval
     #
     $file_avg = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
     $file_max = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
-    if(!(-e $file_avg) or exists($opt{w}))
+    if(!(-e $file_avg) or $OVERWRITE)
     {
         $command = "gawk '{print \$1\"*\"\$2\"*\"\$3,\$5}' $file_all | sort > $file_avg";
         print_mess("$command\n");
@@ -1176,7 +1155,7 @@ sub NormalizationTagRemoval
     }else{
         print_mess("\t The file", $file_avg, "already exist. Skipping creation of the sample avg\n");
     }
-    if(!(-e $file_max) or exists($opt{w}))
+    if(!(-e $file_max) or $OVERWRITE)
     {
         $command = "gawk '{print \$1\"*\"\$2\"*\"\$3,\$6}' $file_all | sort > $file_max";
         print_mess("$command\n");
@@ -1226,7 +1205,7 @@ sub JoinNormValues
     $final_avg = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_spike_avg.txt";
     $final_max = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_spike_max.txt";
     #
-    if(!(-e $final_avg) or exists($opt{w}))
+    if(!(-e $final_avg) or $OVERWRITE)
     {
         $commandAVG = $commandAVG." | sort -k 1,1 > $final_avg";
         print_mess("$commandAVG\n");
@@ -1234,7 +1213,7 @@ sub JoinNormValues
     }else{
         print_mess("\t The file", $final_avg, "already exist. Skipping joining the spike files for avg\n");
     }
-    if(!(-e $final_max) or exists($opt{w}))
+    if(!(-e $final_max) or $OVERWRITE)
     {
         $commandMAX = $commandMAX." | sort -k 1,1 > $final_max";
         print_mess("$commandMAX\n");
@@ -1271,7 +1250,7 @@ sub JoinNormValues
     $final_avg = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_sample_avg.txt";
     $final_max = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_sample_max.txt";
     #
-    if(!(-e $final_avg) or exists($opt{w}))
+    if(!(-e $final_avg) or $OVERWRITE)
     {
         $commandAVG = $commandAVG." | sort -k 1,1 > $final_avg";
         print_mess("$commandAVG\n");
@@ -1279,7 +1258,7 @@ sub JoinNormValues
     }else{
         print_mess("\t The file", $final_avg, "already exist. Skipping joining the sample files for avg\n");
     }
-    if(!(-e $final_max) or exists($opt{w}))
+    if(!(-e $final_max) or $OVERWRITE)
     {
         $commandMAX = $commandMAX." | sort -k 1,1 > $final_max";
         print_mess("$commandMAX\n");
@@ -1332,7 +1311,7 @@ sub PreparespikChIPValues
         print_mess("\t The files are already prepared for spike\n")
     }
     
-    if(!(-e $output_file1) or exists($opt{w}))
+    if(!(-e $output_file1) or $OVERWRITE)
     {
         $command = "cat $spike_values $sample_values > $output_file1";
         print_mess("$command\n");
@@ -1347,21 +1326,21 @@ sub PreparespikChIPValues
     }
     $fields = $fields." \$".($i+2);
     
-    if(!(-e $output_file2) or exists($opt{w}))
+    if(!(-e $output_file2) or $OVERWRITE)
     {
         $command = "gawk 'BEGIN{OFS=\"\\t\"}{print $fields}' $output_file1 > $output_file2";
         print_mess("$command\n");
         system($command);
     }
 
-    if(!(-e $output_file3) or exists($opt{w}))
+    if(!(-e $output_file3) or $OVERWRITE)
     {
         $command = "gawk 'BEGIN{OFS=\"\\t\"}{print NR}' $output_file1 > $output_file3";
         print_mess("$command\n");
         system($command);
     }
 
-    if(!(-e $output_file4) or exists($opt{w}))
+    if(!(-e $output_file4) or $OVERWRITE)
     {
         $command = "gawk 'BEGIN{OFS=\"\\t\"}{print NR,\$1}' $output_file1 > $output_file4";
         print_mess("$command\n");
@@ -1387,28 +1366,28 @@ sub PreparespikChIPValues
         print_mess("\t The files are already prepared for sample\n")
     }
 
-    if(!(-e $output_file1) or exists($opt{w}))
+    if(!(-e $output_file1) or $OVERWRITE)
     {
         $command = "cat $spike_values $sample_values > $output_file1";
         print_mess("$command\n");
         system($command);
     }
 
-    if(!(-e $output_file2) or exists($opt{w}))
+    if(!(-e $output_file2) or $OVERWRITE)
     {
         $command = "gawk 'BEGIN{OFS=\"\\t\"}{print $fields}' $output_file1 > $output_file2";
         print_mess("$command\n");
         system($command);
     }
 
-    if(!(-e $output_file3) or exists($opt{w}))
+    if(!(-e $output_file3) or $OVERWRITE)
     {
         $command = "gawk 'BEGIN{OFS=\"\\t\"}{print NR}' $output_file1 > $output_file3";
         print_mess("$command\n");
         system($command);
     }
 
-    if(!(-e $output_file4) or exists($opt{w}))
+    if(!(-e $output_file4) or $OVERWRITE)
     {
         $command = "gawk 'BEGIN{OFS=\"\\t\"}{print NR,\$1}' $output_file1 > $output_file4";
         print_mess("$command\n");
