@@ -296,22 +296,32 @@ for($i=0; $i<$n_experiments; $i++)
         print_mess("\t None of the following normalization were selected: raw, traditional, chiprx, or tag removal.")
     }
 }
-exit 42;
+
 
 # join the values of all experiments in a single file per normalization class
-print_mess("Join raw data values from all experiments\n");
-JoinNormValues($RAW_TOKEN);
-print_mess("\n");
-print_mess("Join traditional data values from all experiments\n");
-JoinNormValues($TRADITIONAL_TOKEN);
-print_mess("\n");
-print_mess("Join ChIP-RX data values from all experiments\n");
-JoinNormValues($CHIPRX_TOKEN);
-print_mess("\n");
-print_mess("Join tag removal data values from all experiments\n");
-JoinNormValues($TAGREMOVAL_TOKEN);
-print_mess("\n");
-
+if($RAW)
+{
+    print_mess("Join raw data values from all experiments\n");
+    JoinNormValues($RAW_TOKEN);
+    print_mess("\n");
+}
+if($TRADITIONAL){
+    print_mess("Join traditional data values from all experiments\n");
+    JoinNormValues($TRADITIONAL_TOKEN);
+    print_mess("\n");
+}
+if($CHIPRX){
+    print_mess("Join ChIP-RX data values from all experiments\n");
+    JoinNormValues($CHIPRX_TOKEN);
+    print_mess("\n");
+}
+if($TAGREMOVAL)
+{
+    print_mess("Join tag removal data values from all experiments\n");
+    JoinNormValues($TAGREMOVAL_TOKEN);
+    print_mess("\n");
+}
+exit 42;
 
 print_mess("Starting $PROGRAM local normalization...\n");
 print_mess("Prepare $PROGRAM data values for local normalization\n");
@@ -1410,56 +1420,61 @@ sub RunspikChIPValues
 
     # spikChIP on avg values
     print_mess("Performing the analysis on average values\n");
-    #
     $Rfile = $RSCRIPTS.join("-",@NAMES)."_".$BIN_SIZE."_avg.R";
-    $output_file1 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg.txt";
-    $output_file2 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg_values.txt";
-    $output_file3 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg_names.txt";
-    $output_file4 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg_names2.txt";
-    #
-    $final_avg = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_avg_normalized.txt";
-    $final_avg_spike = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_avg_normalized_spike.txt";
-    $final_avg_sample = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_avg_normalized_sample.txt";
-    #
-    CleanFile($final_avg);
-    SaveFile($final_avg_spike);
-    SaveFile($final_avg_sample);
-    #
-    $n_total_bins = $n_spike_bins + $n_sample_bins;
-    #
     # R code to perform the loess regression on the whole set of bins in all conditions
-    (open(RFILE,'>',$Rfile)) or print_error("R SCRIPT: FILE $Rfile file can not be opened to write");
-    print RFILE "library(affy)\n";
-    print RFILE "library(MASS)\n";
-    print RFILE "c <- scan(\"$output_file2\",sep=\"\\t\")\n";
-    print RFILE "c <- c + $PSEUDOCOUNT\n";
-    print RFILE "m <-matrix(c,$n_total_bins,$n_experiments,byrow=TRUE)\n";
-    print RFILE "d <- read.table(\"$output_file3\")\n";
-    print RFILE "rownames(m) <- d[,1]\n";
-    print RFILE "s <- seq(1,$n_spike_bins)\n";
-    print RFILE "mn <- normalize.loess(m,subset=s)\n";
-    print RFILE "write.table(mn,file=\"$final_avg\",sep=\"\\t\",row.names=TRUE,col.names=FALSE,quote=FALSE)\n";
-    close(RFILE);
-    #
-    # execute R script
-    $command = "R CMD BATCH $Rfile";
-    print_mess("$command\n");
-    system($command);
-    #
-    # error check in Rout file
-    $Routput_file = join("-",@NAMES)."_".$BIN_SIZE."_avg.Rout";
-    (open(ROUT,$Routput_file)) or print_error("R SCRIPTS (avg): FILE $Routput_file can not be opened");
-    while($line=<ROUT>)
+    if(!(-e $Rfile) or $OVERWRITE)
     {
-	if ($line=~/Error/)
-	{
-	    print_error("R running: $line\n");
-	}
+        $output_file1 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg.txt";
+        $output_file2 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg_values.txt";
+        $output_file3 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg_names.txt";
+        $output_file4 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg_names2.txt";
+        #
+        $final_avg = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_avg_normalized.txt";
+        $final_avg_spike = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_avg_normalized_spike.txt";
+        $final_avg_sample = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_avg_normalized_sample.txt";
+        #
+        CleanFile($final_avg);
+        SaveFile($final_avg_spike);
+        SaveFile($final_avg_sample);
+        #
+        $n_total_bins = $n_spike_bins + $n_sample_bins;
+        #
+        (open(RFILE,'>',$Rfile)) or print_error("R SCRIPT: FILE $Rfile file can not be opened to write");
+        print RFILE "library(affy)\n";
+        print RFILE "library(MASS)\n";
+        print RFILE "c <- scan(\"$output_file2\",sep=\"\\t\")\n";
+        print RFILE "c <- c + $PSEUDOCOUNT\n";
+        print RFILE "m <-matrix(c,$n_total_bins,$n_experiments,byrow=TRUE)\n";
+        print RFILE "d <- read.table(\"$output_file3\")\n";
+        print RFILE "rownames(m) <- d[,1]\n";
+        print RFILE "s <- seq(1,$n_spike_bins)\n";
+        print RFILE "mn <- normalize.loess(m,subset=s)\n";
+        print RFILE "write.table(mn,file=\"$final_avg\",sep=\"\\t\",row.names=TRUE,col.names=FALSE,quote=FALSE)\n";
+        close(RFILE);
+        #
+        $Routput_file = join("-",@NAMES)."_".$BIN_SIZE."_avg.Rout";
+    
+        # execute R script
+        $command = "R CMD BATCH $Rfile";
+        print_mess("$command\n");
+        system($command);
+        # error check in Rout file
+        (open(ROUT,$Routput_file)) or print_error("R SCRIPTS (avg): FILE $Routput_file can not be opened");
+        while($line=<ROUT>)
+        {
+            if ($line=~/Error/)
+            {
+                print_error("R running: $line\n");
+            }
+        }
+        close(ROUT);
+        $command = "rm -f $Routput_file";
+        print_mess("$command\n");
+        system($command);
+    }else{
+        print_mess("The Rscript", $Rfile, "already exists");
     }
-    close(ROUT);
-    $command = "rm -f $Routput_file";
-    print_mess("$command\n");
-    system($command);
+    #
     #
     # extract all the columns with values (one per experiment)
     $fields = "";
@@ -1471,74 +1486,95 @@ sub RunspikChIPValues
     $binname = " \$".($i+3);
     #
     # distinguish spike from sample bins
-    $command = "join $final_avg $output_file4 | grep FLY | gawk 'BEGIN{OFS=\"\\t\"}{print $binname,$fields}'> $final_avg_spike";
-    print_mess("$command\n");
-    system($command);
-    $command = "join $final_avg $output_file4 | grep -v FLY | gawk 'BEGIN{OFS=\"\\t\"}{print $binname,$fields}'> $final_avg_sample";
-    print_mess("$command\n");
-    system($command);
+    if(!(-e $final_avg_spike) or $OVERWRITE)
+    {
+        $command = "join $final_avg $output_file4 | grep FLY | gawk 'BEGIN{OFS=\"\\t\"}{print $binname,$fields}'> $final_avg_spike";
+        print_mess("$command\n");
+        system($command);
+    }
+    if(!(-e $final_avg_sample) or $OVERWRITE)
+    {
+        $command = "join $final_avg $output_file4 | grep -v FLY | gawk 'BEGIN{OFS=\"\\t\"}{print $binname,$fields}'> $final_avg_sample";
+        print_mess("$command\n");
+        system($command);
+    }
 
     # spikChIP on max values
-    print_mess("Performing the analysis on average values\n");
-    #
+    print_mess("Performing the analysis on max values\n");
     $Rfile = $RSCRIPTS.join("-",@NAMES)."_".$BIN_SIZE."_max.R";
-    $output_file1 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max.txt";
-    $output_file2 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max_values.txt";
-    $output_file3 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max_names.txt";
-    $output_file4 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max_names2.txt";
-    #
-    $final_max = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_max_normalized.txt";
-    $final_max_spike = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_max_normalized_spike.txt";
-    $final_max_sample = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_max_normalized_sample.txt";
-    #
-    CleanFile($final_max);
-    SaveFile($final_max_spike);
-    SaveFile($final_max_sample);
-    #
-    $n_total_bins = $n_spike_bins + $n_sample_bins;
-    #
-    # R code to perform the loess regression on the whole set of bins in all conditions
-    (open(RFILE,'>',$Rfile)) or print_error("R SCRIPT: FILE $Rfile file can not be opened to write");
-    print RFILE "library(affy)\n";
-    print RFILE "library(MASS)\n";
-    print RFILE "c <- scan(\"$output_file2\",sep=\"\\t\")\n";
-    print RFILE "c <- c + $PSEUDOCOUNT\n";
-    print RFILE "m <-matrix(c,$n_total_bins,$n_experiments,byrow=TRUE)\n";
-    print RFILE "d <- read.table(\"$output_file3\")\n";
-    print RFILE "rownames(m) <- d[,1]\n";
-    print RFILE "s <- seq(1,$n_spike_bins)\n";
-    print RFILE "mn <- normalize.loess(m,subset=s)\n";
-    print RFILE "write.table(mn,file=\"$final_max\",sep=\"\\t\",row.names=TRUE,col.names=FALSE,quote=FALSE)\n";
-    close(RFILE);
-    #
-    # execute R script
-    $command = "R CMD BATCH $Rfile";
-    print_mess("$command\n");
-    system($command);
-    #
-    # error check in Rout file
-    $Routput_file = join("-",@NAMES)."_".$BIN_SIZE."_max.Rout";
-    (open(ROUT,$Routput_file)) or print_error("R SCRIPTS (max): FILE $Routput_file can not be opened");
-    while($line=<ROUT>)
+    if(!(-e $Rfile) or $OVERWRITE)
     {
-	if ($line=~/Error/)
-	{
-	    print_error("R running: $line\n");
-	}
+        $output_file1 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max.txt";
+        $output_file2 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max_values.txt";
+        $output_file3 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max_names.txt";
+        $output_file4 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max_names2.txt";
+        #
+        $final_max = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_max_normalized.txt";
+        $final_max_spike = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_max_normalized_spike.txt";
+        $final_max_sample = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_max_normalized_sample.txt";
+        #
+        CleanFile($final_max);
+        SaveFile($final_max_spike);
+        SaveFile($final_max_sample);
+        #
+        $n_total_bins = $n_spike_bins + $n_sample_bins;
+        #
+        # R code to perform the loess regression on the whole set of bins in all conditions
+        (open(RFILE,'>',$Rfile)) or print_error("R SCRIPT: FILE $Rfile file can not be opened to write");
+        print RFILE "library(affy)\n";
+        print RFILE "library(MASS)\n";
+        print RFILE "c <- scan(\"$output_file2\",sep=\"\\t\")\n";
+        print RFILE "c <- c + $PSEUDOCOUNT\n";
+        print RFILE "m <-matrix(c,$n_total_bins,$n_experiments,byrow=TRUE)\n";
+        print RFILE "d <- read.table(\"$output_file3\")\n";
+        print RFILE "rownames(m) <- d[,1]\n";
+        print RFILE "s <- seq(1,$n_spike_bins)\n";
+        print RFILE "mn <- normalize.loess(m,subset=s)\n";
+        print RFILE "write.table(mn,file=\"$final_max\",sep=\"\\t\",row.names=TRUE,col.names=FALSE,quote=FALSE)\n";
+        close(RFILE);
+        #
+        # execute R script
+        $command = "R CMD BATCH $Rfile";
+        print_mess("$command\n");
+        system($command);
+        #
+        # error check in Rout file
+        $Routput_file = join("-",@NAMES)."_".$BIN_SIZE."_max.Rout";
+        (open(ROUT,$Routput_file)) or print_error("R SCRIPTS (max): FILE $Routput_file can not be opened");
+        while($line=<ROUT>)
+        {
+    	if ($line=~/Error/)
+    	{
+    	    print_error("R running: $line\n");
+    	}
+        }
+        close(ROUT);
+        $command = "rm -f $Routput_file";
+        print_mess("$command\n");
+        system($command);
+    }else{
+        print_mess("The Rscript", $Rfile, "already exists");
     }
-    close(ROUT);
-    $command = "rm -f $Routput_file";
-    print_mess("$command\n");
-    system($command);
     #
-    # distinguish spike from sample bins
-    $command = "join $final_max $output_file4 | grep FLY | gawk 'BEGIN{OFS=\"\\t\"}{print $binname,$fields}'> $final_max_spike";
-    print_mess("$command\n");
-    system($command);
-    $command = "join $final_max $output_file4 | grep -v FLY | gawk 'BEGIN{OFS=\"\\t\"}{print $binname,$fields}'> $final_max_sample";
-    print_mess("$command");
-    system($command);
+    if(!(-e $final_max_spike) or $OVERWRITE)
+    {
+        # distinguish spike from sample bins
+        $command = "join $final_max $output_file4 | grep FLY | gawk 'BEGIN{OFS=\"\\t\"}{print $binname,$fields}'> $final_max_spike";
+        print_mess("$command\n");
+        system($command);
+    }else{
+        print_mess("\t $final_max_spike already exists");
+    }
+    if(!(-e $final_max_sample) or $OVERWRITE)
+    {
+        $command = "join $final_max $output_file4 | grep -v FLY | gawk 'BEGIN{OFS=\"\\t\"}{print $binname,$fields}'> $final_max_sample";
+        print_mess("$command");
+        system($command);
+    }else{
+        print_mess("\t $final_max_sample already exists");
+    }
 }
+
 
 sub ClassifyBins
 {
