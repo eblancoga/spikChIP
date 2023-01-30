@@ -321,18 +321,21 @@ if($TAGREMOVAL)
     JoinNormValues($TAGREMOVAL_TOKEN);
     print_mess("\n");
 }
-exit 42;
 
-print_mess("Starting $PROGRAM local normalization...\n");
-print_mess("Prepare $PROGRAM data values for local normalization\n");
-PreparespikChIPValues();
-print_mess("Run local regression adjusting sample values with spike values\n");
-RunspikChIPValues();
-print_ok();
+if($SPIKCHIP)
+{
+    print_mess("Starting $PROGRAM local normalization...\n");
+    print_mess("Prepare $PROGRAM data values for local normalization\n");
+    PreparespikChIPValues();
+    print_mess("Run local regression adjusting sample values with spike values\n");
+    RunspikChIPValues();
+    print_ok();
+}
+
 print_mess("Finishing Stage 2. Normalization...");
 print_ok();
 print_mess("\n");
-
+exit 42;
 
 # Step 3. Identification of bins associated to peaks/bg
 $date = localtime();
@@ -1421,17 +1424,17 @@ sub RunspikChIPValues
     # spikChIP on avg values
     print_mess("Performing the analysis on average values\n");
     $Rfile = $RSCRIPTS.join("-",@NAMES)."_".$BIN_SIZE."_avg.R";
+    $output_file1 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg.txt";
+    $output_file2 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg_values.txt";
+    $output_file3 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg_names.txt";
+    $output_file4 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg_names2.txt";
+    #
+    $final_avg = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_avg_normalized.txt";
+    $final_avg_spike = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_avg_normalized_spike.txt";
+    $final_avg_sample = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_avg_normalized_sample.txt";
     # R code to perform the loess regression on the whole set of bins in all conditions
     if(!(-e $Rfile) or $OVERWRITE)
     {
-        $output_file1 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg.txt";
-        $output_file2 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg_values.txt";
-        $output_file3 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg_names.txt";
-        $output_file4 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg_names2.txt";
-        #
-        $final_avg = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_avg_normalized.txt";
-        $final_avg_spike = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_avg_normalized_spike.txt";
-        $final_avg_sample = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_avg_normalized_sample.txt";
         #
         CleanFile($final_avg);
         SaveFile($final_avg_spike);
@@ -1471,32 +1474,33 @@ sub RunspikChIPValues
         $command = "rm -f $Routput_file";
         print_mess("$command\n");
         system($command);
+        
+        #
+        #
+        # extract all the columns with values (one per experiment)
+        $fields = "";
+        for($i=0; $i<$n_experiments-1; $i++)
+        {
+        $fields = $fields." \$".($i+2).",";
+        }
+        $fields = $fields." \$".($i+2);
+        $binname = " \$".($i+3);
+        #
+        # distinguish spike from sample bins
+        if(!(-e $final_avg_spike) or $OVERWRITE)
+        {
+            $command = "join $final_avg $output_file4 | grep FLY | gawk 'BEGIN{OFS=\"\\t\"}{print $binname,$fields}'> $final_avg_spike";
+            print_mess("$command\n");
+            system($command);
+        }
+        if(!(-e $final_avg_sample) or $OVERWRITE)
+        {
+            $command = "join $final_avg $output_file4 | grep -v FLY | gawk 'BEGIN{OFS=\"\\t\"}{print $binname,$fields}'> $final_avg_sample";
+            print_mess("$command\n");
+            system($command);
+        }
     }else{
         print_mess("The Rscript", $Rfile, "already exists");
-    }
-    #
-    #
-    # extract all the columns with values (one per experiment)
-    $fields = "";
-    for($i=0; $i<$n_experiments-1; $i++)
-    {
-	$fields = $fields." \$".($i+2).",";
-    }
-    $fields = $fields." \$".($i+2);
-    $binname = " \$".($i+3);
-    #
-    # distinguish spike from sample bins
-    if(!(-e $final_avg_spike) or $OVERWRITE)
-    {
-        $command = "join $final_avg $output_file4 | grep FLY | gawk 'BEGIN{OFS=\"\\t\"}{print $binname,$fields}'> $final_avg_spike";
-        print_mess("$command\n");
-        system($command);
-    }
-    if(!(-e $final_avg_sample) or $OVERWRITE)
-    {
-        $command = "join $final_avg $output_file4 | grep -v FLY | gawk 'BEGIN{OFS=\"\\t\"}{print $binname,$fields}'> $final_avg_sample";
-        print_mess("$command\n");
-        system($command);
     }
 
     # spikChIP on max values
@@ -1552,26 +1556,27 @@ sub RunspikChIPValues
         $command = "rm -f $Routput_file";
         print_mess("$command\n");
         system($command);
+        
+        #
+        if(!(-e $final_max_spike) or $OVERWRITE)
+        {
+            # distinguish spike from sample bins
+            $command = "join $final_max $output_file4 | grep FLY | gawk 'BEGIN{OFS=\"\\t\"}{print $binname,$fields}'> $final_max_spike";
+            print_mess("$command\n");
+            system($command);
+        }else{
+            print_mess("\t $final_max_spike already exists");
+        }
+        if(!(-e $final_max_sample) or $OVERWRITE)
+        {
+            $command = "join $final_max $output_file4 | grep -v FLY | gawk 'BEGIN{OFS=\"\\t\"}{print $binname,$fields}'> $final_max_sample";
+            print_mess("$command");
+            system($command);
+        }else{
+            print_mess("\t $final_max_sample already exists");
+        }
     }else{
         print_mess("The Rscript", $Rfile, "already exists");
-    }
-    #
-    if(!(-e $final_max_spike) or $OVERWRITE)
-    {
-        # distinguish spike from sample bins
-        $command = "join $final_max $output_file4 | grep FLY | gawk 'BEGIN{OFS=\"\\t\"}{print $binname,$fields}'> $final_max_spike";
-        print_mess("$command\n");
-        system($command);
-    }else{
-        print_mess("\t $final_max_spike already exists");
-    }
-    if(!(-e $final_max_sample) or $OVERWRITE)
-    {
-        $command = "join $final_max $output_file4 | grep -v FLY | gawk 'BEGIN{OFS=\"\\t\"}{print $binname,$fields}'> $final_max_sample";
-        print_mess("$command");
-        system($command);
-    }else{
-        print_mess("\t $final_max_sample already exists");
     }
 }
 
