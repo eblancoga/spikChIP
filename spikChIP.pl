@@ -335,7 +335,7 @@ if($SPIKCHIP)
 print_mess("Finishing Stage 2. Normalization...");
 print_ok();
 print_mess("\n");
-exit 42;
+
 
 # Step 3. Identification of bins associated to peaks/bg
 $date = localtime();
@@ -346,26 +346,38 @@ ClassifyBins();
 print_ok();
 print_mess("\n");
 
+
 print_mess("Processing values of each normalization strategy into peaks and bg\n");
-print_mess("Working with $RAW_TOKEN values\n");
-ClassifyNormalizationValues($RAW_TOKEN);
-print_ok();
-print_mess("\n");
-print_mess("Working with $TRADITIONAL_TOKEN values\n");
-ClassifyNormalizationValues($TRADITIONAL_TOKEN);
-print_ok();
-print_mess("\n");
-print_mess("Working with $CHIPRX_TOKEN values\n");
-ClassifyNormalizationValues($CHIPRX_TOKEN);
-print_ok();
-print_mess("\n");
-print_mess("Working with $TAGREMOVAL_TOKEN values\n");
-ClassifyNormalizationValues($TAGREMOVAL_TOKEN);
-print_ok();
-print_mess("\n");
-print_mess("Working with $SPIKCHIP_TOKEN values\n");
-ClassifyNormalizationValues($SPIKCHIP_TOKEN);
-print_ok();
+if($RAW){
+    print_mess("Working with $RAW_TOKEN values\n");
+    ClassifyNormalizationValues($RAW_TOKEN);
+    print_ok();
+    print_mess("\n");
+}
+if($TRADITIONAL){
+    print_mess("Working with $TRADITIONAL_TOKEN values\n");
+    ClassifyNormalizationValues($TRADITIONAL_TOKEN);
+    print_ok();
+    print_mess("\n");
+}
+if($CHIPRX){
+    print_mess("Working with $CHIPRX_TOKEN values\n");
+    ClassifyNormalizationValues($CHIPRX_TOKEN);
+    print_ok();
+    print_mess("\n");
+}
+if($TAGREMOVAL){
+    print_mess("Working with $TAGREMOVAL_TOKEN values\n");
+    ClassifyNormalizationValues($TAGREMOVAL_TOKEN);
+    print_ok();
+    print_mess("\n");
+    exit 42;
+}
+if($SPIKCHIP){
+    print_mess("Working with $SPIKCHIP_TOKEN values\n");
+    ClassifyNormalizationValues($SPIKCHIP_TOKEN);
+    print_ok();
+}
 print_mess("Finishing Stage 3. Segregation...");
 print_ok();
 print_mess("\n");
@@ -1591,51 +1603,52 @@ sub ClassifyBins
     # for each experiment, compare spike/sample genome bins to peaks in the corresponding spike/genome
     for ($i=0; $i<scalar(@NAMES); $i++)
     {
-	print_mess("Working with sample $NAMES[$i]: peaks Vs. bins of spike\n");
-	
-	# use SeqCode to identify the spike bins overlapping with spike peaks
-	$out_name = $NAMES[$i]."_".$BIN_SIZE."_spike_bins";
-	$folder = $PEAKS_TOKEN."_".$out_name."_matchpeaks";
-	$out_common = $folder."/common_".$PEAKS_TOKEN."_".$out_name.".bed";
-	$out_peaks_file = $RESULTS.$NAMES[$i]."_".$BIN_SIZE."_bins_spike_peaks.bed";
-	$BINS_PEAKS_SPIKE[$i] = $out_peaks_file;
-	#
-	CleanFile($out_peaks_file);
-	#
-	$command = "matchpeaks -v $PEAKS_SPIKES[$i] $spike_bins $PEAKS_TOKEN $out_name";
-	print_mess("$command\n");
-	system($command);
-	$command = "grep spike_bins $out_common > $out_peaks_file";
-	print_mess("$command\n");
-	system($command);
-	#
-	print_mess("Removing SeqCode folder\n");
-	$command = "rm -rf $folder";
-	system($command);
-	print_mess("\n");
-	#
-	print_mess("Working with sample $NAMES[$i]: peaks Vs. bins of sample\n");
-	
-	# use SeqCode to identify the sample bins overlapping with sample peaks
-	$out_name = $NAMES[$i]."_".$BIN_SIZE."_sample_bins";
-	$folder = $PEAKS_TOKEN."_".$out_name."_matchpeaks";
-	$out_common = $folder."/common_".$PEAKS_TOKEN."_".$out_name.".bed";
-	$out_peaks_file = $RESULTS.$NAMES[$i]."_".$BIN_SIZE."_bins_sample_peaks.bed";
-	$BINS_PEAKS_SAMPLE[$i] = $out_peaks_file;
-	#
-	CleanFile($out_peaks_file);
-	#
-	$command = "matchpeaks -v $PEAKS_SAMPLES[$i] $sample_bins $PEAKS_TOKEN $out_name";
-	print_mess("$command\n");
-	system($command);
-	$command = "grep sample_bins $out_common > $out_peaks_file";
-	print_mess("$command\n");
-	system($command);
-	#
-	print_mess("Removing SeqCode folder\n");
-	$command = "rm -rf $folder";
-	system($command);
-	#
+    	print_mess("Working with sample $NAMES[$i]: peaks Vs. bins of spike\n");
+    	
+    	# use SeqCode to identify the spike bins overlapping with spike peaks
+    	$out_name = $NAMES[$i]."_".$BIN_SIZE."_spike_bins";
+    	$folder = $PEAKS_TOKEN."_".$out_name."_matchpeaks";
+    	$out_common = $folder."/common_".$PEAKS_TOKEN."_".$out_name.".bed";
+    	$out_peaks_file = $RESULTS.$NAMES[$i]."_".$BIN_SIZE."_bins_spike_peaks.bed";
+    	$BINS_PEAKS_SPIKE[$i] = $out_peaks_file;
+    	#
+    	if(!(-e $out_peaks_file) or $OVERWRITE)
+        {
+            CleanFile($out_peaks_file);
+            
+        	$command = "matchpeaks -v $PEAKS_SPIKES[$i] $spike_bins $PEAKS_TOKEN $out_name";
+        	print_mess("$command\n");
+        	system($command);
+        	$command = "grep spike_bins $out_common > $out_peaks_file";
+        	print_mess("$command\n");
+        	system($command);
+        	#
+        	CleanFolder($folder);
+        	print_mess("\n");
+    	}
+    	#
+    	print_mess("Working with sample $NAMES[$i]: peaks Vs. bins of sample\n");
+    	
+    	# use SeqCode to identify the sample bins overlapping with sample peaks
+    	$out_name = $NAMES[$i]."_".$BIN_SIZE."_sample_bins";
+    	$folder = $PEAKS_TOKEN."_".$out_name."_matchpeaks";
+    	$out_common = $folder."/common_".$PEAKS_TOKEN."_".$out_name.".bed";
+    	$out_peaks_file = $RESULTS.$NAMES[$i]."_".$BIN_SIZE."_bins_sample_peaks.bed";
+    	$BINS_PEAKS_SAMPLE[$i] = $out_peaks_file;
+    	#
+    	if(!(-e $out_peaks_file) or $OVERWRITE)
+        {
+        	CleanFile($out_peaks_file);
+        	#
+        	$command = "matchpeaks -v $PEAKS_SAMPLES[$i] $sample_bins $PEAKS_TOKEN $out_name";
+        	print_mess("$command\n");
+        	system($command);
+        	$command = "grep sample_bins $out_common > $out_peaks_file";
+        	print_mess("$command\n");
+        	system($command);
+        	#
+        	CleanFolder($folder);
+    	}
     }
 }
 
@@ -1656,101 +1669,141 @@ sub ClassifyNormalizationValues
     $n_experiments = scalar(@NAMES);
     for($i=0; $i<$n_experiments; $i++)
     {
-	$name = $NAMES[$i];
-	# select the corresponding column in the results file for the current experiment
-	$n_field = "\$".($i + 2);
-	#
-	# extract values for spike with avg
-	if ($token eq $SPIKCHIP_TOKEN)
-	{
-	    $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_avg_normalized_spike.txt";
-	}
-	else
-	{
-	    $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_spike_avg.txt";
-	}
-	$output_file = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_avg_peaks.txt";
-	$command = "grep -v track ".$BINS_PEAKS_SPIKE[$i]." | gawk '{print \$1\"*\"\$2\"*\"\$3}' | sort | join - $input_file | gawk '{print \$1,$n_field;}' > $output_file";
-	print_mess("$command\n");
-	system($command);
-	#
-	CleanFile($output_file);
-	#
-	$output_file = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_avg_bg.txt";
-	$command = "grep -v track ".$BINS_PEAKS_SPIKE[$i]." | gawk '{print \$1\"*\"\$2\"*\"\$3}' | sort | join -v 2 - $input_file | gawk '{print \$1,$n_field;}' > $output_file";
-	print_mess("$command\n");
-	system($command);
-	#
-	CleanFile($output_file);
-	#
-	# extract values for sample with avg
-	if ($token eq $SPIKCHIP_TOKEN)
-	{
-	    $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_avg_normalized_sample.txt";
-	}
-	else
-	{
-	    $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_sample_avg.txt";
-	}
-	$output_file = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_avg_peaks.txt";
-	$command = "grep -v track ".$BINS_PEAKS_SAMPLE[$i]." | gawk '{print \$1\"*\"\$2\"*\"\$3}' | sort | join - $input_file | gawk '{print \$1,$n_field;}' > $output_file";
-	print_mess("$command\n");
-	system($command);
-	#
-	CleanFile($output_file);
-	#
-	$output_file = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_avg_bg.txt";
-	$command = "grep -v track ".$BINS_PEAKS_SAMPLE[$i]." | gawk '{print \$1\"*\"\$2\"*\"\$3}' | sort | join -v 2 - $input_file | gawk '{print \$1,$n_field;}' > $output_file";
-	print_mess("$command\n");
-	system($command);
-	#
-	CleanFile($output_file);
-	#
-	# extract values for spike with max
-	if ($token eq $SPIKCHIP_TOKEN)
-	{
-	    $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_max_normalized_spike.txt";
-	}
-	else
-	{
-	    $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_spike_max.txt";
-	}
-	$output_file = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_max_peaks.txt";
-	$command = "grep -v track ".$BINS_PEAKS_SPIKE[$i]." | gawk '{print \$1\"*\"\$2\"*\"\$3}' | sort | join - $input_file | gawk '{print \$1,$n_field;}' > $output_file";
-	print_mess("$command\n");
-	system($command);
-	#
-	CleanFile($output_file);
-	#
-	$output_file = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_max_bg.txt";
-	$command = "grep -v track ".$BINS_PEAKS_SPIKE[$i]." | gawk '{print \$1\"*\"\$2\"*\"\$3}' | sort | join -v 2 - $input_file | gawk '{print \$1,$n_field;}' > $output_file";
-	print_mess("$command\n");
-	system($command);
-	#
-	CleanFile($output_file);
-	#
-	# extract values for sample with max
-	if ($token eq $SPIKCHIP_TOKEN)
-	{
-	    $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_max_normalized_sample.txt";
-	}
-	else
-	{
-	    $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_sample_max.txt";
-	}
-	$output_file = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_max_peaks.txt";
-	$command = "grep -v track ".$BINS_PEAKS_SAMPLE[$i]." | gawk '{print \$1\"*\"\$2\"*\"\$3}' | sort | join - $input_file | gawk '{print \$1,$n_field;}' > $output_file";
-	print_mess("$command\n");
-	system($command);
-	#
-	CleanFile($output_file);
-	#
-	$output_file = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_max_bg.txt";
-	$command = "grep -v track ".$BINS_PEAKS_SAMPLE[$i]." | gawk '{print \$1\"*\"\$2\"*\"\$3}' | sort | join -v 2 - $input_file | gawk '{print \$1,$n_field;}' > $output_file";
-	print_mess("$command\n");
-	system($command);
-	#
-	CleanFile($output_file);
+        $name = $NAMES[$i];
+        # select the corresponding column in the results file for the current experiment
+        $n_field = "\$".($i + 2);
+        #
+        # extract values for spike with avg
+        if ($token eq $SPIKCHIP_TOKEN)
+        {
+            $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_avg_normalized_spike.txt";
+        }
+        else
+        {
+            $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_spike_avg.txt";
+        }
+        $output_file = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_avg_peaks.txt";
+        if(!(-e $output_file) or $OVERWRITE)
+        {
+            $command = "grep -v track ".$BINS_PEAKS_SPIKE[$i]." | gawk '{print \$1\"*\"\$2\"*\"\$3}' | sort | join - $input_file | gawk '{print \$1,$n_field;}' > $output_file";
+            print_mess("$command\n");
+            system($command);
+        }else{
+            print_mess("\t $output_file already exists");
+        }
+        #
+        CleanFile($output_file);
+        #
+        $output_file = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_avg_bg.txt";
+        if(!(-e $output_file) or $OVERWRITE)
+        {
+            $command = "grep -v track ".$BINS_PEAKS_SPIKE[$i]." | gawk '{print \$1\"*\"\$2\"*\"\$3}' | sort | join -v 2 - $input_file | gawk '{print \$1,$n_field;}' > $output_file";
+            print_mess("$command\n");
+            system($command);
+        }else{
+            print_mess("\t $output_file already exists");
+        }
+        #
+        CleanFile($output_file);
+        #
+        # extract values for sample with avg
+        if ($token eq $SPIKCHIP_TOKEN)
+        {
+            $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_avg_normalized_sample.txt";
+        }
+        else
+        {
+            $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_sample_avg.txt";
+        }
+        $output_file = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_avg_peaks.txt";
+        if(!(-e $output_file) or $OVERWRITE)
+        {
+            $command = "grep -v track ".$BINS_PEAKS_SAMPLE[$i]." | gawk '{print \$1\"*\"\$2\"*\"\$3}' | sort | join - $input_file | gawk '{print \$1,$n_field;}' > $output_file";
+            print_mess("$command\n");
+            system($command);
+        }else{
+            print_mess("\t $output_file already exists");
+        }
+        #
+        CleanFile($output_file);
+        #
+        $output_file = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_avg_bg.txt";
+        if(!(-e $output_file) or $OVERWRITE)
+        {
+            $command = "grep -v track ".$BINS_PEAKS_SAMPLE[$i]." | gawk '{print \$1\"*\"\$2\"*\"\$3}' | sort | join -v 2 - $input_file | gawk '{print \$1,$n_field;}' > $output_file";
+            print_mess("$command\n");
+            system($command);
+        }else{
+            print_mess("\t $output_file already exists");
+        }
+        #
+        CleanFile($output_file);
+        #
+        # extract values for spike with max
+        if ($token eq $SPIKCHIP_TOKEN)
+        {
+            $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_max_normalized_spike.txt";
+        }
+        else
+        {
+            $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_spike_max.txt";
+        }
+        $output_file = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_max_peaks.txt";
+        if(!(-e $output_file) or $OVERWRITE)
+        {
+            $command = "grep -v track ".$BINS_PEAKS_SPIKE[$i]." | gawk '{print \$1\"*\"\$2\"*\"\$3}' | sort | join - $input_file | gawk '{print \$1,$n_field;}' > $output_file";
+            print_mess("$command\n");
+            system($command);
+        }else{
+            print_mess("\t $output_file already exists");
+        }
+        #
+        CleanFile($output_file);
+        #
+        $output_file = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_max_bg.txt";
+        if(!(-e $output_file) or $OVERWRITE)
+        {
+            $command = "grep -v track ".$BINS_PEAKS_SPIKE[$i]." | gawk '{print \$1\"*\"\$2\"*\"\$3}' | sort | join -v 2 - $input_file | gawk '{print \$1,$n_field;}' > $output_file";
+            print_mess("$command\n");
+            system($command);
+        }else{
+            print_mess("\t $output_file already exists");
+        }
+        #
+        CleanFile($output_file);
+        #
+        # extract values for sample with max
+        if ($token eq $SPIKCHIP_TOKEN)
+        {
+            $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_max_normalized_sample.txt";
+        }
+        else
+        {
+            $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_sample_max.txt";
+        }
+        $output_file = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_max_peaks.txt";
+        if(!(-e $output_file) or $OVERWRITE)
+        {
+            $command = "grep -v track ".$BINS_PEAKS_SAMPLE[$i]." | gawk '{print \$1\"*\"\$2\"*\"\$3}' | sort | join - $input_file | gawk '{print \$1,$n_field;}' > $output_file";
+            print_mess("$command\n");
+            system($command);
+        }else{
+            print_mess("\t $output_file already exists");
+        }
+        #
+        CleanFile($output_file);
+        #
+        $output_file = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_max_bg.txt";
+        if(!(-e $output_file) or $OVERWRITE)
+        {
+            $command = "grep -v track ".$BINS_PEAKS_SAMPLE[$i]." | gawk '{print \$1\"*\"\$2\"*\"\$3}' | sort | join -v 2 - $input_file | gawk '{print \$1,$n_field;}' > $output_file";
+            print_mess("$command\n");
+            system($command);
+        }else{
+            print_mess("\t $output_file already exists");
+        }
+        #
+        CleanFile($output_file);
     }
 
     # (B) join the files of values for bins of peaks and bins of bg of each experiment into a single final experiment
@@ -1758,8 +1811,8 @@ sub ClassifyNormalizationValues
     $field_notnull = "gawk '{if (";
     for($i=0; $i<$n_experiments-1; $i++)
     {
-	$n_field = "\$".($i + 2);
-	$field_notnull = $field_notnull."$n_field !=0 && ";
+    $n_field = "\$".($i + 2);
+    $field_notnull = $field_notnull."$n_field !=0 && ";
     }
     $n_field = "\$".($i + 2);
     $field_notnull = $field_notnull."$n_field !=0) print \$0}'";
@@ -1776,21 +1829,31 @@ sub ClassifyNormalizationValues
     # the rest of experiments (if any)
     for($i=2; $i<$n_experiments; $i++)
     {
-	$file_avg = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_avg_peaks.txt";
-	$file_max = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_max_peaks.txt";
-	$commandAVG = $commandAVG." | join - $file_avg ";
-	$commandMAX = $commandMAX." | join - $file_max ";
+    $file_avg = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_avg_peaks.txt";
+    $file_max = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_max_peaks.txt";
+    $commandAVG = $commandAVG." | join - $file_avg ";
+    $commandMAX = $commandMAX." | join - $file_max ";
     }
 
     $final_avg = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_spike_avg_peaks.txt";
     $final_max = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_spike_max_peaks.txt";
     #
-    $commandAVG = $commandAVG." | $field_notnull > $final_avg";
-    print_mess("$commandAVG\n");
-    system($commandAVG);
-    $commandMAX = $commandMAX." | $field_notnull > $final_max";
-    print_mess("$commandMAX\n");
-    system($commandMAX);
+    if(!(-e $final_avg) or $OVERWRITE)
+    {
+        $commandAVG = $commandAVG." | $field_notnull > $final_avg";
+        print_mess("$commandAVG\n");
+        system($commandAVG);
+    }else{
+        print_mess("\t $final_avg already exists");
+    }
+    if(!(-e $final_max) or $OVERWRITE)
+    {
+        $commandMAX = $commandMAX." | $field_notnull > $final_max";
+        print_mess("$commandMAX\n");
+        system($commandMAX);
+    }else{
+        print_mess("\t $final_max already exists");
+    }
     #
     SaveFile($final_avg);
     SaveFile($final_max);
@@ -1807,21 +1870,31 @@ sub ClassifyNormalizationValues
     # the rest of experiments (if any)
     for($i=2; $i<$n_experiments; $i++)
     {
-	$file_avg = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_avg_peaks.txt";
-	$file_max = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_max_peaks.txt";
-	$commandAVG = $commandAVG." | join - $file_avg ";
-	$commandMAX = $commandMAX." | join - $file_max ";
+    $file_avg = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_avg_peaks.txt";
+    $file_max = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_max_peaks.txt";
+    $commandAVG = $commandAVG." | join - $file_avg ";
+    $commandMAX = $commandMAX." | join - $file_max ";
     }
 
     $final_avg = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_sample_avg_peaks.txt";
     $final_max = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_sample_max_peaks.txt";
     #
-    $commandAVG = $commandAVG." | $field_notnull > $final_avg";
-    print_mess("$commandAVG\n");
-    system($commandAVG);
-    $commandMAX = $commandMAX." | $field_notnull > $final_max";
-    print_mess("$commandMAX\n");
-    system($commandMAX);
+    if(!(-e $final_avg) or $OVERWRITE)
+    {
+        $commandAVG = $commandAVG." | $field_notnull > $final_avg";
+        print_mess("$commandAVG\n");
+        system($commandAVG);
+    }else{
+        print_mess("\t $final_avg already exists");
+    }
+    if(!(-e $final_max) or $OVERWRITE)
+    {
+        $commandMAX = $commandMAX." | $field_notnull > $final_max";
+        print_mess("$commandMAX\n");
+        system($commandMAX);
+    }else{
+        print_mess("\t $final_max already exists");
+    }
     #
     SaveFile($final_avg);
     SaveFile($final_max);
@@ -1838,21 +1911,31 @@ sub ClassifyNormalizationValues
     # the rest of experiments (if any)
     for($i=2; $i<$n_experiments; $i++)
     {
-	$file_avg = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_avg_bg.txt";
-	$file_max = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_max_bg.txt";
-	$commandAVG = $commandAVG." | join - $file_avg ";
-	$commandMAX = $commandMAX." | join - $file_max ";
+    $file_avg = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_avg_bg.txt";
+    $file_max = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_max_bg.txt";
+    $commandAVG = $commandAVG." | join - $file_avg ";
+    $commandMAX = $commandMAX." | join - $file_max ";
     }
 
     $final_avg = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_spike_avg_bg.txt";
     $final_max = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_spike_max_bg.txt";
     #
-    $commandAVG = $commandAVG." | $field_notnull > $final_avg";
-    print_mess("$commandAVG\n");
-    system($commandAVG);
-    $commandMAX = $commandMAX." | $field_notnull > $final_max";
-    print_mess("$commandMAX\n");
-    system($commandMAX);
+    if(!(-e $final_avg) or $OVERWRITE)
+    {
+        $commandAVG = $commandAVG." | $field_notnull > $final_avg";
+        print_mess("$commandAVG\n");
+        system($commandAVG);
+    }else{
+        print_mess("\t $final_avg already exists");
+    }
+    if(!(-e $final_max) or $OVERWRITE)
+    {
+        $commandMAX = $commandMAX." | $field_notnull > $final_max";
+        print_mess("$commandMAX\n");
+        system($commandMAX);
+    }else{
+        print_mess("\t $final_max already exists");
+    }
     #
     SaveFile($final_avg);
     SaveFile($final_max);
@@ -1869,21 +1952,31 @@ sub ClassifyNormalizationValues
     # the rest of experiments (if any)
     for($i=2; $i<$n_experiments; $i++)
     {
-	$file_avg = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_avg_bg.txt";
-	$file_max = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_max_bg.txt";
-	$commandAVG = $commandAVG." | join - $file_avg ";
-	$commandMAX = $commandMAX." | join - $file_max ";
+    $file_avg = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_avg_bg.txt";
+    $file_max = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_max_bg.txt";
+    $commandAVG = $commandAVG." | join - $file_avg ";
+    $commandMAX = $commandMAX." | join - $file_max ";
     }
 
     $final_avg = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_sample_avg_bg.txt";
     $final_max = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_sample_max_bg.txt";
     #
-    $commandAVG = $commandAVG." | $field_notnull > $final_avg";
-    print_mess("$commandAVG\n");
-    system($commandAVG);
-    $commandMAX = $commandMAX." | $field_notnull > $final_max";
-    print_mess("$commandMAX");
-    system($commandMAX);
+    if(!(-e $final_avg) or $OVERWRITE)
+    {
+        $commandAVG = $commandAVG." | $field_notnull > $final_avg";
+        print_mess("$commandAVG\n");
+        system($commandAVG);
+    }else{
+        print_mess("\t $final_avg already exists");
+    }
+    if(!(-e $final_max) or $OVERWRITE)
+    {
+        $commandMAX = $commandMAX." | $field_notnull > $final_max";
+        print_mess("$commandMAX");
+        system($commandMAX);
+    }else{
+        print_mess("\t $final_max already exists");
+    }
     #
     SaveFile($final_avg);
     SaveFile($final_max);
