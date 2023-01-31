@@ -387,9 +387,10 @@ $date = localtime();
 print_mess("[$date] Stage 4.  Generating the final boxplots of values\n");
 
 print_mess("Boxplots using the average values\n");
-GenerateBoxplot($SPIKE_TOKEN,$AVG_TOKEN);
-exit 42;
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#GenerateBoxplot($SPIKE_TOKEN,$AVG_TOKEN);
 GenerateBoxplot($SAMPLE_TOKEN,$AVG_TOKEN);
+exit 42;
 print_ok();
 print_mess("\n");
 
@@ -1995,6 +1996,24 @@ sub NumberLines
     return $count;
 }
 
+# addPath($norm_token, $exp, $val, $extension, @files_array)
+sub addPath
+{
+    my $norm_token = $_[0];
+    my $exp = $_[1];
+    my $val = $_[2];
+    my $extension = $_[3];
+    my @files_array = @{$_[4]};
+    my $input;
+    my $nb_line;
+    
+    $input = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$norm_token."_".$BIN_SIZE."_".$exp."_".$val.$extension;
+    $nb_line = NumberLines($input);
+    if($nb_line != 0){push(@files_array, $input);}
+    return @files_array;
+}
+
+
 sub GenerateBoxplot
 {
     my $experiment = $_[0];
@@ -2021,41 +2040,16 @@ sub GenerateBoxplot
     {
         (open(RFILE,'>',$Rfile)) or print_error("R SCRIPT (boxplots): FILE $Rfile file can not be opened to write");
         
+        if($RAW){@input_files = addPath($RAW_TOKEN, $experiment, $value, "_peaks.txt", \@input_files);}
+        if($TRADITIONAL){@input_files = addPath($TRADITIONAL_TOKEN, $experiment, $value, "_peaks.txt", \@input_files);}
+        if($CHIPRX){@input_files = addPath($CHIPRX_TOKEN, $experiment, $value, "_peaks.txt", \@input_files);}
+        if($TAGREMOVAL){@input_files = addPath($TAGREMOVAL_TOKEN, $experiment, $value, "_peaks.txt", \@input_files);}
+        if($SPIKCHIP){@input_files = addPath($SPIKCHIP_TOKEN, $experiment, $value, "_peaks.txt", \@input_files);}
+        
+        
         if($RAW)
         {
-            $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$RAW_TOKEN."_".$BIN_SIZE."_".$experiment."_".$value."_peaks.txt";
-            $nb_line = NumberLines($input_file);
-            if($nb_line != 0){push(@input_files, $input_file);}
-            exit 42;
-            
-            #print RFILE "c1<-read.table(\"$input_file\")\n";
-        }
-        if($TRADITIONAL)
-        {
-            $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$TRADITIONAL_TOKEN."_".$BIN_SIZE."_".$experiment."_".$value."_peaks.txt";
-            push(@input_files, $input_file);
-            #print RFILE "c2<-read.table(\"$input_file\")\n";
-        }
-        if($CHIPRX)
-        {
-            $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$CHIPRX_TOKEN."_".$BIN_SIZE."_".$experiment."_".$value."_peaks.txt";
-            push(@input_files, $input_file);
-            #print RFILE "c3<-read.table(\"$input_file\")\n";
-        }
-        if($TAGREMOVAL)
-        {
-            $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$TAGREMOVAL_TOKEN."_".$BIN_SIZE."_".$experiment."_".$value."_peaks.txt";
-            push(@input_files, $input_file);
-            #print RFILE "c4<-read.table(\"$input_file\")\n";
-        }
-        if($SPIKCHIP)
-        {
-            $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_".$experiment."_".$value."_peaks.txt";
-            push(@input_files, $input_file);
-            #print RFILE "c5<-read.table(\"$input_file\")\n";
-        }
-        if($RAW)
-        {
+            @input_files = addPath($SPIKCHIP_TOKEN, $experiment, $value, "_peaks.txt", \@input_files);
             $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$RAW_TOKEN."_".$BIN_SIZE."_".$experiment."_".$value."_bg.txt";
             push(@input_files, $input_file);
             #print RFILE "c6<-read.table(\"$input_file\")\n";
