@@ -387,10 +387,8 @@ $date = localtime();
 print_mess("[$date] Stage 4.  Generating the final boxplots of values\n");
 
 print_mess("Boxplots using the average values\n");
-#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-#GenerateBoxplot($SPIKE_TOKEN,$AVG_TOKEN);
+GenerateBoxplot($SPIKE_TOKEN,$AVG_TOKEN);
 GenerateBoxplot($SAMPLE_TOKEN,$AVG_TOKEN);
-exit 42;
 print_ok();
 print_mess("\n");
 
@@ -401,7 +399,6 @@ print_ok();
 print_mess("Finishing Stage 4. Drawing...");
 print_ok();
 print_mess("\n");
-
 
 ## Step 5. End of the analysis
 my $stop;
@@ -2119,28 +2116,34 @@ sub GenerateBoxplot
         $towrite = $towrite."dev.off()\n";
         print RFILE $towrite;
         close(RFILE);
-        exit 42;
+    }else{
+        print_mess("\t The R script ",$Rfile, "already exists.") 
     }
     #
-    # execute R script
-    $command = "R CMD BATCH $Rfile";
-    print_mess("$command\n");
-    system($command);
-    #
-    # error check in Rout file
-    $Routput_file = join("-",@NAMES)."_".$BIN_SIZE."_".$experiment."_".$value."_boxplot.Rout";
-    (open(ROUT,$Routput_file)) or print_error("R SCRIPTS (avg): FILE $Routput_file can not be opened");
-    while($line=<ROUT>)
+    if(!(-e $PDF_file) or $OVERWRITE)
     {
-	if ($line=~/Error/)
-	{
-	    print_error("R running: $line\n");
-	}
+        # execute R script
+        $command = "R CMD BATCH $Rfile";
+        print_mess("$command\n");
+        system($command);
+        #
+        # error check in Rout file
+        $Routput_file = join("-",@NAMES)."_".$BIN_SIZE."_".$experiment."_".$value."_boxplot.Rout";
+        (open(ROUT,$Routput_file)) or print_error("R SCRIPTS (avg): FILE $Routput_file can not be opened");
+        while($line=<ROUT>)
+        {
+    	if ($line=~/Error/)
+    	{
+    	    print_error("R running: $line\n");
+    	}
+        }
+        close(ROUT);
+        $command = "rm -f $Routput_file";
+        print_mess("$command\n");
+        system($command);
+    }else{
+        print_mess("\t The plot ",$PDF_file, "already exists.") 
     }
-    close(ROUT);
-    $command = "rm -f $Routput_file";
-    print_mess("$command\n");
-    system($command);
 }
 
 sub CleanFile
