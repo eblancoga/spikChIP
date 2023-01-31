@@ -2034,8 +2034,29 @@ sub peaksBgTXT
     if($SPIKCHIP){@files_array = addPath($SPIKCHIP_TOKEN, $exp, $val, $extension, \@files_array);}
     
     return @files_array;
-
 }
+
+
+sub pathVector
+{
+    my @files_array = @{$_[0]};
+    my $last_element;
+    my $pathvec;
+    my $file;
+    
+    if((scalar @files_array) > 1){
+        $last_element = pop @files_array;
+        $pathvec = "paths \<\- c(";
+        for my $el (@files_array) {
+                $pathvec = $pathvec."\"".$el."\"\,";
+        }
+        $pathvec = $pathvec."\"".$last_element."\"\)\n\n\n\n";
+    }else{
+        $pathvec = "paths \<\- \"".$files_array[0]."\"\n\n\n\n";
+    }
+    return $pathvec;
+}
+
 sub GenerateBoxplot
 {
     my $experiment = $_[0];
@@ -2051,6 +2072,7 @@ sub GenerateBoxplot
     my $length;
     my $last_element;
     my $nb_line;
+    my $towrite;
 
     
     # (A) Boxplot with labelling
@@ -2064,25 +2086,55 @@ sub GenerateBoxplot
         @input_files = peaksBgTXT($experiment, $value, "_peaks.txt", \@input_files);
         @input_files = peaksBgTXT($experiment, $value, "_bg.txt", \@input_files);
         
-        # Creating the vector of files path
+        # Creating the vector of files path and the palette
+        $towrite = pathVector(\@input_files);
+        $towrite = $towrite."p \<\- colorRampPalette($PALETTE)\n";
+        print RFILE $towrite;
+        # Generating code for boxplot
         
-        $length = scalar @input_files;
-        if($length > 1){
-            $last_element = pop @input_files;
-            print RFILE "paths <- c(";
-            for my $el (@input_files) {
-                print RFILE "\"".$el."\"\,";
-            }
-            print RFILE "\"".$last_element."\"\)\n\n";
-        }else{
-            print RFILE "paths <- \"".$input_files[0]."\"\n\n"
-        }
+        testlist <- lapply(paths,function(x) read.table(x, row.names=1))
+        testlist2 <- unlist(lapply(testlist, function(x) as.list(data.frame(x))), recursive=FALSE)
+        boxplot(testlist2, xaxt="n",xlab ="",lwd=1, ylab="log2 (avg)",outline=FALSE, col=rev(p(4)), notch=TRUE, main="(sample,avg) ESC1,ESC3,NPC1,NPC3")
+        labels <- c("ESC1","ESC3","NPC1","NPC3")
+        legend("topright",labels,fill=rev(p(4)))
+        axis(1, labels = FALSE,tick=FALSE)
+        lines(c(20.5,20.5),c(10,-10),lwd=1,col="darkblue")
+
+
+
+
         
-        close(RFILE);
-        exit 42;
+        text(x=10.5,y=0,"PEAKS",cex=3,col="blue")
+text(x=30.5,y=0,"BG",cex=3,col="blue")
+text(x=2.5,y=2.5,"RAW",srt=90,cex=0.5,col="blue")
+text(x=6.5,y=2.5,"TRADITIONAL",srt=90,cex=0.5,col="blue")
+text(x=10.5,y=2.5,"CHIPRX",srt=90,cex=0.5,col="blue")
+text(x=14.5,y=2.5,"TAGREMOVAL",srt=90,cex=0.5,col="blue")
+text(x=18.5,y=2.5,"SPIKCHIP",srt=90,cex=0.5,col="blue")
+text(x=22.5,y=2.5,"RAW",srt=90,cex=0.5,col="blue")
+text(x=26.5,y=2.5,"TRADITIONAL",srt=90,cex=0.5,col="blue")
+text(x=30.5,y=2.5,"CHIPRX",srt=90,cex=0.5,col="blue")
+text(x=34.5,y=2.5,"TAGREMOVAL",srt=90,cex=0.5,col="blue")
+text(x=38.5,y=2.5,"SPIKCHIP",srt=90,cex=0.5,col="blue")
+text(x=42.5,y=2.5,"RAW",srt=90,cex=0.5,col="blue")
+text(x=46.5,y=2.5,"TRADITIONAL",srt=90,cex=0.5,col="blue")
+text(x=50.5,y=2.5,"CHIPRX",srt=90,cex=0.5,col="blue")
+text(x=54.5,y=2.5,"TAGREMOVAL",srt=90,cex=0.5,col="blue")
+text(x=58.5,y=2.5,"SPIKCHIP",srt=90,cex=0.5,col="blue")
+text(x=62.5,y=2.5,"RAW",srt=90,cex=0.5,col="blue")
+text(x=66.5,y=2.5,"TRADITIONAL",srt=90,cex=0.5,col="blue")
+text(x=70.5,y=2.5,"CHIPRX",srt=90,cex=0.5,col="blue")
+text(x=74.5,y=2.5,"TAGREMOVAL",srt=90,cex=0.5,col="blue")
+text(x=78.5,y=2.5,"SPIKCHIP",srt=90,cex=0.5,col="blue")
+
+
+
+
+
+
 
 ########  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    print RFILE "p = colorRampPalette($PALETTE)\n";
+    
     print RFILE "pdf(\"$PDF_file\")\n";
     $expression = "boxplot(";
     for($i=0; $i<10; $i++)
