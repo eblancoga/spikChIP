@@ -2052,7 +2052,7 @@ sub pathVector
         }
         $pathvec = $pathvec."\"".$last_element."\"\)\n\n\n\n";
     }else{
-        $pathvec = "paths \<\- \"".$files_array[0]."\"\n\n\n\n";
+        $pathvec = "paths \<\- \"".$files_array[0]."\"\n\n";
     }
     return $pathvec;
 }
@@ -2088,101 +2088,38 @@ sub GenerateBoxplot
         
         # Creating the vector of files path and the palette
         $towrite = pathVector(\@input_files);
-        $towrite = $towrite."p \<\- colorRampPalette($PALETTE)\n";
-        print RFILE $towrite;
+        $towrite = $towrite."p \<\- colorRampPalette($PALETTE)\n\n";
+        
+        # Preparing values and labels
+        $towrite = $towrite."filist <- lapply(paths,function(x) read.table(x, row.names=1))\n";
+        $towrite = $towrite."filist <- unlist(lapply(filist, function(x) as.list(data.frame(x))), recursive=FALSE)\n";
+        $towrite = $towrite."filist <- lapply(filist, log2)\n\n"; 
+        $towrite = $towrite."labels <- unique(sapply(strsplit(paths,\"_\"), \"[\",2))\n";
+        $towrite = $towrite."if(!isTRUE(all.equal(length(labels), 1))) stop(\"Problem with the labels\")\n";
+        $towrite = $towrite."labels <- unlist(strsplit(labels,\"-\"))\n\n";
+        
+        #Determine position of ticks
+        $towrite = $towrite."normNames <- sapply(strsplit(paths, \"_\"), \"[\", 3)\n";
+        $towrite = $towrite."normNb <- length(unique(normNames))\n";
+        $towrite = $towrite."if(normNb%%2 == 0){\n";
+        $towrite = $towrite."\tpositions <- seq((normNb/2)+1, length(paths)*$n_experiments, by =(normNb/2)+2)\n";
+        $towrite = $towrite."}else\n";
+        $towrite = $towrite."\tpositions <- seq(ceiling(normNb/2), length(paths)*$n_experiments, by = ceiling(normNb/2)+1)\n\n";
+        
+        #Determine label of each boxplot
+        $towrite = $towrite."peaksbgvec <- strsplit(paths, \"_\")\n";
+        $towrite = $towrite."idx <- unique(sapply(peaksbgvec, function(x) grep(\"txt\",x)))\n";
+        $towrite = $towrite."peaksbgvec <- gsub(\".txt\", \"\", sapply(peaksbgvec, \"[\", idx))\n\n";
+        
         # Generating code for boxplot
-        
-        testlist <- lapply(paths,function(x) read.table(x, row.names=1))
-        testlist2 <- unlist(lapply(testlist, function(x) as.list(data.frame(x))), recursive=FALSE)
-        boxplot(testlist2, xaxt="n",xlab ="",lwd=1, ylab="log2 (avg)",outline=FALSE, col=rev(p(4)), notch=TRUE, main="(sample,avg) ESC1,ESC3,NPC1,NPC3")
-        labels <- c("ESC1","ESC3","NPC1","NPC3")
-        legend("topright",labels,fill=rev(p(4)))
-        axis(1, labels = FALSE,tick=FALSE)
-        lines(c(20.5,20.5),c(10,-10),lwd=1,col="darkblue")
-
-
-
-
-        
-        text(x=10.5,y=0,"PEAKS",cex=3,col="blue")
-text(x=30.5,y=0,"BG",cex=3,col="blue")
-text(x=2.5,y=2.5,"RAW",srt=90,cex=0.5,col="blue")
-text(x=6.5,y=2.5,"TRADITIONAL",srt=90,cex=0.5,col="blue")
-text(x=10.5,y=2.5,"CHIPRX",srt=90,cex=0.5,col="blue")
-text(x=14.5,y=2.5,"TAGREMOVAL",srt=90,cex=0.5,col="blue")
-text(x=18.5,y=2.5,"SPIKCHIP",srt=90,cex=0.5,col="blue")
-text(x=22.5,y=2.5,"RAW",srt=90,cex=0.5,col="blue")
-text(x=26.5,y=2.5,"TRADITIONAL",srt=90,cex=0.5,col="blue")
-text(x=30.5,y=2.5,"CHIPRX",srt=90,cex=0.5,col="blue")
-text(x=34.5,y=2.5,"TAGREMOVAL",srt=90,cex=0.5,col="blue")
-text(x=38.5,y=2.5,"SPIKCHIP",srt=90,cex=0.5,col="blue")
-text(x=42.5,y=2.5,"RAW",srt=90,cex=0.5,col="blue")
-text(x=46.5,y=2.5,"TRADITIONAL",srt=90,cex=0.5,col="blue")
-text(x=50.5,y=2.5,"CHIPRX",srt=90,cex=0.5,col="blue")
-text(x=54.5,y=2.5,"TAGREMOVAL",srt=90,cex=0.5,col="blue")
-text(x=58.5,y=2.5,"SPIKCHIP",srt=90,cex=0.5,col="blue")
-text(x=62.5,y=2.5,"RAW",srt=90,cex=0.5,col="blue")
-text(x=66.5,y=2.5,"TRADITIONAL",srt=90,cex=0.5,col="blue")
-text(x=70.5,y=2.5,"CHIPRX",srt=90,cex=0.5,col="blue")
-text(x=74.5,y=2.5,"TAGREMOVAL",srt=90,cex=0.5,col="blue")
-text(x=78.5,y=2.5,"SPIKCHIP",srt=90,cex=0.5,col="blue")
-
-
-
-
-
-
-
-########  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    
-    print RFILE "pdf(\"$PDF_file\")\n";
-    $expression = "boxplot(";
-    for($i=0; $i<10; $i++)
-    {
-	for($j=0; $j<$n_experiments; $j++)
-	{
-	    $expression = $expression."log(c".($i+1)."[,".($j+2)."],base=2),";
-	}
-	$expression = $expression."\n";
-    }
-
-    print RFILE "$expression";
-    print RFILE "xaxt=\"n\",xlab =\"\",lwd=1,\n";
-    print RFILE "ylab=\"log2 ($value)\",outline=FALSE,\n";
-    print RFILE "col=rev(p($n_experiments)),\n";
-    print RFILE "notch=TRUE,\n";
-    print RFILE "main=\"($experiment,$value) ".join(",",@NAMES)."\")\n";
-
-    $expression = "c(";
-    for($j=0; $j<$n_experiments-1; $j++)
-    {
-	$expression = $expression."\"".$NAMES[$j]."\",";
-    }
-    $expression = $expression."\"".$NAMES[$j]."\")";
-
-    print RFILE "labels <- $expression\n";
-    print RFILE "legend(\"topright\",labels,fill=rev(p($n_experiments)))\n";
-    
-    print RFILE "axis(1, labels = FALSE,tick=FALSE)\n";
-    $midpoint = ($n_experiments*$N_STRATEGIES) + 0.5;
-    print RFILE "lines(c($midpoint,$midpoint),c(10,-10),lwd=1,col=\"darkblue\")\n";
-    #
-    $midpoint = ($n_experiments*$N_STRATEGIES)/2;
-    $expression = $midpoint + 0.5;
-    print RFILE "text(x=$expression,y=0,\"PEAKS\",cex=3,col=\"blue\")\n";
-    #
-    $expression = ($n_experiments*$N_STRATEGIES) + $midpoint + 0.5;
-    print RFILE "text(x=$expression,y=0,\"BG\",cex=3,col=\"blue\")\n";   
-    #
-    $midpoint = $n_experiments/2;
-    @CLASSES=($RAW_TOKEN,$TRADITIONAL_TOKEN,$CHIPRX_TOKEN,$TAGREMOVAL_TOKEN,$SPIKCHIP_TOKEN);
-    for($j=0; $j<$n_experiments*$N_STRATEGIES; $j++)
-    {
-	$expression = ($j*$n_experiments) + $midpoint + 0.5;
-	print RFILE "text(x=$expression,y=2.5,\"".$CLASSES[($j % $N_STRATEGIES)]."\",srt=90,cex=0.5,col=\"blue\")\n";   
-    }
-    print RFILE "dev.off()\n";
-    close(RFILE);
+        $towrite = $towrite."pdf(\"$PDF_file\")\n";
+        $towrite = $towrite."boxplot(filist, xaxt=\"n\",xlab =\"\",lwd=1, ylab=\"log2 (avg)\",outline=FALSE, col=rev(p(4)), notch=TRUE, main=paste0(\"$experiment,$value \", paste(labels, collapse=\",\")))\n";
+        $towrite = $towrite."legend(\"topright\",labels,fill=rev(p(4)))\n";
+        $towrite = $towrite."axis(1, at = positions, labels = paste(normNames, peaksbgvec, sep=\"-\"), las=2, cex.axis=0.5)\n";
+        $towrite = $towrite."dev.off()\n";
+        print RFILE $towrite;
+        close(RFILE);
+        exit 42;
     }
     #
     # execute R script
@@ -2203,78 +2140,6 @@ text(x=78.5,y=2.5,"SPIKCHIP",srt=90,cex=0.5,col="blue")
     close(ROUT);
     $command = "rm -f $Routput_file";
     print_mess("$command\n");
-    system($command);
-
-    # (B) Boxplot without labelling
-    # R code to generate the corresponding final boxplot
-    $Rfile = $RSCRIPTS.join("-",@NAMES)."_".$BIN_SIZE."_".$experiment."_".$value."_boxplot_".$NOLABELS_TOKEN.".R";
-    $PDF_file = $PLOTS.join("-",@NAMES)."_".$BIN_SIZE."_".$experiment."_".$value."_".$NOLABELS_TOKEN.".pdf";
-    
-    (open(RFILE,'>',$Rfile)) or print_error("R SCRIPT (boxplots no labels): FILE $Rfile file can not be opened to write");
-    print RFILE "pdf(\"$PDF_file\")\n";
-    $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$RAW_TOKEN."_".$BIN_SIZE."_".$experiment."_".$value."_peaks.txt";
-    print RFILE "c1<-read.table(\"$input_file\")\n";
-    $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$TRADITIONAL_TOKEN."_".$BIN_SIZE."_".$experiment."_".$value."_peaks.txt";
-    print RFILE "c2<-read.table(\"$input_file\")\n";
-    $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$CHIPRX_TOKEN."_".$BIN_SIZE."_".$experiment."_".$value."_peaks.txt";
-    print RFILE "c3<-read.table(\"$input_file\")\n";
-    $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$TAGREMOVAL_TOKEN."_".$BIN_SIZE."_".$experiment."_".$value."_peaks.txt";
-    print RFILE "c4<-read.table(\"$input_file\")\n";
-    $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_".$experiment."_".$value."_peaks.txt";
-    print RFILE "c5<-read.table(\"$input_file\")\n";
-    $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$RAW_TOKEN."_".$BIN_SIZE."_".$experiment."_".$value."_bg.txt";
-    print RFILE "c6<-read.table(\"$input_file\")\n";
-    $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$TRADITIONAL_TOKEN."_".$BIN_SIZE."_".$experiment."_".$value."_bg.txt";
-    print RFILE "c7<-read.table(\"$input_file\")\n";
-    $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$CHIPRX_TOKEN."_".$BIN_SIZE."_".$experiment."_".$value."_bg.txt";
-    print RFILE "c8<-read.table(\"$input_file\")\n";
-    $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$TAGREMOVAL_TOKEN."_".$BIN_SIZE."_".$experiment."_".$value."_bg.txt";
-    print RFILE "c9<-read.table(\"$input_file\")\n";
-    $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_".$experiment."_".$value."_bg.txt";
-    print RFILE "c10<-read.table(\"$input_file\")\n";
-
-    print RFILE "p = colorRampPalette($PALETTE)\n";
-    
-    $expression = "boxplot(";
-    for($i=0; $i<10; $i++)
-    {
-	for($j=0; $j<$n_experiments; $j++)
-	{
-	    $expression = $expression."log(c".($i+1)."[,".($j+2)."],base=2),";
-	}
-	$expression = $expression."\n";
-    }
-
-    print RFILE "$expression";
-    print RFILE "xaxt=\"n\",yaxt=\"n\",xlab =\"\",lwd=1,\n";
-    print RFILE "ylab=\"\",outline=FALSE,\n";
-    print RFILE "col=rev(p($n_experiments)),\n";
-    print RFILE "notch=TRUE)\n";
-
-    print RFILE "axis(1, labels = FALSE,tick=FALSE)\n";
-    print RFILE "axis(2, labels = FALSE,tick=TRUE)\n";
-    
-    print RFILE "dev.off()\n";
-    close(RFILE);
-    #
-    # execute R script
-    $command = "R CMD BATCH $Rfile";
-    print_mess("$command\n");
-    system($command);
-    #
-    # error check in Rout file
-    $Routput_file = join("-",@NAMES)."_".$BIN_SIZE."_".$experiment."_".$value."_boxplot_".$NOLABELS_TOKEN.".Rout";
-    (open(ROUT,$Routput_file)) or print_error("R SCRIPTS (avg): FILE $Routput_file can not be opened");
-    while($line=<ROUT>)
-    {
-	if ($line=~/Error/)
-	{
-	    print_error("R running: $line\n");
-	}
-    }
-    close(ROUT);
-    $command = "rm -f $Routput_file";
-    print_mess("$command");
     system($command);
 }
 
