@@ -371,7 +371,6 @@ if($TAGREMOVAL){
     ClassifyNormalizationValues($TAGREMOVAL_TOKEN);
     print_ok();
     print_mess("\n");
-    exit 42;
 }
 if($SPIKCHIP){
     print_mess("Working with $SPIKCHIP_TOKEN values\n");
@@ -389,6 +388,7 @@ print_mess("[$date] Stage 4.  Generating the final boxplots of values\n");
 
 print_mess("Boxplots using the average values\n");
 GenerateBoxplot($SPIKE_TOKEN,$AVG_TOKEN);
+exit 42;
 GenerateBoxplot($SAMPLE_TOKEN,$AVG_TOKEN);
 print_ok();
 print_mess("\n");
@@ -1982,49 +1982,126 @@ sub ClassifyNormalizationValues
     SaveFile($final_max);
 }
 
+
+sub NumberLines
+{
+    my $path = $_[0];
+    my $count = `wc -l < $path`;
+    die "wc failed: $?" if $?;
+    chomp($count);
+    if($count == 0){
+        print_mess("\t\t The file is empty:", $path);
+    }
+    return $count;
+}
+
 sub GenerateBoxplot
 {
     my $experiment = $_[0];
     my $value = $_[1];
     my ($Rfile,$Routput_file);
     my $PDF_file;
+    my @input_files;
     my $input_file;
     my $expression;
     my ($i,$j);
     my $midpoint;
     my @CLASSES;
+    my $length;
+    my $last_element;
+    my $nb_line;
 
     
     # (A) Boxplot with labelling
     # R code to generate the corresponding final boxplot
     $Rfile = $RSCRIPTS.join("-",@NAMES)."_".$BIN_SIZE."_".$experiment."_".$value."_boxplot.R";
     $PDF_file = $PLOTS.join("-",@NAMES)."_".$BIN_SIZE."_".$experiment."_".$value.".pdf";
-    
-    (open(RFILE,'>',$Rfile)) or print_error("R SCRIPT (boxplots): FILE $Rfile file can not be opened to write");
-    print RFILE "pdf(\"$PDF_file\")\n";
-    $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$RAW_TOKEN."_".$BIN_SIZE."_".$experiment."_".$value."_peaks.txt";
-    print RFILE "c1<-read.table(\"$input_file\")\n";
-    $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$TRADITIONAL_TOKEN."_".$BIN_SIZE."_".$experiment."_".$value."_peaks.txt";
-    print RFILE "c2<-read.table(\"$input_file\")\n";
-    $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$CHIPRX_TOKEN."_".$BIN_SIZE."_".$experiment."_".$value."_peaks.txt";
-    print RFILE "c3<-read.table(\"$input_file\")\n";
-    $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$TAGREMOVAL_TOKEN."_".$BIN_SIZE."_".$experiment."_".$value."_peaks.txt";
-    print RFILE "c4<-read.table(\"$input_file\")\n";
-    $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_".$experiment."_".$value."_peaks.txt";
-    print RFILE "c5<-read.table(\"$input_file\")\n";
-    $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$RAW_TOKEN."_".$BIN_SIZE."_".$experiment."_".$value."_bg.txt";
-    print RFILE "c6<-read.table(\"$input_file\")\n";
-    $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$TRADITIONAL_TOKEN."_".$BIN_SIZE."_".$experiment."_".$value."_bg.txt";
-    print RFILE "c7<-read.table(\"$input_file\")\n";
-    $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$CHIPRX_TOKEN."_".$BIN_SIZE."_".$experiment."_".$value."_bg.txt";
-    print RFILE "c8<-read.table(\"$input_file\")\n";
-    $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$TAGREMOVAL_TOKEN."_".$BIN_SIZE."_".$experiment."_".$value."_bg.txt";
-    print RFILE "c9<-read.table(\"$input_file\")\n";
-    $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_".$experiment."_".$value."_bg.txt";
-    print RFILE "c10<-read.table(\"$input_file\")\n";
+    print_mess("Writing ", $Rfile);
+    if(!(-e $Rfile) or $OVERWRITE)
+    {
+        (open(RFILE,'>',$Rfile)) or print_error("R SCRIPT (boxplots): FILE $Rfile file can not be opened to write");
+        
+        if($RAW)
+        {
+            $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$RAW_TOKEN."_".$BIN_SIZE."_".$experiment."_".$value."_peaks.txt";
+            $nb_line = NumberLines($input_file);
+            if($nb_line != 0){push(@input_files, $input_file);}
+            exit 42;
+            
+            #print RFILE "c1<-read.table(\"$input_file\")\n";
+        }
+        if($TRADITIONAL)
+        {
+            $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$TRADITIONAL_TOKEN."_".$BIN_SIZE."_".$experiment."_".$value."_peaks.txt";
+            push(@input_files, $input_file);
+            #print RFILE "c2<-read.table(\"$input_file\")\n";
+        }
+        if($CHIPRX)
+        {
+            $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$CHIPRX_TOKEN."_".$BIN_SIZE."_".$experiment."_".$value."_peaks.txt";
+            push(@input_files, $input_file);
+            #print RFILE "c3<-read.table(\"$input_file\")\n";
+        }
+        if($TAGREMOVAL)
+        {
+            $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$TAGREMOVAL_TOKEN."_".$BIN_SIZE."_".$experiment."_".$value."_peaks.txt";
+            push(@input_files, $input_file);
+            #print RFILE "c4<-read.table(\"$input_file\")\n";
+        }
+        if($SPIKCHIP)
+        {
+            $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_".$experiment."_".$value."_peaks.txt";
+            push(@input_files, $input_file);
+            #print RFILE "c5<-read.table(\"$input_file\")\n";
+        }
+        if($RAW)
+        {
+            $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$RAW_TOKEN."_".$BIN_SIZE."_".$experiment."_".$value."_bg.txt";
+            push(@input_files, $input_file);
+            #print RFILE "c6<-read.table(\"$input_file\")\n";
+        }
+        if($TRADITIONAL)
+        {
+            $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$TRADITIONAL_TOKEN."_".$BIN_SIZE."_".$experiment."_".$value."_bg.txt";
+            push(@input_files, $input_file);
+            #print RFILE "c7<-read.table(\"$input_file\")\n";
+        }
+        if($CHIPRX)
+        {
+            $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$CHIPRX_TOKEN."_".$BIN_SIZE."_".$experiment."_".$value."_bg.txt";
+            push(@input_files, $input_file);
+            #print RFILE "c8<-read.table(\"$input_file\")\n";
+        }
+        if($TAGREMOVAL)
+        {
+            $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$TAGREMOVAL_TOKEN."_".$BIN_SIZE."_".$experiment."_".$value."_bg.txt";
+            push(@input_files, $input_file);
+            #print RFILE "c9<-read.table(\"$input_file\")\n";
+        }
+        if($SPIKCHIP)
+        {
+            $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_".$experiment."_".$value."_bg.txt";
+            push(@input_files, $input_file);
+            #print RFILE "c10<-read.table(\"$input_file\")\n";
+        }
+        $length = scalar @input_files;
+        if($length > 1){
+            $last_element = pop @input_files;
+            print RFILE "paths <- c(";
+            for my $el (@input_files) {
+                print RFILE "\"".$el."\"\,";
+            }
+            print RFILE "\"".$last_element."\"\)\n\n";
+        }else{
+            print RFILE "paths <- \"".$input_files[0]."\"\n\n"
+        }
+        
+        close(RFILE);
+        exit 42;
 
+########  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     print RFILE "p = colorRampPalette($PALETTE)\n";
-    
+    print RFILE "pdf(\"$PDF_file\")\n";
     $expression = "boxplot(";
     for($i=0; $i<10; $i++)
     {
@@ -2072,6 +2149,7 @@ sub GenerateBoxplot
     }
     print RFILE "dev.off()\n";
     close(RFILE);
+    }
     #
     # execute R script
     $command = "R CMD BATCH $Rfile";
