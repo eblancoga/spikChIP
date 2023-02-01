@@ -167,7 +167,7 @@ $BIN_SIZE = SettingBinsize();
 print_mess("Effective bin size: $BIN_SIZE");
 print_ok();
 print_mess("\n");
-exit 42;
+
 # 0.8 Checking palette (if selected)
 print_mess("Establishing the palette\n");
 $PALETTE = SettingPalette();
@@ -296,7 +296,7 @@ for($i=0; $i<$n_experiments; $i++)
         print_mess("\t None of the following normalization were selected: raw, traditional, chiprx, or tag removal.")
     }
 }
-
+exit 42;
 
 # join the values of all experiments in a single file per normalization class
 if($RAW)
@@ -1296,14 +1296,10 @@ sub JoinNormValues
     # remove the seqcode folders (spike and sample)
     for($i=0; $i<$n_experiments; $i++)
     {
-	$folder = $NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_recoverChIPlevels/";
-	if(-e $folder){
-	    CleanFolder($folder);
-	}
-	$folder = $NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_recoverChIPlevels/";
-	if(-e $folder){
-        CleanFolder($folder);
-    }
+    	$folder = $NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_recoverChIPlevels/";
+    	CleanFolder($folder);
+    	$folder = $NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_recoverChIPlevels/";
+    	CleanFolder($folder);
     }
 }
 
@@ -1442,13 +1438,13 @@ sub RunspikChIPValues
     $final_avg = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_avg_normalized.txt";
     $final_avg_spike = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_avg_normalized_spike.txt";
     $final_avg_sample = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_avg_normalized_sample.txt";
+    CleanFile($final_avg);
+    SaveFile($final_avg_spike);
+    SaveFile($final_avg_sample);
     # R code to perform the loess regression on the whole set of bins in all conditions
     if(!(-e $Rfile) or $OVERWRITE)
     {
         #
-        CleanFile($final_avg);
-        SaveFile($final_avg_spike);
-        SaveFile($final_avg_sample);
         #
         $n_total_bins = $n_spike_bins + $n_sample_bins;
         #
@@ -1516,20 +1512,20 @@ sub RunspikChIPValues
     # spikChIP on max values
     print_mess("Performing the analysis on max values\n");
     $Rfile = $RSCRIPTS.join("-",@NAMES)."_".$BIN_SIZE."_max.R";
+    $output_file1 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max.txt";
+    $output_file2 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max_values.txt";
+    $output_file3 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max_names.txt";
+    $output_file4 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max_names2.txt";
+    #
+    $final_max = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_max_normalized.txt";
+    $final_max_spike = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_max_normalized_spike.txt";
+    $final_max_sample = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_max_normalized_sample.txt";
+    #
+    CleanFile($final_max);
+    SaveFile($final_max_spike);
+    SaveFile($final_max_sample);
     if(!(-e $Rfile) or $OVERWRITE)
     {
-        $output_file1 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max.txt";
-        $output_file2 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max_values.txt";
-        $output_file3 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max_names.txt";
-        $output_file4 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max_names2.txt";
-        #
-        $final_max = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_max_normalized.txt";
-        $final_max_spike = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_max_normalized_spike.txt";
-        $final_max_sample = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_max_normalized_sample.txt";
-        #
-        CleanFile($final_max);
-        SaveFile($final_max_spike);
-        SaveFile($final_max_sample);
         #
         $n_total_bins = $n_spike_bins + $n_sample_bins;
         #
@@ -1610,10 +1606,9 @@ sub ClassifyBins
     	$out_peaks_file = $RESULTS.$NAMES[$i]."_".$BIN_SIZE."_bins_spike_peaks.bed";
     	$BINS_PEAKS_SPIKE[$i] = $out_peaks_file;
     	#
+    	CleanFile($out_peaks_file);
     	if(!(-e $out_peaks_file) or $OVERWRITE)
         {
-            CleanFile($out_peaks_file);
-            
         	$command = "matchpeaks -v $PEAKS_SPIKES[$i] $spike_bins $PEAKS_TOKEN $out_name";
         	print_mess("$command\n");
         	system($command);
@@ -1621,9 +1616,9 @@ sub ClassifyBins
         	print_mess("$command\n");
         	system($command);
         	#
-        	CleanFolder($folder);
-        	print_mess("\n");
     	}
+        CleanFolder($folder);
+        print_mess("\n");
     	#
     	print_mess("Working with sample $NAMES[$i]: peaks Vs. bins of sample\n");
     	
@@ -1634,9 +1629,9 @@ sub ClassifyBins
     	$out_peaks_file = $RESULTS.$NAMES[$i]."_".$BIN_SIZE."_bins_sample_peaks.bed";
     	$BINS_PEAKS_SAMPLE[$i] = $out_peaks_file;
     	#
+    	CleanFile($out_peaks_file);
     	if(!(-e $out_peaks_file) or $OVERWRITE)
         {
-        	CleanFile($out_peaks_file);
         	#
         	$command = "matchpeaks -v $PEAKS_SAMPLES[$i] $sample_bins $PEAKS_TOKEN $out_name";
         	print_mess("$command\n");
@@ -1645,8 +1640,8 @@ sub ClassifyBins
         	print_mess("$command\n");
         	system($command);
         	#
-        	CleanFolder($folder);
     	}
+        CleanFolder($folder);
     }
 }
 
