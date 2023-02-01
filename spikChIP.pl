@@ -22,7 +22,7 @@ my $TRUE = 1;
 my $FALSE = 0;
 my $SUCCESS = 0;
 my $DEFAULT_BIN_SIZE = 10000;
-my $MIN_BIN_SIZE = 1000;
+my $MIN_BIN_SIZE = 50;
 my $MAX_BIN_SIZE = 100000;
 my $DEFAULT_PALETTE = 1;
 my $MIN_PALETTE = 0;
@@ -167,7 +167,7 @@ $BIN_SIZE = SettingBinsize();
 print_mess("Effective bin size: $BIN_SIZE");
 print_ok();
 print_mess("\n");
-
+exit 42;
 # 0.8 Checking palette (if selected)
 print_mess("Establishing the palette\n");
 $PALETTE = SettingPalette();
