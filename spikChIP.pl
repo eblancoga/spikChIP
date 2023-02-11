@@ -458,7 +458,7 @@ sub print_help
         print STDERR color("bold blue"),"\t--chiprx|-x: Perform the ChIPRx normalization\n";
         print STDERR color("bold blue"),"\t--tagremoval|-g: Perform the tag removal normalization\n";
         print STDERR color("bold blue"),"\t--spikchip|s: Perform the spikchip normalization with loess\n";
-        print STDERR color("bold blue"),"\t--outputfolder|-o: Path to the result folder (default: results/)\n"
+        print STDERR color("bold blue"),"\t--outputfolder|-o: Path to the result folder (default: results/)\n";
 	exit(0);
     }
 }
