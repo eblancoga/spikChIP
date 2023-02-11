@@ -22,18 +22,19 @@ spikChIP is a command line that runs in Linux and Mac OS-X environments:
 
 Users can configure the behavior of the program with the following options:
 
-    --clean|-c: clean intermediate files of results to save space\n";
-    --lessMillion|-l: allow the process of BAM files of < 1 Million reads\n";
-    --binsize|-b: bin size (default: 10000 bps)\n";
-    --palette|-p: palette (1 for reds, 2 for greens, 3 for blues and 0 for B&W)\n";
-    --help|-h: short help\n";
-    --verbose|-v: verbose option\n";
-    --overwrite|-w: overwrite existing result files\n";
-    --raw|-r: Perform the raw normalization\n";
-    --traditional|-t: Perform the traditional normalization\n";
-    --chiprx|-x: Perform the ChIPRx normalization\n";
-    --tagremoval|-g: Perform the tag removal normalization\n";
-    --spikchip|s: Perform the spikchip normalization with loess\n";
+    --clean|-c:  remove intermediate files to reduce the size of the output folder
+    --lessMillion|-l: allow the process of BAM files of < 1 Million reads
+    --binsize|-b: bin size (default: 10000 bps)
+    --palette|-p: palette (1 for reds, 2 for greens, 3 for blues and 0 for B&W)
+    --help|-h: short help
+    --verbose|-v: verbose option
+    --overwrite|-w: overwrite existing result files
+    --raw|-r: Perform the raw normalization
+    --traditional|-t: Perform the traditional normalization
+    --chiprx|-x: Perform the ChIPRx normalization
+    --tagremoval|-g: Perform the tag removal normalization
+    --spikchip|s: Perform the spikchip normalization with loess
+    --outputfolder|-o: Path to the result folder (default: results/)
 
 The configuration file of spikChIP is a plain-text file in which each line
 contains the information about the files of a particular experimental condition:

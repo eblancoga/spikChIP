@@ -41,7 +41,7 @@ my $SAMPLE_TOKEN = "sample";
 my $SPIKE_TOKEN = "spike";
 my $AVG_TOKEN = "avg";
 my $MAX_TOKEN = "max";
-my $RESULTS = "results/";
+my $DEFAULT_RESULTS = "results/";
 my $PLOTS = "plots/";
 my $RSCRIPTS = "Rscripts/";
 my $NOLABELS_TOKEN = "nolabels";
@@ -64,7 +64,7 @@ my $newdir;
 my @CLEAN_PROCEDURE;
 my @SAVE_PROCEDURE;
 
-# --clean|-c: clean intermediate files of results to save space
+# --clean|-c:  remove intermediate files to reduce the size of the output folder
 # --lessMillion|-l: allow the process of BAM files of < 1 Million reads
 # --binsize|-b: bin size (default: 10000 bps)
 # --palette|-p: palette (1 for reds, 2 for greens, 3 for blues and 0 for B&W)
@@ -76,11 +76,13 @@ my @SAVE_PROCEDURE;
 # --chiprx|-x: Perform the ChIPRx normalization
 # --tagremoval|-g: Perform the tag removal normalization
 # --spikchip|s: Perform the spikchip normalization with loess
+# --outputfolder|-o: Path to the result folder (default: results/)
 
 my $CLEAN = 0;
 my $LESSMILLION = 0;
 my $BIN_SIZE = $DEFAULT_BIN_SIZE;
 my $PALETTE = $DEFAULT_PALETTE;
+my $RESULTS = $DEFAULT_RESULTS;
 my $HELP = 0;
 my $VERBOSE = 0;
 my $OVERWRITE = 0;
@@ -106,6 +108,7 @@ Getopt::Long::GetOptions(
     'chiprx|x' => \$CHIPRX,
     'tagremoval|g' => \$TAGREMOVAL,
     'spikchip|s' => \$SPIKCHIP,
+    'outputfolder|o=i' => $RESULTS,
 );
 
 print_mess("$PROGRAM.pl by Enrique Blanco @ CRG (2021)");
@@ -443,7 +446,7 @@ sub print_help
         print STDERR color("bold blue"),"NAME\n\tspikChIP, a tool to normalize ChIP-seq experiments by spike-in correction\n\n";
         print STDERR color("bold blue"),"SYNOPSIS:\n\t$PROGRAM -rtxgs -vclw -b <bin_size_kbp> -p <0|1|2|3> <configuration_file> <chrominfo_file>\n\n";
         print STDERR color("bold blue"),"OPTIONS:\n";
-        print STDERR color("bold blue"),"\t--clean|-c: clean intermediate files of results to save space\n";
+        print STDERR color("bold blue"),"\t--clean|-c:  remove intermediate files to reduce the size of the output folder\n";
         print STDERR color("bold blue"),"\t--lessMillion|-l: allow the process of BAM files of < 1 Million reads\n";
         print STDERR color("bold blue"),"\t--binsize|-b: bin size (default: 10000 bps)\n";
         print STDERR color("bold blue"),"\t--palette|-p: palette (1 for reds, 2 for greens, 3 for blues and 0 for B&W)\n";
@@ -455,6 +458,7 @@ sub print_help
         print STDERR color("bold blue"),"\t--chiprx|-x: Perform the ChIPRx normalization\n";
         print STDERR color("bold blue"),"\t--tagremoval|-g: Perform the tag removal normalization\n";
         print STDERR color("bold blue"),"\t--spikchip|s: Perform the spikchip normalization with loess\n";
+        print STDERR color("bold blue"),"\t--outputfolder|-o: Path to the result folder (default: results/)\n"
 	exit(0);
     }
 }
