@@ -852,12 +852,12 @@ sub NormalizationRaw
     $bam_spike = $BAM_SPIKES[$i];
 
     # Spike bins
+    $out_name = $NAMES[$i]."_".$RAW_TOKEN."_".$BIN_SIZE."_spike";
     if($RESULTS ne "results/"){
-        $out_name = $RESULTS."/".$NAMES[$i]."_".$RAW_TOKEN."_".$BIN_SIZE."_spike";
+        $file_all = $RESULTS."/"."$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
     }else{
-        $out_name = $NAMES[$i]."_".$RAW_TOKEN."_".$BIN_SIZE."_spike";
+        $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
     }
-    $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
     
     if(!(-e $file_all) or $OVERWRITE)
     {
@@ -875,8 +875,14 @@ sub NormalizationRaw
         print_mess("\t The file", $file_all, "already exist. Skipping the spike Raw Normalization\n");
     }
     #
-    $file_avg = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
-    $file_max = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
+    if($RESULTS ne "results/"){
+        $file_avg = $RESULTS."/"."$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
+        $file_max = $RESULTS."/"."$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
+    }else{
+        $file_avg = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
+        $file_max = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
+    }
+    
     
     if(!(-e $file_avg) or $OVERWRITE)
     {
@@ -897,12 +903,12 @@ sub NormalizationRaw
     }
 
     # Sample bins
+    $out_name = $NAMES[$i]."_".$RAW_TOKEN."_".$BIN_SIZE."_sample";
     if($RESULTS ne "results/"){
-        $out_name = $RESULTS."/".$NAMES[$i]."_".$RAW_TOKEN."_".$BIN_SIZE."_sample";
+        $file_all = $RESULTS."/"."$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
     }else{
-        $out_name = $NAMES[$i]."_".$RAW_TOKEN."_".$BIN_SIZE."_sample";
+        $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
     }
-    $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
     if(!(-e $file_all) or $OVERWRITE)
     {
         if ($LESSMILLION)
@@ -920,8 +926,13 @@ sub NormalizationRaw
     }
 
     #
-    $file_avg = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
-    $file_max = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
+    if($RESULTS ne "results/"){
+        $file_avg = $RESULTS."/"."$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
+        $file_max = $RESULTS."/"."$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
+    }else{
+        $file_avg = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
+        $file_max = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
+    }
     
     if(!(-e $file_avg) or $OVERWRITE)
     {
@@ -957,12 +968,12 @@ sub NormalizationTraditional
     $total_reads = $READS_SAMPLES[$i] + $READS_SPIKES[$i];
 
     # Spike bins
+    $out_name = $NAMES[$i]."_".$TRADITIONAL_TOKEN."_".$BIN_SIZE."_spike";
     if($RESULTS ne "results/"){
-        $out_name = $RESULTS."/".$NAMES[$i]."_".$TRADITIONAL_TOKEN."_".$BIN_SIZE."_spike";
+        $file_all = $RESULTS."/"."$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
     }else{
-        $out_name = $NAMES[$i]."_".$TRADITIONAL_TOKEN."_".$BIN_SIZE."_spike";
+        $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
     }
-    $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
     if(!(-e $file_all) or $OVERWRITE)
     {
         if ($LESSMILLION)
@@ -980,8 +991,13 @@ sub NormalizationTraditional
     }
     
     #
-    $file_avg = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
-    $file_max = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
+    if($RESULTS ne "results/"){
+        $file_avg = $RESULTS."/"."$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
+        $file_max = $RESULTS."/"."$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
+    }else{
+        $file_avg = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
+        $file_max = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
+    }
     
     if(!(-e $file_avg) or $OVERWRITE)
     {
@@ -1002,12 +1018,12 @@ sub NormalizationTraditional
     }
 
     # Sample bins
+    $out_name = $NAMES[$i]."_".$TRADITIONAL_TOKEN."_".$BIN_SIZE."_sample";
     if($RESULTS ne "results/"){
-        $out_name = $RESULTS."/".$NAMES[$i]."_".$TRADITIONAL_TOKEN."_".$BIN_SIZE."_sample";
+        $file_all = $RESULTS."/"."$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
     }else{
-        $out_name = $NAMES[$i]."_".$TRADITIONAL_TOKEN."_".$BIN_SIZE."_sample";
+        $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
     }
-    $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
     if(!(-e $file_all) or $OVERWRITE)
     {
       if ($LESSMILLION)
@@ -1025,8 +1041,13 @@ sub NormalizationTraditional
     }
     
     #
-    $file_avg = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
-    $file_max = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
+    if($RESULTS ne "results/"){
+        $file_avg = $RESULTS."/"."$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
+        $file_max = $RESULTS."/"."$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
+    }else{
+        $file_avg = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
+        $file_max = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
+    }
     
     if(!(-e $file_avg) or $OVERWRITE)
     {
@@ -1062,12 +1083,12 @@ sub NormalizationChIPRX
     $total_reads = $READS_SAMPLES[$i] + $READS_SPIKES[$i];
 
     # Spike bins
+    $out_name = $NAMES[$i]."_".$CHIPRX_TOKEN."_".$BIN_SIZE."_spike";
     if($RESULTS ne "results/"){
-        $out_name = $RESULTS."/".$NAMES[$i]."_".$CHIPRX_TOKEN."_".$BIN_SIZE."_spike";
+        $file_all = $RESULTS."/"."$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
     }else{
-        $out_name = $NAMES[$i]."_".$CHIPRX_TOKEN."_".$BIN_SIZE."_spike";
+        $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
     }
-    $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
     if(!(-e $file_all) or $OVERWRITE)
     {
       if ($LESSMILLION)
@@ -1083,10 +1104,14 @@ sub NormalizationChIPRX
     }else{
         print_mess("\t The file", $file_all, "already exist. Skipping the spike ChIPRX Normalization\n");
     }
-    
     #
-    $file_avg = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
-    $file_max = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
+    if($RESULTS ne "results/"){
+        $file_avg = $RESULTS."/"."$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
+        $file_max = $RESULTS."/"."$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
+    }else{
+        $file_avg = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
+        $file_max = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
+    }
     if(!(-e $file_avg) or $OVERWRITE)
     {
         $command = "gawk '{print \$1\"*\"\$2\"*\"\$3,\$5}' $file_all | sort > $file_avg";
@@ -1105,12 +1130,12 @@ sub NormalizationChIPRX
     }
 
     # Sample bins
+    $out_name = $NAMES[$i]."_".$CHIPRX_TOKEN."_".$BIN_SIZE."_sample";
     if($RESULTS ne "results/"){
-        $out_name = $RESULTS."/".$NAMES[$i]."_".$CHIPRX_TOKEN."_".$BIN_SIZE."_sample";
+        $file_all = $RESULTS."/"."$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
     }else{
-        $out_name = $NAMES[$i]."_".$CHIPRX_TOKEN."_".$BIN_SIZE."_sample";
+        $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
     }
-    $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
     if(!(-e $file_all) or $OVERWRITE)
     {
       if ($LESSMILLION)
@@ -1128,8 +1153,13 @@ sub NormalizationChIPRX
     }
     
     #
-    $file_avg = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
-    $file_max = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
+    if($RESULTS ne "results/"){
+        $file_avg = $RESULTS."/"."$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
+        $file_max = $RESULTS."/"."$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
+    }else{
+        $file_avg = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
+        $file_max = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
+    }
     if(!(-e $file_avg) or $OVERWRITE)
     {
         $command = "gawk '{print \$1\"*\"\$2\"*\"\$3,\$5}' $file_all | sort > $file_avg";
@@ -1161,12 +1191,12 @@ sub NormalizationTagRemoval
     $bam_spike = $BAM_SPIKES_DOWN[$i];
 
     # Spike bins
+    $out_name = $NAMES[$i]."_".$TAGREMOVAL_TOKEN."_".$BIN_SIZE."_spike";
     if($RESULTS ne "results/"){
-        $out_name = $RESULTS."/".$NAMES[$i]."_".$TAGREMOVAL_TOKEN."_".$BIN_SIZE."_spike";
+        $file_all = $RESULTS."/"."$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
     }else{
-        $out_name = $NAMES[$i]."_".$TAGREMOVAL_TOKEN."_".$BIN_SIZE."_spike";
+        $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
     }
-    $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
     if(!(-e $file_all) or $OVERWRITE)
     {
       if ($LESSMILLION)
@@ -1183,8 +1213,13 @@ sub NormalizationTagRemoval
         print_mess("\t The file", $file_all, "already exist. Skipping the spike TagRemoval Normalization\n");
     }
     #
-    $file_avg = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
-    $file_max = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
+    if($RESULTS ne "results/"){
+        $file_avg = $RESULTS."/"."$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
+        $file_max = $RESULTS."/"."$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
+    }else{
+        $file_avg = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
+        $file_max = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
+    }
     if(!(-e $file_avg) or $OVERWRITE)
     {
         $command = "gawk '{print \$1\"*\"\$2\"*\"\$3,\$5}' $file_all | sort > $file_avg";
@@ -1203,12 +1238,12 @@ sub NormalizationTagRemoval
     }
     
     # Sample bins
+    $out_name = $NAMES[$i]."_".$TAGREMOVAL_TOKEN."_".$BIN_SIZE."_sample";
     if($RESULTS ne "results/"){
-        $out_name = $RESULTS."/".$NAMES[$i]."_".$TAGREMOVAL_TOKEN."_".$BIN_SIZE."_sample";
+        $file_all = $RESULTS."/"."$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
     }else{
-        $out_name = $NAMES[$i]."_".$TAGREMOVAL_TOKEN."_".$BIN_SIZE."_sample";
+        $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
     }
-    $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
     if(!(-e $file_all) or $OVERWRITE)
     {
       if ($LESSMILLION)
@@ -1225,8 +1260,13 @@ sub NormalizationTagRemoval
         print_mess("\t The file", $file_all, "already exist. Skipping the sample TagRemoval Normalization\n");
     }
     #
-    $file_avg = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
-    $file_max = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
+    if($RESULTS ne "results/"){
+        $file_avg = $RESULTS."/"."$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
+        $file_max = $RESULTS."/"."$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
+    }else{
+        $file_avg = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
+        $file_max = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
+    }
     if(!(-e $file_avg) or $OVERWRITE)
     {
         $command = "gawk '{print \$1\"*\"\$2\"*\"\$3,\$5}' $file_all | sort > $file_avg";
@@ -1263,33 +1303,36 @@ sub JoinNormValues
 
     # First, spike values
     # at least, two experiments
+    $out_name0 = $NAMES[0]."_".$token."_".$BIN_SIZE."_spike";
     if($RESULTS ne "results/"){
-        $out_name0 = $RESULTS."/".$NAMES[0]."_".$token."_".$BIN_SIZE."_spike";
+        $file_avg0 = $RESULTS."/"."$out_name0"."_recoverChIPlevels/PEAKsignal_"."$out_name0"."_avg.bed";
+        $file_max0 = $RESULTS."/"."$out_name0"."_recoverChIPlevels/PEAKsignal_"."$out_name0"."_max.bed";
     }else{
-        $out_name0 = $NAMES[0]."_".$token."_".$BIN_SIZE."_spike";
+        $file_avg0 = "$out_name0"."_recoverChIPlevels/PEAKsignal_"."$out_name0"."_avg.bed";
+        $file_max0 = "$out_name0"."_recoverChIPlevels/PEAKsignal_"."$out_name0"."_max.bed";
     }
-    $file_avg0 = "$out_name0"."_recoverChIPlevels/PEAKsignal_"."$out_name0"."_avg.bed";
-    $file_max0 = "$out_name0"."_recoverChIPlevels/PEAKsignal_"."$out_name0"."_max.bed";
+    $out_name1 = $NAMES[1]."_".$token."_".$BIN_SIZE."_spike";
     if($RESULTS ne "results/"){
-        $out_name1 = $RESULTS."/".$NAMES[1]."_".$token."_".$BIN_SIZE."_spike";
+        $file_avg1 = $RESULTS."/"."$out_name1"."_recoverChIPlevels/PEAKsignal_"."$out_name1"."_avg.bed";
+        $file_max1 = $RESULTS."/"."$out_name1"."_recoverChIPlevels/PEAKsignal_"."$out_name1"."_max.bed";
     }else{
-        $out_name1 = $NAMES[1]."_".$token."_".$BIN_SIZE."_spike";
+        $file_avg1 = "$out_name1"."_recoverChIPlevels/PEAKsignal_"."$out_name1"."_avg.bed";
+        $file_max1 = "$out_name1"."_recoverChIPlevels/PEAKsignal_"."$out_name1"."_max.bed";
     }
-    $file_avg1 = "$out_name1"."_recoverChIPlevels/PEAKsignal_"."$out_name1"."_avg.bed";
-    $file_max1 = "$out_name1"."_recoverChIPlevels/PEAKsignal_"."$out_name1"."_max.bed";
     $commandAVG = "JoinNFiles.pl -v $file_avg0 $file_avg1 ";
     $commandMAX = "JoinNFiles.pl -v $file_max0 $file_max1 ";
 
     # the rest of experiments (if any)
     for($i=2; $i<$n_experiments; $i++)
     {
+        $out_name = $NAMES[$i]."_".$token."_".$BIN_SIZE."_spike";
         if($RESULTS ne "results/"){
-            $out_name = $RESULTS."/".$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike";
+            $file_avg = $RESULTS."/"."$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
+            $file_max = $RESULTS."/"."$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
         }else{
-            $out_name = $NAMES[$i]."_".$token."_".$BIN_SIZE."_spike";
+            $file_avg = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
+            $file_max = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
         }
-        $file_avg = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
-        $file_max = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
         $commandAVG = $commandAVG." $file_avg ";
         $commandMAX = $commandMAX." $file_max ";
     }
@@ -1325,33 +1368,36 @@ sub JoinNormValues
 
     # Second, sample values
     # at least, two experiments
+    $out_name0 = $NAMES[0]."_".$token."_".$BIN_SIZE."_sample";
     if($RESULTS ne "results/"){
-        $out_name0 = $RESULTS."/".$NAMES[0]."_".$token."_".$BIN_SIZE."_sample";
+        $file_avg0 = $RESULTS."/"."$out_name0"."_recoverChIPlevels/PEAKsignal_"."$out_name0"."_avg.bed";
+        $file_max0 = $RESULTS."/"."$out_name0"."_recoverChIPlevels/PEAKsignal_"."$out_name0"."_max.bed";
     }else{
-        $out_name0 = $NAMES[0]."_".$token."_".$BIN_SIZE."_sample";
+        $file_avg0 = "$out_name0"."_recoverChIPlevels/PEAKsignal_"."$out_name0"."_avg.bed";
+        $file_max0 = "$out_name0"."_recoverChIPlevels/PEAKsignal_"."$out_name0"."_max.bed";
     }
-    $file_avg0 = "$out_name0"."_recoverChIPlevels/PEAKsignal_"."$out_name0"."_avg.bed";
-    $file_max0 = "$out_name0"."_recoverChIPlevels/PEAKsignal_"."$out_name0"."_max.bed";
+    $out_name1 = $NAMES[1]."_".$token."_".$BIN_SIZE."_sample";
     if($RESULTS ne "results/"){
-        $out_name1 = $RESULTS."/".$NAMES[1]."_".$token."_".$BIN_SIZE."_sample";
+        $file_avg1 = $RESULTS."/"."$out_name1"."_recoverChIPlevels/PEAKsignal_"."$out_name1"."_avg.bed";
+        $file_max1 = $RESULTS."/"."$out_name1"."_recoverChIPlevels/PEAKsignal_"."$out_name1"."_max.bed";
     }else{
-        $out_name1 = $NAMES[1]."_".$token."_".$BIN_SIZE."_sample";
+        $file_avg1 = "$out_name1"."_recoverChIPlevels/PEAKsignal_"."$out_name1"."_avg.bed";
+        $file_max1 = "$out_name1"."_recoverChIPlevels/PEAKsignal_"."$out_name1"."_max.bed";
     }
-    $file_avg1 = "$out_name1"."_recoverChIPlevels/PEAKsignal_"."$out_name1"."_avg.bed";
-    $file_max1 = "$out_name1"."_recoverChIPlevels/PEAKsignal_"."$out_name1"."_max.bed";
     $commandAVG = "JoinNFiles.pl -v $file_avg0 $file_avg1 ";
     $commandMAX = "JoinNFiles.pl -v $file_max0 $file_max1 ";
 
     # the rest of experiments (if any)
     for($i=2; $i<$n_experiments; $i++)
     {
+        $out_name = $NAMES[$i]."_".$token."_".$BIN_SIZE."_sample";
         if($RESULTS ne "results/"){
-            $out_name = $RESULTS."/".$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample";
+            $file_avg = $RESULTS."/"."$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
+            $file_max = $RESULTS."/"."$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
         }else{
-            $out_name = $NAMES[$i]."_".$token."_".$BIN_SIZE."_sample";
+            $file_avg = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
+            $file_max = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
         }
-        $file_avg = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
-        $file_max = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
         $commandAVG = $commandAVG." $file_avg ";
         $commandMAX = $commandMAX." $file_max ";
     }
