@@ -321,7 +321,6 @@ for($i=0; $i<$n_experiments; $i++)
         print_mess("\t None of the following normalization were selected: raw, traditional, chiprx, or tag removal.")
     }
 }
-exit 42;
 
 # join the values of all experiments in a single file per normalization class
 if($RAW)
