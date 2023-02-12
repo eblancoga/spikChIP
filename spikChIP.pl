@@ -143,15 +143,27 @@ print_mess("\n");
 # 0.5 Prepare the output folders
 print_mess("Generating output folders (if necessary)");
 # create the results/ folder
-$newdir = $RESULTS;
+if($RESULTS ne "results/"){
+    $newdir = $RESULTS"/results";
+}else{
+    $newdir = $RESULTS;
+}
 print_mess("Trying the $RESULTS directory");
 mkdir($newdir) or print_mess("It is already existing");
 # create the Rscripts/ folder
-$newdir = $RSCRIPTS;
+if($RESULTS ne "results/"){
+    $newdir = $RESULTS"/"$RSCRIPTS;
+}else{
+    $newdir = $RSCRIPTS;
+}
 print_mess("Trying the $RSCRIPTS directory");
 mkdir($newdir) or print_mess("It is already existing");
 # create the plots/ folder
-$newdir = $PLOTS;
+if($RESULTS ne "results/"){
+    $newdir = $RESULTS"/"$PLOTS;
+}else{
+    $newdir = $PLOTS;
+}
 print_mess("Trying the $PLOTS directory");
 mkdir($newdir) or print_mess("It is already existing");
 print_ok();
@@ -222,7 +234,12 @@ close(FILEBINS);
 print_mess("$n_spike_bins bins generated in the segmentation of the spike genome\n");
 
 # sample genome segmentation
-$sample_bins = $RESULTS.join("-",@NAMES)."_"."sample_".$BIN_SIZE.".bed";
+if($RESULTS ne "results/"){
+    $sample_bins = $RESULTS."/results/".join("-",@NAMES)."_"."sample_".$BIN_SIZE.".bed";
+}else{
+    $sample_bins = $RESULTS.join("-",@NAMES)."_"."sample_".$BIN_SIZE.".bed";
+}
+
 if(!(-e $sample_bins) or $OVERWRITE)
 {
     $command = "grep -v FLY $chrominfo_file | gawk 'BEGIN{OFS=\"\\t\";offset=$BIN_SIZE;}{for(i=1;i<\$2-offset;i=i+offset) print \$1,i,i+offset;}' > $sample_bins";
@@ -533,7 +550,11 @@ sub CalculateReads
 
     
     # running the samtools to calculate the number of reads of the BAM file
-    $out_file = $RESULTS.$name."_flagstat.txt";
+    if($RESULTS ne "results/"){
+        $out_file = $RESULTS."/results/".$name."_flagstat.txt";
+    }else{
+        $out_file = $RESULTS.$name."_flagstat.txt";
+    }
     
     if(!(-e $out_file) or $OVERWRITE)
     {
@@ -831,7 +852,11 @@ sub NormalizationRaw
     $bam_spike = $BAM_SPIKES[$i];
 
     # Spike bins
-    $out_name = $NAMES[$i]."_".$RAW_TOKEN."_".$BIN_SIZE."_spike";
+    if($RESULTS ne "results/"){
+        $out_name = $RESULTS."/".$NAMES[$i]."_".$RAW_TOKEN."_".$BIN_SIZE."_spike";
+    }else{
+        $out_name = $NAMES[$i]."_".$RAW_TOKEN."_".$BIN_SIZE."_spike";
+    }
     $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
     
     if(!(-e $file_all) or $OVERWRITE)
@@ -872,7 +897,11 @@ sub NormalizationRaw
     }
 
     # Sample bins
-    $out_name = $NAMES[$i]."_".$RAW_TOKEN."_".$BIN_SIZE."_sample";
+    if($RESULTS ne "results/"){
+        $out_name = $RESULTS."/".$NAMES[$i]."_".$RAW_TOKEN."_".$BIN_SIZE."_sample";
+    }else{
+        $out_name = $NAMES[$i]."_".$RAW_TOKEN."_".$BIN_SIZE."_sample";
+    }
     $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
     if(!(-e $file_all) or $OVERWRITE)
     {
@@ -928,7 +957,11 @@ sub NormalizationTraditional
     $total_reads = $READS_SAMPLES[$i] + $READS_SPIKES[$i];
 
     # Spike bins
-    $out_name = $NAMES[$i]."_".$TRADITIONAL_TOKEN."_".$BIN_SIZE."_spike";
+    if($RESULTS ne "results/"){
+        $out_name = $RESULTS."/".$NAMES[$i]."_".$TRADITIONAL_TOKEN."_".$BIN_SIZE."_spike";
+    }else{
+        $out_name = $NAMES[$i]."_".$TRADITIONAL_TOKEN."_".$BIN_SIZE."_spike";
+    }
     $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
     if(!(-e $file_all) or $OVERWRITE)
     {
@@ -969,7 +1002,11 @@ sub NormalizationTraditional
     }
 
     # Sample bins
-    $out_name = $NAMES[$i]."_".$TRADITIONAL_TOKEN."_".$BIN_SIZE."_sample";
+    if($RESULTS ne "results/"){
+        $out_name = $RESULTS."/".$NAMES[$i]."_".$TRADITIONAL_TOKEN."_".$BIN_SIZE."_sample";
+    }else{
+        $out_name = $NAMES[$i]."_".$TRADITIONAL_TOKEN."_".$BIN_SIZE."_sample";
+    }
     $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
     if(!(-e $file_all) or $OVERWRITE)
     {
@@ -1025,7 +1062,11 @@ sub NormalizationChIPRX
     $total_reads = $READS_SAMPLES[$i] + $READS_SPIKES[$i];
 
     # Spike bins
-    $out_name = $NAMES[$i]."_".$CHIPRX_TOKEN."_".$BIN_SIZE."_spike";
+    if($RESULTS ne "results/"){
+        $out_name = $RESULTS."/".$NAMES[$i]."_".$CHIPRX_TOKEN."_".$BIN_SIZE."_spike";
+    }else{
+        $out_name = $NAMES[$i]."_".$CHIPRX_TOKEN."_".$BIN_SIZE."_spike";
+    }
     $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
     if(!(-e $file_all) or $OVERWRITE)
     {
@@ -1064,7 +1105,11 @@ sub NormalizationChIPRX
     }
 
     # Sample bins
-    $out_name = $NAMES[$i]."_".$CHIPRX_TOKEN."_".$BIN_SIZE."_sample";
+    if($RESULTS ne "results/"){
+        $out_name = $RESULTS."/".$NAMES[$i]."_".$CHIPRX_TOKEN."_".$BIN_SIZE."_sample";
+    }else{
+        $out_name = $NAMES[$i]."_".$CHIPRX_TOKEN."_".$BIN_SIZE."_sample";
+    }
     $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
     if(!(-e $file_all) or $OVERWRITE)
     {
@@ -1116,7 +1161,11 @@ sub NormalizationTagRemoval
     $bam_spike = $BAM_SPIKES_DOWN[$i];
 
     # Spike bins
-    $out_name = $NAMES[$i]."_".$TAGREMOVAL_TOKEN."_".$BIN_SIZE."_spike";
+    if($RESULTS ne "results/"){
+        $out_name = $RESULTS."/".$NAMES[$i]."_".$TAGREMOVAL_TOKEN."_".$BIN_SIZE."_spike";
+    }else{
+        $out_name = $NAMES[$i]."_".$TAGREMOVAL_TOKEN."_".$BIN_SIZE."_spike";
+    }
     $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
     if(!(-e $file_all) or $OVERWRITE)
     {
@@ -1154,7 +1203,11 @@ sub NormalizationTagRemoval
     }
     
     # Sample bins
-    $out_name = $NAMES[$i]."_".$TAGREMOVAL_TOKEN."_".$BIN_SIZE."_sample";
+    if($RESULTS ne "results/"){
+        $out_name = $RESULTS."/".$NAMES[$i]."_".$TAGREMOVAL_TOKEN."_".$BIN_SIZE."_sample";
+    }else{
+        $out_name = $NAMES[$i]."_".$TAGREMOVAL_TOKEN."_".$BIN_SIZE."_sample";
+    }
     $file_all = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name".".bed";
     if(!(-e $file_all) or $OVERWRITE)
     {
@@ -1210,10 +1263,18 @@ sub JoinNormValues
 
     # First, spike values
     # at least, two experiments
-    $out_name0 = $NAMES[0]."_".$token."_".$BIN_SIZE."_spike";
+    if($RESULTS ne "results/"){
+        $out_name0 = $RESULTS."/".$NAMES[0]."_".$token."_".$BIN_SIZE."_spike";
+    }else{
+        $out_name0 = $NAMES[0]."_".$token."_".$BIN_SIZE."_spike";
+    }
     $file_avg0 = "$out_name0"."_recoverChIPlevels/PEAKsignal_"."$out_name0"."_avg.bed";
     $file_max0 = "$out_name0"."_recoverChIPlevels/PEAKsignal_"."$out_name0"."_max.bed";
-    $out_name1 = $NAMES[1]."_".$token."_".$BIN_SIZE."_spike";
+    if($RESULTS ne "results/"){
+        $out_name1 = $RESULTS."/".$NAMES[1]."_".$token."_".$BIN_SIZE."_spike";
+    }else{
+        $out_name1 = $NAMES[1]."_".$token."_".$BIN_SIZE."_spike";
+    }
     $file_avg1 = "$out_name1"."_recoverChIPlevels/PEAKsignal_"."$out_name1"."_avg.bed";
     $file_max1 = "$out_name1"."_recoverChIPlevels/PEAKsignal_"."$out_name1"."_max.bed";
     $commandAVG = "JoinNFiles.pl -v $file_avg0 $file_avg1 ";
@@ -1222,15 +1283,24 @@ sub JoinNormValues
     # the rest of experiments (if any)
     for($i=2; $i<$n_experiments; $i++)
     {
-	$out_name = $NAMES[$i]."_".$token."_".$BIN_SIZE."_spike";
-	$file_avg = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
-	$file_max = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
-	$commandAVG = $commandAVG." $file_avg ";
-	$commandMAX = $commandMAX." $file_max ";
+        if($RESULTS ne "results/"){
+            $out_name = $RESULTS."/".$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike";
+        }else{
+            $out_name = $NAMES[$i]."_".$token."_".$BIN_SIZE."_spike";
+        }
+        $file_avg = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
+        $file_max = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
+        $commandAVG = $commandAVG." $file_avg ";
+        $commandMAX = $commandMAX." $file_max ";
     }
-
-    $final_avg = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_spike_avg.txt";
-    $final_max = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_spike_max.txt";
+    
+    if($RESULTS ne "results/"){
+        $final_avg = $RESULTS."/results/".$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_spike_avg.txt";
+        $final_max = $RESULTS."/results/".$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_spike_max.txt";
+    }else{
+        $final_avg = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_spike_avg.txt";
+        $final_max = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_spike_max.txt";
+    }
     #
     if(!(-e $final_avg) or $OVERWRITE)
     {
@@ -1255,10 +1325,18 @@ sub JoinNormValues
 
     # Second, sample values
     # at least, two experiments
-    $out_name0 = $NAMES[0]."_".$token."_".$BIN_SIZE."_sample";
+    if($RESULTS ne "results/"){
+        $out_name0 = $RESULTS."/".$NAMES[0]."_".$token."_".$BIN_SIZE."_sample";
+    }else{
+        $out_name0 = $NAMES[0]."_".$token."_".$BIN_SIZE."_sample";
+    }
     $file_avg0 = "$out_name0"."_recoverChIPlevels/PEAKsignal_"."$out_name0"."_avg.bed";
     $file_max0 = "$out_name0"."_recoverChIPlevels/PEAKsignal_"."$out_name0"."_max.bed";
-    $out_name1 = $NAMES[1]."_".$token."_".$BIN_SIZE."_sample";
+    if($RESULTS ne "results/"){
+        $out_name1 = $RESULTS."/".$NAMES[1]."_".$token."_".$BIN_SIZE."_sample";
+    }else{
+        $out_name1 = $NAMES[1]."_".$token."_".$BIN_SIZE."_sample";
+    }
     $file_avg1 = "$out_name1"."_recoverChIPlevels/PEAKsignal_"."$out_name1"."_avg.bed";
     $file_max1 = "$out_name1"."_recoverChIPlevels/PEAKsignal_"."$out_name1"."_max.bed";
     $commandAVG = "JoinNFiles.pl -v $file_avg0 $file_avg1 ";
@@ -1267,15 +1345,23 @@ sub JoinNormValues
     # the rest of experiments (if any)
     for($i=2; $i<$n_experiments; $i++)
     {
-	$out_name = $NAMES[$i]."_".$token."_".$BIN_SIZE."_sample";
-	$file_avg = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
-	$file_max = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
-	$commandAVG = $commandAVG." $file_avg ";
-	$commandMAX = $commandMAX." $file_max ";
+        if($RESULTS ne "results/"){
+            $out_name = $RESULTS."/".$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample";
+        }else{
+            $out_name = $NAMES[$i]."_".$token."_".$BIN_SIZE."_sample";
+        }
+        $file_avg = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_avg.bed";
+        $file_max = "$out_name"."_recoverChIPlevels/PEAKsignal_"."$out_name"."_max.bed";
+        $commandAVG = $commandAVG." $file_avg ";
+        $commandMAX = $commandMAX." $file_max ";
     }
-
-    $final_avg = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_sample_avg.txt";
-    $final_max = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_sample_max.txt";
+    if($RESULTS ne "results/"){
+        $final_avg = $RESULTS."/results/".$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_sample_avg.txt";
+        $final_max = $RESULTS."/results/".$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_sample_max.txt";
+    }else{
+        $final_avg = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_sample_avg.txt";
+        $final_max = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_sample_max.txt";
+    }
     #
     if(!(-e $final_avg) or $OVERWRITE)
     {
@@ -1300,12 +1386,20 @@ sub JoinNormValues
     # remove the seqcode folders (spike and sample)
     for($i=0; $i<$n_experiments; $i++)
     {
-    	$folder = $NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_recoverChIPlevels/";
-    	CleanFolder($folder);
-    	$folder = $NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_recoverChIPlevels/";
-    	CleanFolder($folder);
+        if($RESULTS ne "results/"){
+            $folder = $RESULTS."/".$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_recoverChIPlevels/";
+            CleanFolder($folder);
+            $folder = $RESULTS."/".$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_recoverChIPlevels/";
+            CleanFolder($folder);
+        }else{
+            $folder = $NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_recoverChIPlevels/";
+            CleanFolder($folder);
+            $folder = $NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_recoverChIPlevels/";
+            CleanFolder($folder);
+        }
     }
 }
+
 
 sub PreparespikChIPValues
 {
@@ -1316,14 +1410,23 @@ sub PreparespikChIPValues
     
 
     # (A) normalization based in avg values
-    $spike_values = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$TRADITIONAL_TOKEN."_".$BIN_SIZE."_spike_avg.txt";
-    $sample_values = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$TRADITIONAL_TOKEN."_".$BIN_SIZE."_sample_avg.txt";
-
-    # output files
-    $output_file1 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg.txt";
-    $output_file2 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg_values.txt";
-    $output_file3 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg_names.txt";
-    $output_file4 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg_names2.txt";
+    if($RESULTS ne "results/"){
+        $spike_values = $RESULTS."/results/".$FINAL_TOKEN."_".join("-",@NAMES)."_".$TRADITIONAL_TOKEN."_".$BIN_SIZE."_spike_avg.txt";
+        $sample_values = $RESULTS."/results/".$FINAL_TOKEN."_".join("-",@NAMES)."_".$TRADITIONAL_TOKEN."_".$BIN_SIZE."_sample_avg.txt";
+        # output files
+        $output_file1 = $RESULTS."/results/".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg.txt";
+        $output_file2 = $RESULTS."/results/".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg_values.txt";
+        $output_file3 = $RESULTS."/results/".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg_names.txt";
+        $output_file4 = $RESULTS."/results/".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg_names2.txt";
+    }else{
+        $spike_values = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$TRADITIONAL_TOKEN."_".$BIN_SIZE."_spike_avg.txt";
+        $sample_values = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$TRADITIONAL_TOKEN."_".$BIN_SIZE."_sample_avg.txt";
+        # output files
+        $output_file1 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg.txt";
+        $output_file2 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg_values.txt";
+        $output_file3 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg_names.txt";
+        $output_file4 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg_names2.txt";
+    }
     #
     CleanFile($output_file1);
     CleanFile($output_file2);
@@ -1371,14 +1474,23 @@ sub PreparespikChIPValues
     }
 
     # (B) normalization based in max values
-    $spike_values = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$TRADITIONAL_TOKEN."_".$BIN_SIZE."_spike_max.txt";
-    $sample_values = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$TRADITIONAL_TOKEN."_".$BIN_SIZE."_sample_max.txt";
-
-    # output files
-    $output_file1 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max.txt";
-    $output_file2 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max_values.txt";
-    $output_file3 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max_names.txt";
-    $output_file4 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max_names2.txt";
+    if($RESULTS ne "results/"){
+        $spike_values = $RESULTS."/results/".$FINAL_TOKEN."_".join("-",@NAMES)."_".$TRADITIONAL_TOKEN."_".$BIN_SIZE."_spike_max.txt";
+        $sample_values = $RESULTS."/results/".$FINAL_TOKEN."_".join("-",@NAMES)."_".$TRADITIONAL_TOKEN."_".$BIN_SIZE."_sample_max.txt";
+        # output files
+        $output_file1 = $RESULTS."/results/".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max.txt";
+        $output_file2 = $RESULTS."/results/".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max_values.txt";
+        $output_file3 = $RESULTS."/results/".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max_names.txt";
+        $output_file4 = $RESULTS."/results/".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max_names2.txt";
+    }else{
+        $spike_values = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$TRADITIONAL_TOKEN."_".$BIN_SIZE."_spike_max.txt";
+        $sample_values = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$TRADITIONAL_TOKEN."_".$BIN_SIZE."_sample_max.txt";
+        # output files
+        $output_file1 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max.txt";
+        $output_file2 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max_values.txt";
+        $output_file3 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max_names.txt";
+        $output_file4 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max_names2.txt";
+    }
     #
     CleanFile($output_file1);
     CleanFile($output_file2);
@@ -1433,15 +1545,27 @@ sub RunspikChIPValues
 
     # spikChIP on avg values
     print_mess("Performing the analysis on average values\n");
-    $Rfile = $RSCRIPTS.join("-",@NAMES)."_".$BIN_SIZE."_avg.R";
-    $output_file1 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg.txt";
-    $output_file2 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg_values.txt";
-    $output_file3 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg_names.txt";
-    $output_file4 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg_names2.txt";
-    #
-    $final_avg = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_avg_normalized.txt";
-    $final_avg_spike = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_avg_normalized_spike.txt";
-    $final_avg_sample = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_avg_normalized_sample.txt";
+    if($RESULTS ne "results/"){
+        $Rfile = $RESULTS."/".$RSCRIPTS.join("-",@NAMES)."_".$BIN_SIZE."_avg.R";
+        $output_file1 = $RESULTS."/results/".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg.txt";
+        $output_file2 = $RESULTS."/results/".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg_values.txt";
+        $output_file3 = $RESULTS."/results/".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg_names.txt";
+        $output_file4 = $RESULTS."/results/".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg_names2.txt";
+        #
+        $final_avg = $RESULTS."/results/".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_avg_normalized.txt";
+        $final_avg_spike = $RESULTS."/results/".$FINAL_TOKEN."_".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_avg_normalized_spike.txt";
+        $final_avg_sample = $RESULTS."/results/".$FINAL_TOKEN."_".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_avg_normalized_sample.txt";
+    }else{
+        $Rfile = $RSCRIPTS.join("-",@NAMES)."_".$BIN_SIZE."_avg.R";
+        $output_file1 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg.txt";
+        $output_file2 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg_values.txt";
+        $output_file3 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg_names.txt";
+        $output_file4 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_avg_names2.txt";
+        #
+        $final_avg = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_avg_normalized.txt";
+        $final_avg_spike = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_avg_normalized_spike.txt";
+        $final_avg_sample = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_avg_normalized_sample.txt";
+    }
     CleanFile($final_avg);
     SaveFile($final_avg_spike);
     SaveFile($final_avg_sample);
@@ -1465,8 +1589,12 @@ sub RunspikChIPValues
         print RFILE "write.table(mn,file=\"$final_avg\",sep=\"\\t\",row.names=TRUE,col.names=FALSE,quote=FALSE)\n";
         close(RFILE);
         #
-        $Routput_file = join("-",@NAMES)."_".$BIN_SIZE."_avg.Rout";
-    
+        if($RESULTS ne "results/"){
+            $Routput_file = $RESULTS."/".join("-",@NAMES)."_".$BIN_SIZE."_avg.Rout";
+        }else{
+            $Routput_file = join("-",@NAMES)."_".$BIN_SIZE."_avg.Rout";
+        }
+        
         # execute R script
         $command = "R CMD BATCH $Rfile";
         print_mess("$command\n");
@@ -1515,15 +1643,27 @@ sub RunspikChIPValues
 
     # spikChIP on max values
     print_mess("Performing the analysis on max values\n");
-    $Rfile = $RSCRIPTS.join("-",@NAMES)."_".$BIN_SIZE."_max.R";
-    $output_file1 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max.txt";
-    $output_file2 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max_values.txt";
-    $output_file3 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max_names.txt";
-    $output_file4 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max_names2.txt";
-    #
-    $final_max = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_max_normalized.txt";
-    $final_max_spike = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_max_normalized_spike.txt";
-    $final_max_sample = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_max_normalized_sample.txt";
+    if($RESULTS ne "results/"){
+        $Rfile = $RESULTS."/".$RSCRIPTS.join("-",@NAMES)."_".$BIN_SIZE."_max.R";
+        $output_file1 = $RESULTS."/results/".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max.txt";
+        $output_file2 = $RESULTS."/results/".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max_values.txt";
+        $output_file3 = $RESULTS."/results/".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max_names.txt";
+        $output_file4 = $RESULTS."/results/".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max_names2.txt";
+        #
+        $final_max = $RESULTS."/results/".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_max_normalized.txt";
+        $final_max_spike = $RESULTS."/results/".$FINAL_TOKEN."_".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_max_normalized_spike.txt";
+        $final_max_sample = $RESULTS."/results/".$FINAL_TOKEN."_".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_max_normalized_sample.txt";
+    }else{
+        $Rfile = $RSCRIPTS.join("-",@NAMES)."_".$BIN_SIZE."_max.R";
+        $output_file1 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max.txt";
+        $output_file2 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max_values.txt";
+        $output_file3 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max_names.txt";
+        $output_file4 = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_spike-sample_max_names2.txt";
+        #
+        $final_max = $RESULTS.join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_max_normalized.txt";
+        $final_max_spike = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_max_normalized_spike.txt";
+        $final_max_sample = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$SPIKCHIP_TOKEN."_".$BIN_SIZE."_max_normalized_sample.txt";
+    }
     #
     CleanFile($final_max);
     SaveFile($final_max_spike);
@@ -1553,7 +1693,11 @@ sub RunspikChIPValues
         system($command);
         #
         # error check in Rout file
-        $Routput_file = join("-",@NAMES)."_".$BIN_SIZE."_max.Rout";
+        if($RESULTS ne "results/"){
+            $Routput_file = $RESULTS."/".join("-",@NAMES)."_".$BIN_SIZE."_max.Rout";
+        }else{
+            $Routput_file = join("-",@NAMES)."_".$BIN_SIZE."_max.Rout";
+        }
         (open(ROUT,$Routput_file)) or print_error("R SCRIPTS (max): FILE $Routput_file can not be opened");
         while($line=<ROUT>)
         {
@@ -1604,11 +1748,19 @@ sub ClassifyBins
     	print_mess("Working with sample $NAMES[$i]: peaks Vs. bins of spike\n");
     	
     	# use SeqCode to identify the spike bins overlapping with spike peaks
-    	$out_name = $NAMES[$i]."_".$BIN_SIZE."_spike_bins";
-    	$folder = $PEAKS_TOKEN."_".$out_name."_matchpeaks";
-    	$out_common = $folder."/common_".$PEAKS_TOKEN."_".$out_name.".bed";
-    	$out_peaks_file = $RESULTS.$NAMES[$i]."_".$BIN_SIZE."_bins_spike_peaks.bed";
-    	$BINS_PEAKS_SPIKE[$i] = $out_peaks_file;
+    	if($RESULTS ne "results/"){
+            $out_name = $NAMES[$i]."_".$BIN_SIZE."_spike_bins";
+            $folder = $PEAKS_TOKEN."_".$out_name."_matchpeaks";
+            $out_common = $RESULTS."/".$folder."/common_".$PEAKS_TOKEN."_".$out_name.".bed";
+            $out_peaks_file = $RESULTS."/results/".$NAMES[$i]."_".$BIN_SIZE."_bins_spike_peaks.bed";
+            $BINS_PEAKS_SPIKE[$i] = $out_peaks_file;
+        }else{
+            $out_name = $NAMES[$i]."_".$BIN_SIZE."_spike_bins";
+            $folder = $PEAKS_TOKEN."_".$out_name."_matchpeaks";
+            $out_common = $folder."/common_".$PEAKS_TOKEN."_".$out_name.".bed";
+            $out_peaks_file = $RESULTS.$NAMES[$i]."_".$BIN_SIZE."_bins_spike_peaks.bed";
+            $BINS_PEAKS_SPIKE[$i] = $out_peaks_file;
+        }
     	#
     	CleanFile($out_peaks_file);
     	if(!(-e $out_peaks_file) or $OVERWRITE)
@@ -1627,11 +1779,19 @@ sub ClassifyBins
     	print_mess("Working with sample $NAMES[$i]: peaks Vs. bins of sample\n");
     	
     	# use SeqCode to identify the sample bins overlapping with sample peaks
-    	$out_name = $NAMES[$i]."_".$BIN_SIZE."_sample_bins";
-    	$folder = $PEAKS_TOKEN."_".$out_name."_matchpeaks";
-    	$out_common = $folder."/common_".$PEAKS_TOKEN."_".$out_name.".bed";
-    	$out_peaks_file = $RESULTS.$NAMES[$i]."_".$BIN_SIZE."_bins_sample_peaks.bed";
-    	$BINS_PEAKS_SAMPLE[$i] = $out_peaks_file;
+    	if($RESULTS ne "results/"){
+            $out_name = $NAMES[$i]."_".$BIN_SIZE."_sample_bins";
+            $folder = $PEAKS_TOKEN."_".$out_name."_matchpeaks";
+            $out_common = $RESULTS."/".$folder."/common_".$PEAKS_TOKEN."_".$out_name.".bed";
+            $out_peaks_file = $RESULTS."/results/".$NAMES[$i]."_".$BIN_SIZE."_bins_sample_peaks.bed";
+            $BINS_PEAKS_SAMPLE[$i] = $out_peaks_file;
+        }else{
+            $out_name = $NAMES[$i]."_".$BIN_SIZE."_sample_bins";
+            $folder = $PEAKS_TOKEN."_".$out_name."_matchpeaks";
+            $out_common = $folder."/common_".$PEAKS_TOKEN."_".$out_name.".bed";
+            $out_peaks_file = $RESULTS.$NAMES[$i]."_".$BIN_SIZE."_bins_sample_peaks.bed";
+            $BINS_PEAKS_SAMPLE[$i] = $out_peaks_file;
+        }
     	#
     	CleanFile($out_peaks_file);
     	if(!(-e $out_peaks_file) or $OVERWRITE)
@@ -1673,13 +1833,25 @@ sub ClassifyNormalizationValues
         # extract values for spike with avg
         if ($token eq $SPIKCHIP_TOKEN)
         {
-            $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_avg_normalized_spike.txt";
+            if($RESULTS ne "results/"){
+                $input_file = $RESULTS."/results/".$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_avg_normalized_spike.txt";
+            }else{
+                $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_avg_normalized_spike.txt";
+            }
         }
         else
         {
-            $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_spike_avg.txt";
+            if($RESULTS ne "results/"){
+                $input_file = $RESULTS."/results/".$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_spike_avg.txt";
+            }else{
+                $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_spike_avg.txt";
+            }
         }
-        $output_file = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_avg_peaks.txt";
+        if($RESULTS ne "results/"){
+                $output_file = $RESULTS."/results/".$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_avg_peaks.txt";
+        }else{
+                $output_file = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_avg_peaks.txt";
+        }
         if(!(-e $output_file) or $OVERWRITE)
         {
             $command = "grep -v track ".$BINS_PEAKS_SPIKE[$i]." | gawk '{print \$1\"*\"\$2\"*\"\$3}' | sort | join - $input_file | gawk '{print \$1,$n_field;}' > $output_file";
@@ -1691,7 +1863,11 @@ sub ClassifyNormalizationValues
         #
         CleanFile($output_file);
         #
-        $output_file = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_avg_bg.txt";
+        if($RESULTS ne "results/"){
+                $output_file = $RESULTS."/results/".$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_avg_bg.txt";
+        }else{
+                $output_file = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_avg_bg.txt";
+        }
         if(!(-e $output_file) or $OVERWRITE)
         {
             $command = "grep -v track ".$BINS_PEAKS_SPIKE[$i]." | gawk '{print \$1\"*\"\$2\"*\"\$3}' | sort | join -v 2 - $input_file | gawk '{print \$1,$n_field;}' > $output_file";
@@ -1706,13 +1882,22 @@ sub ClassifyNormalizationValues
         # extract values for sample with avg
         if ($token eq $SPIKCHIP_TOKEN)
         {
-            $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_avg_normalized_sample.txt";
+            if($RESULTS ne "results/"){
+                $input_file = $RESULTS."/results/".$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_avg_normalized_sample.txt";
+            }else{
+                $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_avg_normalized_sample.txt";
+            }
         }
         else
         {
-            $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_sample_avg.txt";
+            if($RESULTS ne "results/"){
+                $input_file = $RESULTS."/results/".$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_sample_avg.txt";
+                $output_file = $RESULTS."/results/".$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_avg_peaks.txt";
+            }else{
+                $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_sample_avg.txt";
+                $output_file = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_avg_peaks.txt";
+            }
         }
-        $output_file = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_avg_peaks.txt";
         if(!(-e $output_file) or $OVERWRITE)
         {
             $command = "grep -v track ".$BINS_PEAKS_SAMPLE[$i]." | gawk '{print \$1\"*\"\$2\"*\"\$3}' | sort | join - $input_file | gawk '{print \$1,$n_field;}' > $output_file";
@@ -1724,7 +1909,11 @@ sub ClassifyNormalizationValues
         #
         CleanFile($output_file);
         #
-        $output_file = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_avg_bg.txt";
+        if($RESULTS ne "results/"){
+                $output_file = $RESULTS."/results/".$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_avg_bg.txt";
+        }else{
+            $output_file = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_avg_bg.txt";
+        }
         if(!(-e $output_file) or $OVERWRITE)
         {
             $command = "grep -v track ".$BINS_PEAKS_SAMPLE[$i]." | gawk '{print \$1\"*\"\$2\"*\"\$3}' | sort | join -v 2 - $input_file | gawk '{print \$1,$n_field;}' > $output_file";
@@ -1739,13 +1928,25 @@ sub ClassifyNormalizationValues
         # extract values for spike with max
         if ($token eq $SPIKCHIP_TOKEN)
         {
-            $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_max_normalized_spike.txt";
+            if($RESULTS ne "results/"){
+                $input_file = $RESULTS."/results/".$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_max_normalized_spike.txt";
+            }else{
+                $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_max_normalized_spike.txt";
+            }
         }
         else
         {
-            $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_spike_max.txt";
+            if($RESULTS ne "results/"){
+                $input_file = $RESULTS."/results/".$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_spike_max.txt";
+            }else{
+                $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_spike_max.txt";
+            }
         }
-        $output_file = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_max_peaks.txt";
+        if($RESULTS ne "results/"){
+            $output_file = $RESULTS."/results/".$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_max_peaks.txt";
+        }else{
+            $output_file = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_max_peaks.txt";
+        }
         if(!(-e $output_file) or $OVERWRITE)
         {
             $command = "grep -v track ".$BINS_PEAKS_SPIKE[$i]." | gawk '{print \$1\"*\"\$2\"*\"\$3}' | sort | join - $input_file | gawk '{print \$1,$n_field;}' > $output_file";
@@ -1757,7 +1958,11 @@ sub ClassifyNormalizationValues
         #
         CleanFile($output_file);
         #
-        $output_file = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_max_bg.txt";
+        if($RESULTS ne "results/"){
+            $output_file = $RESULTS."/results/".$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_max_bg.txt";
+        }else{
+            $output_file = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_max_bg.txt";
+        }
         if(!(-e $output_file) or $OVERWRITE)
         {
             $command = "grep -v track ".$BINS_PEAKS_SPIKE[$i]." | gawk '{print \$1\"*\"\$2\"*\"\$3}' | sort | join -v 2 - $input_file | gawk '{print \$1,$n_field;}' > $output_file";
@@ -1772,13 +1977,25 @@ sub ClassifyNormalizationValues
         # extract values for sample with max
         if ($token eq $SPIKCHIP_TOKEN)
         {
-            $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_max_normalized_sample.txt";
+            if($RESULTS ne "results/"){
+                $input_file = $RESULTS."/results/".$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_max_normalized_sample.txt";
+            }else{
+                $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_max_normalized_sample.txt";
+            }
         }
         else
         {
-            $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_sample_max.txt";
+            if($RESULTS ne "results/"){
+                $input_file = $RESULTS."/results/".$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_sample_max.txt";
+            }else{
+                $input_file = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_sample_max.txt";
+            }
         }
-        $output_file = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_max_peaks.txt";
+        if($RESULTS ne "results/"){
+            $output_file = $RESULTS."/results/".$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_max_peaks.txt";
+        }else{
+            $output_file = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_max_peaks.txt";
+        }
         if(!(-e $output_file) or $OVERWRITE)
         {
             $command = "grep -v track ".$BINS_PEAKS_SAMPLE[$i]." | gawk '{print \$1\"*\"\$2\"*\"\$3}' | sort | join - $input_file | gawk '{print \$1,$n_field;}' > $output_file";
@@ -1790,7 +2007,11 @@ sub ClassifyNormalizationValues
         #
         CleanFile($output_file);
         #
-        $output_file = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_max_bg.txt";
+        if($RESULTS ne "results/"){
+            $output_file = $RESULTS."/results/".$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_max_bg.txt";
+        }else{
+            $output_file = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_max_bg.txt";
+        }
         if(!(-e $output_file) or $OVERWRITE)
         {
             $command = "grep -v track ".$BINS_PEAKS_SAMPLE[$i]." | gawk '{print \$1\"*\"\$2\"*\"\$3}' | sort | join -v 2 - $input_file | gawk '{print \$1,$n_field;}' > $output_file";
@@ -1816,24 +2037,41 @@ sub ClassifyNormalizationValues
 
     # First, spike values for peaks
     # at least, two experiments
-    $file_avg0 = $RESULTS.$NAMES[0]."_".$token."_".$BIN_SIZE."_spike_avg_peaks.txt";
-    $file_max0 = $RESULTS.$NAMES[0]."_".$token."_".$BIN_SIZE."_spike_max_peaks.txt";
-    $file_avg1 = $RESULTS.$NAMES[1]."_".$token."_".$BIN_SIZE."_spike_avg_peaks.txt";
-    $file_max1 = $RESULTS.$NAMES[1]."_".$token."_".$BIN_SIZE."_spike_max_peaks.txt";
+    if($RESULTS ne "results/"){
+        $file_avg0 = $RESULTS."/results/".$NAMES[0]."_".$token."_".$BIN_SIZE."_spike_avg_peaks.txt";
+        $file_max0 = $RESULTS."/results/".$NAMES[0]."_".$token."_".$BIN_SIZE."_spike_max_peaks.txt";
+        $file_avg1 = $RESULTS."/results/".$NAMES[1]."_".$token."_".$BIN_SIZE."_spike_avg_peaks.txt";
+        $file_max1 = $RESULTS."/results/".$NAMES[1]."_".$token."_".$BIN_SIZE."_spike_max_peaks.txt";
+    }else{
+        $file_avg0 = $RESULTS.$NAMES[0]."_".$token."_".$BIN_SIZE."_spike_avg_peaks.txt";
+        $file_max0 = $RESULTS.$NAMES[0]."_".$token."_".$BIN_SIZE."_spike_max_peaks.txt";
+        $file_avg1 = $RESULTS.$NAMES[1]."_".$token."_".$BIN_SIZE."_spike_avg_peaks.txt";
+        $file_max1 = $RESULTS.$NAMES[1]."_".$token."_".$BIN_SIZE."_spike_max_peaks.txt";
+    }
     $commandAVG = "join $file_avg0 $file_avg1 ";
     $commandMAX = "join $file_max0 $file_max1 ";
 
     # the rest of experiments (if any)
     for($i=2; $i<$n_experiments; $i++)
     {
-    $file_avg = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_avg_peaks.txt";
-    $file_max = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_max_peaks.txt";
-    $commandAVG = $commandAVG." | join - $file_avg ";
-    $commandMAX = $commandMAX." | join - $file_max ";
+        if($RESULTS ne "results/"){
+            $file_avg = $RESULTS."/results/".$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_avg_peaks.txt";
+            $file_max = $RESULTS."/results/".$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_max_peaks.txt";
+        }else{
+            $file_avg = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_avg_peaks.txt";
+            $file_max = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_max_peaks.txt";
+        }
+        $commandAVG = $commandAVG." | join - $file_avg ";
+        $commandMAX = $commandMAX." | join - $file_max ";
     }
 
-    $final_avg = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_spike_avg_peaks.txt";
-    $final_max = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_spike_max_peaks.txt";
+    if($RESULTS ne "results/"){
+        $final_avg = $RESULTS."/results/".$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_spike_avg_peaks.txt";
+        $final_max = $RESULTS."/results/".$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_spike_max_peaks.txt";
+    }else{
+        $final_avg = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_spike_avg_peaks.txt";
+        $final_max = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_spike_max_peaks.txt";
+    }
     #
     if(!(-e $final_avg) or $OVERWRITE)
     {
@@ -1857,24 +2095,41 @@ sub ClassifyNormalizationValues
 
     # Second, sample values for peaks
     # at least, two experiments
-    $file_avg0 = $RESULTS.$NAMES[0]."_".$token."_".$BIN_SIZE."_sample_avg_peaks.txt";
-    $file_max0 = $RESULTS.$NAMES[0]."_".$token."_".$BIN_SIZE."_sample_max_peaks.txt";
-    $file_avg1 = $RESULTS.$NAMES[1]."_".$token."_".$BIN_SIZE."_sample_avg_peaks.txt";
-    $file_max1 = $RESULTS.$NAMES[1]."_".$token."_".$BIN_SIZE."_sample_max_peaks.txt";
+    if($RESULTS ne "results/"){
+        $file_avg0 = $RESULTS."/results/".$NAMES[0]."_".$token."_".$BIN_SIZE."_sample_avg_peaks.txt";
+        $file_max0 = $RESULTS."/results/".$NAMES[0]."_".$token."_".$BIN_SIZE."_sample_max_peaks.txt";
+        $file_avg1 = $RESULTS."/results/".$NAMES[1]."_".$token."_".$BIN_SIZE."_sample_avg_peaks.txt";
+        $file_max1 = $RESULTS."/results/".$NAMES[1]."_".$token."_".$BIN_SIZE."_sample_max_peaks.txt";
+    }else{
+        $file_avg0 = $RESULTS.$NAMES[0]."_".$token."_".$BIN_SIZE."_sample_avg_peaks.txt";
+        $file_max0 = $RESULTS.$NAMES[0]."_".$token."_".$BIN_SIZE."_sample_max_peaks.txt";
+        $file_avg1 = $RESULTS.$NAMES[1]."_".$token."_".$BIN_SIZE."_sample_avg_peaks.txt";
+        $file_max1 = $RESULTS.$NAMES[1]."_".$token."_".$BIN_SIZE."_sample_max_peaks.txt";
+    }
     $commandAVG = "join $file_avg0 $file_avg1 ";
     $commandMAX = "join $file_max0 $file_max1 ";
 
     # the rest of experiments (if any)
     for($i=2; $i<$n_experiments; $i++)
     {
-    $file_avg = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_avg_peaks.txt";
-    $file_max = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_max_peaks.txt";
-    $commandAVG = $commandAVG." | join - $file_avg ";
-    $commandMAX = $commandMAX." | join - $file_max ";
+        if($RESULTS ne "results/"){
+            $file_avg = $RESULTS."/results/".$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_avg_peaks.txt";
+            $file_max = $RESULTS."/results/".$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_max_peaks.txt";
+        }else{
+            $file_avg = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_avg_peaks.txt";
+            $file_max = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_max_peaks.txt";
+        }
+        $commandAVG = $commandAVG." | join - $file_avg ";
+        $commandMAX = $commandMAX." | join - $file_max ";
     }
 
-    $final_avg = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_sample_avg_peaks.txt";
-    $final_max = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_sample_max_peaks.txt";
+    if($RESULTS ne "results/"){
+        $final_avg = $RESULTS."/results/".$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_sample_avg_peaks.txt";
+        $final_max = $RESULTS."/results/".$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_sample_max_peaks.txt";
+    }else{
+        $final_avg = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_sample_avg_peaks.txt";
+        $final_max = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_sample_max_peaks.txt";
+    }
     #
     if(!(-e $final_avg) or $OVERWRITE)
     {
@@ -1898,24 +2153,41 @@ sub ClassifyNormalizationValues
 
     # Third, spike values for bg
     # at least, two experiments
-    $file_avg0 = $RESULTS.$NAMES[0]."_".$token."_".$BIN_SIZE."_spike_avg_bg.txt";
-    $file_max0 = $RESULTS.$NAMES[0]."_".$token."_".$BIN_SIZE."_spike_max_bg.txt";
-    $file_avg1 = $RESULTS.$NAMES[1]."_".$token."_".$BIN_SIZE."_spike_avg_bg.txt";
-    $file_max1 = $RESULTS.$NAMES[1]."_".$token."_".$BIN_SIZE."_spike_max_bg.txt";
+    if($RESULTS ne "results/"){
+        $file_avg0 = $RESULTS."/results/".$NAMES[0]."_".$token."_".$BIN_SIZE."_spike_avg_bg.txt";
+        $file_max0 = $RESULTS."/results/".$NAMES[0]."_".$token."_".$BIN_SIZE."_spike_max_bg.txt";
+        $file_avg1 = $RESULTS."/results/".$NAMES[1]."_".$token."_".$BIN_SIZE."_spike_avg_bg.txt";
+        $file_max1 = $RESULTS."/results/".$NAMES[1]."_".$token."_".$BIN_SIZE."_spike_max_bg.txt";
+    }else{
+        $file_avg0 = $RESULTS.$NAMES[0]."_".$token."_".$BIN_SIZE."_spike_avg_bg.txt";
+        $file_max0 = $RESULTS.$NAMES[0]."_".$token."_".$BIN_SIZE."_spike_max_bg.txt";
+        $file_avg1 = $RESULTS.$NAMES[1]."_".$token."_".$BIN_SIZE."_spike_avg_bg.txt";
+        $file_max1 = $RESULTS.$NAMES[1]."_".$token."_".$BIN_SIZE."_spike_max_bg.txt";
+    }
     $commandAVG = "join $file_avg0 $file_avg1 ";
     $commandMAX = "join $file_max0 $file_max1 ";
 
     # the rest of experiments (if any)
     for($i=2; $i<$n_experiments; $i++)
     {
-    $file_avg = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_avg_bg.txt";
-    $file_max = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_max_bg.txt";
-    $commandAVG = $commandAVG." | join - $file_avg ";
-    $commandMAX = $commandMAX." | join - $file_max ";
+        if($RESULTS ne "results/"){
+            $file_avg = $RESULTS."/results/".$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_avg_bg.txt";
+            $file_max = $RESULTS."/results/".$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_max_bg.txt";
+        }else{
+            $file_avg = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_avg_bg.txt";
+            $file_max = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_spike_max_bg.txt";
+        }
+        $commandAVG = $commandAVG." | join - $file_avg ";
+        $commandMAX = $commandMAX." | join - $file_max ";
     }
 
-    $final_avg = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_spike_avg_bg.txt";
-    $final_max = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_spike_max_bg.txt";
+    if($RESULTS ne "results/"){
+        $final_avg = $RESULTS."/results/".$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_spike_avg_bg.txt";
+        $final_max = $RESULTS."/results/".$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_spike_max_bg.txt";
+    }else{
+        $final_avg = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_spike_avg_bg.txt";
+        $final_max = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_spike_max_bg.txt";
+    }
     #
     if(!(-e $final_avg) or $OVERWRITE)
     {
@@ -1939,24 +2211,41 @@ sub ClassifyNormalizationValues
     
     # Forth, sample values for bg
     # at least, two experiments
-    $file_avg0 = $RESULTS.$NAMES[0]."_".$token."_".$BIN_SIZE."_sample_avg_bg.txt";
-    $file_max0 = $RESULTS.$NAMES[0]."_".$token."_".$BIN_SIZE."_sample_max_bg.txt";
-    $file_avg1 = $RESULTS.$NAMES[1]."_".$token."_".$BIN_SIZE."_sample_avg_bg.txt";
-    $file_max1 = $RESULTS.$NAMES[1]."_".$token."_".$BIN_SIZE."_sample_max_bg.txt";
+    if($RESULTS ne "results/"){
+        $file_avg0 = $RESULTS."/results/".$NAMES[0]."_".$token."_".$BIN_SIZE."_sample_avg_bg.txt";
+        $file_max0 = $RESULTS."/results/".$NAMES[0]."_".$token."_".$BIN_SIZE."_sample_max_bg.txt";
+        $file_avg1 = $RESULTS."/results/".$NAMES[1]."_".$token."_".$BIN_SIZE."_sample_avg_bg.txt";
+        $file_max1 = $RESULTS."/results/".$NAMES[1]."_".$token."_".$BIN_SIZE."_sample_max_bg.txt";
+    }else{
+        $file_avg0 = $RESULTS.$NAMES[0]."_".$token."_".$BIN_SIZE."_sample_avg_bg.txt";
+        $file_max0 = $RESULTS.$NAMES[0]."_".$token."_".$BIN_SIZE."_sample_max_bg.txt";
+        $file_avg1 = $RESULTS.$NAMES[1]."_".$token."_".$BIN_SIZE."_sample_avg_bg.txt";
+        $file_max1 = $RESULTS.$NAMES[1]."_".$token."_".$BIN_SIZE."_sample_max_bg.txt";
+    }
     $commandAVG = "join $file_avg0 $file_avg1 ";
     $commandMAX = "join $file_max0 $file_max1 ";
 
     # the rest of experiments (if any)
     for($i=2; $i<$n_experiments; $i++)
     {
-    $file_avg = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_avg_bg.txt";
-    $file_max = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_max_bg.txt";
-    $commandAVG = $commandAVG." | join - $file_avg ";
-    $commandMAX = $commandMAX." | join - $file_max ";
+        if($RESULTS ne "results/"){
+            $file_avg = $RESULTS."/results/".$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_avg_bg.txt";
+            $file_max = $RESULTS."/results/".$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_max_bg.txt";
+        }else{
+            $file_avg = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_avg_bg.txt";
+            $file_max = $RESULTS.$NAMES[$i]."_".$token."_".$BIN_SIZE."_sample_max_bg.txt";
+        }
+        $commandAVG = $commandAVG." | join - $file_avg ";
+        $commandMAX = $commandMAX." | join - $file_max ";
     }
 
-    $final_avg = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_sample_avg_bg.txt";
-    $final_max = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_sample_max_bg.txt";
+    if($RESULTS ne "results/"){
+        $final_avg = $RESULTS."/results/".$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_sample_avg_bg.txt";
+        $final_max = $RESULTS."/results/".$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_sample_max_bg.txt";
+    }else{
+        $final_avg = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_sample_avg_bg.txt";
+        $final_max = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$token."_".$BIN_SIZE."_sample_max_bg.txt";
+    }
     #
     if(!(-e $final_avg) or $OVERWRITE)
     {
@@ -2009,7 +2298,11 @@ sub addPath
     my $input;
     my $nb_line;
     
-    $input = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$norm_token."_".$BIN_SIZE."_".$exp."_".$val.$extension;
+    if($RESULTS ne "results/"){
+        $input = $RESULTS."/results/".$FINAL_TOKEN."_".join("-",@NAMES)."_".$norm_token."_".$BIN_SIZE."_".$exp."_".$val.$extension;
+    }else{
+        $input = $RESULTS.$FINAL_TOKEN."_".join("-",@NAMES)."_".$norm_token."_".$BIN_SIZE."_".$exp."_".$val.$extension;
+    }
     $nb_line = NumberLines($input);
     if($nb_line != 0){push(@files_array, $input);}
     return @files_array;
@@ -2073,8 +2366,13 @@ sub GenerateBoxplot
     
     # (A) Boxplot with labelling
     # R code to generate the corresponding final boxplot
-    $Rfile = $RSCRIPTS.join("-",@NAMES)."_".$BIN_SIZE."_".$experiment."_".$value."_boxplot.R";
-    $PDF_file = $PLOTS.join("-",@NAMES)."_".$BIN_SIZE."_".$experiment."_".$value.".pdf";
+    if($RESULTS ne "results/"){
+        $Rfile = $RSCRIPTS."/".join("-",@NAMES)."_".$BIN_SIZE."_".$experiment."_".$value."_boxplot.R";
+        $PDF_file = $PLOTS."/".join("-",@NAMES)."_".$BIN_SIZE."_".$experiment."_".$value.".pdf";
+    }else{
+        $Rfile = $RSCRIPTS.join("-",@NAMES)."_".$BIN_SIZE."_".$experiment."_".$value."_boxplot.R";
+        $PDF_file = $PLOTS.join("-",@NAMES)."_".$BIN_SIZE."_".$experiment."_".$value.".pdf";
+    }
     print_mess("Writing ", $Rfile);
     if(!(-e $Rfile) or $OVERWRITE)
     {
@@ -2127,7 +2425,12 @@ sub GenerateBoxplot
         system($command);
         #
         # error check in Rout file
-        $Routput_file = join("-",@NAMES)."_".$BIN_SIZE."_".$experiment."_".$value."_boxplot.Rout";
+        if($RESULTS ne "results/"){
+            $Routput_file = $RESULTS."/".join("-",@NAMES)."_".$BIN_SIZE."_".$experiment."_".$value."_boxplot.Rout";
+        }else{
+            $Routput_file = join("-",@NAMES)."_".$BIN_SIZE."_".$experiment."_".$value."_boxplot.Rout";
+        }
+        
         (open(ROUT,$Routput_file)) or print_error("R SCRIPTS (avg): FILE $Routput_file can not be opened");
         while($line=<ROUT>)
         {
