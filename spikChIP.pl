@@ -873,7 +873,6 @@ sub NormalizationRaw
                 $out_name_load = $RESULTS."/".$out_name."_recoverChIPlevels/";
                 mkdir($out_name_load) or print_mess("It is already existing");
                 $command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_spike $spike_bins $out_name_load";
-                die 42;
             }else{
                 $command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_spike $spike_bins $out_name";
             }
@@ -890,6 +889,7 @@ sub NormalizationRaw
         }
     print_mess("$command\n");
     system($command);
+    die 42;
     }else{
         print_mess("\t The file", $file_all, "already exist. Skipping the spike Raw Normalization\n");
     }
