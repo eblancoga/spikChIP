@@ -214,7 +214,7 @@ print_mess("[$date] Stage 1.  Producing the segmentation of both genomes in bins
 
 # spike segmentation
 if($RESULTS ne "results/"){
-    $spike_bins = $RESULTS."/".join("-",@NAMES)."_"."spike_".$BIN_SIZE.".bed";
+    $spike_bins = $RESULTS."/results/".join("-",@NAMES)."_"."spike_".$BIN_SIZE.".bed";
 }else{
     $spike_bins = join("-",@NAMES)."_"."spike_".$BIN_SIZE.".bed";
 }
