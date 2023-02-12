@@ -850,6 +850,7 @@ sub NormalizationRaw
     my $i = $_[0];
     my ($bam_sample,$bam_spike);
     my $out_name;
+    my $out_name_load;
     my ($file_all,$file_avg,$file_max);
 
     # input bam files
@@ -868,11 +869,21 @@ sub NormalizationRaw
     {
         if ($LESSMILLION)
         {
-            $command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_spike $spike_bins $out_name";
+            if($RESULTS ne "results/"){
+                $out_name_load = $RESULTS."/".$out_name;
+                $command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_spike $spike_bins $out_name_load";
+            }else{
+                $command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_spike $spike_bins $out_name";
+            }
         }
         else
         {
-            $command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_spike $spike_bins $out_name";
+            if($RESULTS ne "results/"){
+                $out_name_load = $RESULTS."/".$out_name;
+                $command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_spike $spike_bins $out_name_load";
+            }else{
+                $command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_spike $spike_bins $out_name";
+            }
         }
     print_mess("$command\n");
     system($command);
@@ -918,11 +929,21 @@ sub NormalizationRaw
     {
         if ($LESSMILLION)
         {
-            $command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_sample $sample_bins $out_name";
+            if($RESULTS ne "results/"){
+                $out_name_load = $RESULTS."/".$out_name;
+                $command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_sample $sample_bins $out_name_load";
+            }else{
+                $command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_sample $sample_bins $out_name";
+            }
         }
         else
         {
-            $command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_sample $sample_bins $out_name";
+            if($RESULTS ne "results/"){
+                $out_name_load = $RESULTS."/".$out_name;
+                $command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_sample $sample_bins $out_name_load";
+            }else{
+                $command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_sample $sample_bins $out_name";
+            }
         }
     print_mess("$command\n");
     system($command);
@@ -983,11 +1004,21 @@ sub NormalizationTraditional
     {
         if ($LESSMILLION)
         {
-            $command = "recoverChIPlevels -dns $total_reads $chrominfo_file $bam_spike $spike_bins $out_name";
+            if($RESULTS ne "results/"){
+                $out_name_load = $RESULTS."/".$out_name;
+                $command = "recoverChIPlevels -dns $total_reads $chrominfo_file $bam_spike $spike_bins $out_name_load";
+            }else{
+                $command = "recoverChIPlevels -dns $total_reads $chrominfo_file $bam_spike $spike_bins $out_name";
+            }
         }
         else
         {
-            $command = "recoverChIPlevels -ns $total_reads $chrominfo_file $bam_spike $spike_bins $out_name";
+            if($RESULTS ne "results/"){
+                $out_name_load = $RESULTS."/".$out_name;
+                $command = "recoverChIPlevels -ns $total_reads $chrominfo_file $bam_spike $spike_bins $out_name_load";
+            }else{
+                $command = "recoverChIPlevels -ns $total_reads $chrominfo_file $bam_spike $spike_bins $out_name";
+            }
         }
     print_mess("$command\n");
     system($command);
@@ -1033,11 +1064,21 @@ sub NormalizationTraditional
     {
       if ($LESSMILLION)
       {
-          $command = "recoverChIPlevels -dns ".$READS_SAMPLES[$i]." $chrominfo_file $bam_sample $sample_bins $out_name";
+          if($RESULTS ne "results/"){
+                $out_name_load = $RESULTS."/".$out_name;
+                $command = "recoverChIPlevels -dns ".$READS_SAMPLES[$i]." $chrominfo_file $bam_sample $sample_bins $out_name_load";
+            }else{
+                $command = "recoverChIPlevels -dns ".$READS_SAMPLES[$i]." $chrominfo_file $bam_sample $sample_bins $out_name";
+            }
       }
       else
       {
-          $command = "recoverChIPlevels -ns ".$READS_SAMPLES[$i]." $chrominfo_file $bam_sample $sample_bins $out_name";
+          if($RESULTS ne "results/"){
+                $out_name_load = $RESULTS."/".$out_name;
+                $command = "recoverChIPlevels -ns ".$READS_SAMPLES[$i]." $chrominfo_file $bam_sample $sample_bins $out_name_load";
+            }else{
+                $command = "recoverChIPlevels -ns ".$READS_SAMPLES[$i]." $chrominfo_file $bam_sample $sample_bins $out_name";
+            }
       }
     print_mess("$command\n");
     system($command);
@@ -1098,11 +1139,21 @@ sub NormalizationChIPRX
     {
       if ($LESSMILLION)
       {
-          $command = "recoverChIPlevels -dns ".$READS_SPIKES[$i]." $chrominfo_file $bam_spike $spike_bins $out_name";
+          if($RESULTS ne "results/"){
+                $out_name_load = $RESULTS."/".$out_name;
+                $command = "recoverChIPlevels -dns ".$READS_SPIKES[$i]." $chrominfo_file $bam_spike $spike_bins $out_name_load";
+            }else{
+                $command = "recoverChIPlevels -dns ".$READS_SPIKES[$i]." $chrominfo_file $bam_spike $spike_bins $out_name";
+            }
       }
       else
       {
-          $command = "recoverChIPlevels -ns ".$READS_SPIKES[$i]." $chrominfo_file $bam_spike $spike_bins $out_name";
+          if($RESULTS ne "results/"){
+                $out_name_load = $RESULTS."/".$out_name;
+                $command = "recoverChIPlevels -ns ".$READS_SPIKES[$i]." $chrominfo_file $bam_spike $spike_bins $out_name_load";
+            }else{
+                $command = "recoverChIPlevels -ns ".$READS_SPIKES[$i]." $chrominfo_file $bam_spike $spike_bins $out_name";
+            }
       }
     print_mess("$command\n");
     system($command);
@@ -1145,11 +1196,21 @@ sub NormalizationChIPRX
     {
       if ($LESSMILLION)
       {
-          $command = "recoverChIPlevels -dns ".$READS_SPIKES[$i]." $chrominfo_file $bam_sample $sample_bins $out_name";
+          if($RESULTS ne "results/"){
+                $out_name_load = $RESULTS."/".$out_name;
+                $command = "recoverChIPlevels -dns ".$READS_SPIKES[$i]." $chrominfo_file $bam_sample $sample_bins $out_name_load";
+            }else{
+                $command = "recoverChIPlevels -dns ".$READS_SPIKES[$i]." $chrominfo_file $bam_sample $sample_bins $out_name";
+            }
       }
       else
       {
-          $command = "recoverChIPlevels -ns ".$READS_SPIKES[$i]." $chrominfo_file $bam_sample $sample_bins $out_name";
+          if($RESULTS ne "results/"){
+                $out_name_load = $RESULTS."/".$out_name;
+                $command = "recoverChIPlevels -ns ".$READS_SPIKES[$i]." $chrominfo_file $bam_sample $sample_bins $out_name_load";
+            }else{
+                $command = "recoverChIPlevels -ns ".$READS_SPIKES[$i]." $chrominfo_file $bam_sample $sample_bins $out_name";
+            }
       }
     print_mess("$command\n");
     system($command);
@@ -1206,11 +1267,21 @@ sub NormalizationTagRemoval
     {
       if ($LESSMILLION)
       {
-          $command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_spike $spike_bins $out_name";
+          if($RESULTS ne "results/"){
+                $out_name_load = $RESULTS."/".$out_name;
+                $command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_spike $spike_bins $out_name_load";
+            }else{
+                $command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_spike $spike_bins $out_name";
+            }
       }
       else
       {
-          $command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_spike $spike_bins $out_name";
+          if($RESULTS ne "results/"){
+                $out_name_load = $RESULTS."/".$out_name;
+                $command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_spike $spike_bins $out_name_load";
+            }else{
+                $command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_spike $spike_bins $out_name";
+            }
       }
     print_mess("$command\n");
     system($command);
@@ -1253,11 +1324,21 @@ sub NormalizationTagRemoval
     {
       if ($LESSMILLION)
       {
-          $command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_sample $sample_bins $out_name";
+          if($RESULTS ne "results/"){
+                $out_name_load = $RESULTS."/".$out_name;
+                $command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_sample $sample_bins $out_name_load";
+            }else{
+                $command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_sample $sample_bins $out_name";
+            }
       }
       else
       {
-          $command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_sample $sample_bins $out_name";
+          if($RESULTS ne "results/"){
+                $out_name_load = $RESULTS."/".$out_name;
+                $command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_sample $sample_bins $out_name_load";
+            }else{
+                $command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_sample $sample_bins $out_name";
+            }
       }
     print_mess("$command\n");
     system($command);
