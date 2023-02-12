@@ -983,6 +983,7 @@ sub NormalizationTraditional
 {
     my $i = $_[0];
     my ($bam_sample,$bam_spike);
+    my $out_name_load;
     my $out_name;
     my ($file_all,$file_avg,$file_max);
     my $total_reads;
@@ -1119,6 +1120,7 @@ sub NormalizationChIPRX
     my $i = $_[0];
     my ($bam_sample,$bam_spike);
     my $out_name;
+    my $out_name_load;
     my ($file_all,$file_avg,$file_max);
     my $total_reads;
     
@@ -1249,6 +1251,7 @@ sub NormalizationTagRemoval
     my $i = $_[0];
     my ($bam_sample,$bam_spike);
     my $out_name;
+    my $out_name_load;
     my ($file_all,$file_avg,$file_max);
 
     
