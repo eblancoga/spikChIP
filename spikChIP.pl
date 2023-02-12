@@ -144,7 +144,7 @@ print_mess("\n");
 print_mess("Generating output folders (if necessary)");
 # create the results/ folder
 if($RESULTS ne "results/"){
-    $newdir = $RESULTS"/results";
+    $newdir = $RESULTS."/results";
 }else{
     $newdir = $RESULTS;
 }
@@ -152,7 +152,7 @@ print_mess("Trying the $RESULTS directory");
 mkdir($newdir) or print_mess("It is already existing");
 # create the Rscripts/ folder
 if($RESULTS ne "results/"){
-    $newdir = $RESULTS"/"$RSCRIPTS;
+    $newdir = $RESULTS."/".$RSCRIPTS;
 }else{
     $newdir = $RSCRIPTS;
 }
@@ -160,7 +160,7 @@ print_mess("Trying the $RSCRIPTS directory");
 mkdir($newdir) or print_mess("It is already existing");
 # create the plots/ folder
 if($RESULTS ne "results/"){
-    $newdir = $RESULTS"/"$PLOTS;
+    $newdir = $RESULTS."/".$PLOTS;
 }else{
     $newdir = $PLOTS;
 }
