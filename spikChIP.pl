@@ -213,7 +213,12 @@ $date = localtime();
 print_mess("[$date] Stage 1.  Producing the segmentation of both genomes in bins ($BIN_SIZE bps)\n");
 
 # spike segmentation
-$spike_bins = $RESULTS.join("-",@NAMES)."_"."spike_".$BIN_SIZE.".bed";
+if($RESULTS ne "results/"){
+    $spike_bins = $RESULTS."/".join("-",@NAMES)."_"."spike_".$BIN_SIZE.".bed";
+}else{
+    $spike_bins = join("-",@NAMES)."_"."spike_".$BIN_SIZE.".bed";
+}
+
 if(!(-e $spike_bins) or $OVERWRITE)
 {
     $command = "grep FLY $chrominfo_file | gawk 'BEGIN{OFS=\"\\t\";offset=$BIN_SIZE;}{for(i=1;i<\$2-offset;i=i+offset) print \$1,i,i+offset;}' > $spike_bins";
