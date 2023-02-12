@@ -870,9 +870,10 @@ sub NormalizationRaw
         if ($LESSMILLION)
         {
             if($RESULTS ne "results/"){
-                $out_name_load = $RESULTS."/".$out_name."_recoverChIPlevels/";
-                mkdir($out_name_load) or print_mess("It is already existing");
-                $command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_spike $spike_bins $out_name_load";
+                #$out_name_load = $RESULTS."/".$out_name."_recoverChIPlevels/";
+                $prefix = $RESULTS."/";
+                mkdir($prefix) or print_mess("It is already existing");
+                $command = "recoverChIPlevels -dns $MEGA -x $prefix $chrominfo_file $bam_spike $spike_bins $out_name";
             }else{
                 $command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_spike $spike_bins $out_name";
             }
