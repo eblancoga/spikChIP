@@ -108,7 +108,7 @@ Getopt::Long::GetOptions(
     'chiprx|x' => \$CHIPRX,
     'tagremoval|g' => \$TAGREMOVAL,
     'spikchip|s' => \$SPIKCHIP,
-    'outputfolder|o=i' => \$RESULTS,
+    'outputfolder|o=s' => \$RESULTS,
 );
 
 print_mess("$PROGRAM.pl by Enrique Blanco @ CRG (2021)");
