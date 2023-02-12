@@ -871,6 +871,7 @@ sub NormalizationRaw
         {
             if($RESULTS ne "results/"){
                 $out_name_load = $RESULTS."/".$out_name;
+                mkdir($out_name_load) or print_mess("It is already existing");
                 $command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_spike $spike_bins $out_name_load";
             }else{
                 $command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_spike $spike_bins $out_name";
@@ -880,6 +881,7 @@ sub NormalizationRaw
         {
             if($RESULTS ne "results/"){
                 $out_name_load = $RESULTS."/".$out_name;
+                mkdir($out_name_load) or print_mess("It is already existing");
                 $command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_spike $spike_bins $out_name_load";
             }else{
                 $command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_spike $spike_bins $out_name";
@@ -931,6 +933,7 @@ sub NormalizationRaw
         {
             if($RESULTS ne "results/"){
                 $out_name_load = $RESULTS."/".$out_name;
+                mkdir($out_name_load) or print_mess("It is already existing");
                 $command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_sample $sample_bins $out_name_load";
             }else{
                 $command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_sample $sample_bins $out_name";
@@ -940,6 +943,7 @@ sub NormalizationRaw
         {
             if($RESULTS ne "results/"){
                 $out_name_load = $RESULTS."/".$out_name;
+                mkdir($out_name_load) or print_mess("It is already existing");
                 $command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_sample $sample_bins $out_name_load";
             }else{
                 $command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_sample $sample_bins $out_name";
@@ -1007,6 +1011,7 @@ sub NormalizationTraditional
         {
             if($RESULTS ne "results/"){
                 $out_name_load = $RESULTS."/".$out_name;
+                mkdir($out_name_load) or print_mess("It is already existing");
                 $command = "recoverChIPlevels -dns $total_reads $chrominfo_file $bam_spike $spike_bins $out_name_load";
             }else{
                 $command = "recoverChIPlevels -dns $total_reads $chrominfo_file $bam_spike $spike_bins $out_name";
@@ -1016,6 +1021,7 @@ sub NormalizationTraditional
         {
             if($RESULTS ne "results/"){
                 $out_name_load = $RESULTS."/".$out_name;
+                mkdir($out_name_load) or print_mess("It is already existing");
                 $command = "recoverChIPlevels -ns $total_reads $chrominfo_file $bam_spike $spike_bins $out_name_load";
             }else{
                 $command = "recoverChIPlevels -ns $total_reads $chrominfo_file $bam_spike $spike_bins $out_name";
@@ -1067,6 +1073,7 @@ sub NormalizationTraditional
       {
           if($RESULTS ne "results/"){
                 $out_name_load = $RESULTS."/".$out_name;
+                mkdir($out_name_load) or print_mess("It is already existing");
                 $command = "recoverChIPlevels -dns ".$READS_SAMPLES[$i]." $chrominfo_file $bam_sample $sample_bins $out_name_load";
             }else{
                 $command = "recoverChIPlevels -dns ".$READS_SAMPLES[$i]." $chrominfo_file $bam_sample $sample_bins $out_name";
@@ -1076,6 +1083,7 @@ sub NormalizationTraditional
       {
           if($RESULTS ne "results/"){
                 $out_name_load = $RESULTS."/".$out_name;
+                mkdir($out_name_load) or print_mess("It is already existing");
                 $command = "recoverChIPlevels -ns ".$READS_SAMPLES[$i]." $chrominfo_file $bam_sample $sample_bins $out_name_load";
             }else{
                 $command = "recoverChIPlevels -ns ".$READS_SAMPLES[$i]." $chrominfo_file $bam_sample $sample_bins $out_name";
@@ -1143,6 +1151,7 @@ sub NormalizationChIPRX
       {
           if($RESULTS ne "results/"){
                 $out_name_load = $RESULTS."/".$out_name;
+                mkdir($out_name_load) or print_mess("It is already existing");
                 $command = "recoverChIPlevels -dns ".$READS_SPIKES[$i]." $chrominfo_file $bam_spike $spike_bins $out_name_load";
             }else{
                 $command = "recoverChIPlevels -dns ".$READS_SPIKES[$i]." $chrominfo_file $bam_spike $spike_bins $out_name";
@@ -1152,6 +1161,7 @@ sub NormalizationChIPRX
       {
           if($RESULTS ne "results/"){
                 $out_name_load = $RESULTS."/".$out_name;
+                mkdir($out_name_load) or print_mess("It is already existing");
                 $command = "recoverChIPlevels -ns ".$READS_SPIKES[$i]." $chrominfo_file $bam_spike $spike_bins $out_name_load";
             }else{
                 $command = "recoverChIPlevels -ns ".$READS_SPIKES[$i]." $chrominfo_file $bam_spike $spike_bins $out_name";
@@ -1200,6 +1210,7 @@ sub NormalizationChIPRX
       {
           if($RESULTS ne "results/"){
                 $out_name_load = $RESULTS."/".$out_name;
+                mkdir($out_name_load) or print_mess("It is already existing");
                 $command = "recoverChIPlevels -dns ".$READS_SPIKES[$i]." $chrominfo_file $bam_sample $sample_bins $out_name_load";
             }else{
                 $command = "recoverChIPlevels -dns ".$READS_SPIKES[$i]." $chrominfo_file $bam_sample $sample_bins $out_name";
@@ -1209,6 +1220,7 @@ sub NormalizationChIPRX
       {
           if($RESULTS ne "results/"){
                 $out_name_load = $RESULTS."/".$out_name;
+                mkdir($out_name_load) or print_mess("It is already existing");
                 $command = "recoverChIPlevels -ns ".$READS_SPIKES[$i]." $chrominfo_file $bam_sample $sample_bins $out_name_load";
             }else{
                 $command = "recoverChIPlevels -ns ".$READS_SPIKES[$i]." $chrominfo_file $bam_sample $sample_bins $out_name";
@@ -1272,6 +1284,7 @@ sub NormalizationTagRemoval
       {
           if($RESULTS ne "results/"){
                 $out_name_load = $RESULTS."/".$out_name;
+                mkdir($out_name_load) or print_mess("It is already existing");
                 $command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_spike $spike_bins $out_name_load";
             }else{
                 $command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_spike $spike_bins $out_name";
@@ -1281,6 +1294,7 @@ sub NormalizationTagRemoval
       {
           if($RESULTS ne "results/"){
                 $out_name_load = $RESULTS."/".$out_name;
+                mkdir($out_name_load) or print_mess("It is already existing");
                 $command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_spike $spike_bins $out_name_load";
             }else{
                 $command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_spike $spike_bins $out_name";
@@ -1329,6 +1343,7 @@ sub NormalizationTagRemoval
       {
           if($RESULTS ne "results/"){
                 $out_name_load = $RESULTS."/".$out_name;
+                mkdir($out_name_load) or print_mess("It is already existing");
                 $command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_sample $sample_bins $out_name_load";
             }else{
                 $command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_sample $sample_bins $out_name";
@@ -1338,6 +1353,7 @@ sub NormalizationTagRemoval
       {
           if($RESULTS ne "results/"){
                 $out_name_load = $RESULTS."/".$out_name;
+                mkdir($out_name_load) or print_mess("It is already existing");
                 $command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_sample $sample_bins $out_name_load";
             }else{
                 $command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_sample $sample_bins $out_name";
