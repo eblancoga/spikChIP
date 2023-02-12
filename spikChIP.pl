@@ -850,7 +850,6 @@ sub NormalizationRaw
     my $i = $_[0];
     my ($bam_sample,$bam_spike);
     my $out_name;
-    my $out_name_load;
     my $prefix;
     my ($file_all,$file_avg,$file_max);
 
@@ -881,7 +880,7 @@ sub NormalizationRaw
         {
             if($RESULTS ne "results/"){
                 $prefix = $RESULTS."/";
-                $command = "recoverChIPlevels -ns $MEGA -x $prefix $chrominfo_file $bam_spike $spike_bins $out_name_load";
+                $command = "recoverChIPlevels -ns $MEGA -x $prefix $chrominfo_file $bam_spike $spike_bins $out_name";
             }else{
                 $command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_spike $spike_bins $out_name";
             }
@@ -932,7 +931,7 @@ sub NormalizationRaw
         {
             if($RESULTS ne "results/"){
                 $prefix = $RESULTS."/";
-                $command = "recoverChIPlevels -dns $MEGA -x $prefix $chrominfo_file $bam_sample $sample_bins $out_name_load";
+                $command = "recoverChIPlevels -dns $MEGA -x $prefix $chrominfo_file $bam_sample $sample_bins $out_name";
             }else{
                 $command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_sample $sample_bins $out_name";
             }
@@ -941,7 +940,7 @@ sub NormalizationRaw
         {
             if($RESULTS ne "results/"){
                 $prefix = $RESULTS."/";
-                $command = "recoverChIPlevels -ns $MEGA -x $prefix $chrominfo_file $bam_sample $sample_bins $out_name_load";
+                $command = "recoverChIPlevels -ns $MEGA -x $prefix $chrominfo_file $bam_sample $sample_bins $out_name";
             }else{
                 $command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_sample $sample_bins $out_name";
             }
@@ -1008,7 +1007,7 @@ sub NormalizationTraditional
         {
             if($RESULTS ne "results/"){
                 $prefix = $RESULTS."/";
-                $command = "recoverChIPlevels -dns $total_reads -x $prefix $chrominfo_file $bam_spike $spike_bins $out_name_load";
+                $command = "recoverChIPlevels -dns $total_reads -x $prefix $chrominfo_file $bam_spike $spike_bins $out_name";
             }else{
                 $command = "recoverChIPlevels -dns $total_reads $chrominfo_file $bam_spike $spike_bins $out_name";
             }
@@ -1017,7 +1016,7 @@ sub NormalizationTraditional
         {
             if($RESULTS ne "results/"){
                 $prefix = $RESULTS."/";
-                $command = "recoverChIPlevels -ns $total_reads -x $prefix $chrominfo_file $bam_spike $spike_bins $out_name_load";
+                $command = "recoverChIPlevels -ns $total_reads -x $prefix $chrominfo_file $bam_spike $spike_bins $out_name";
             }else{
                 $command = "recoverChIPlevels -ns $total_reads $chrominfo_file $bam_spike $spike_bins $out_name";
             }
@@ -1068,7 +1067,7 @@ sub NormalizationTraditional
       {
           if($RESULTS ne "results/"){
                 $prefix = $RESULTS."/";
-                $command = "recoverChIPlevels -dns ".$READS_SAMPLES[$i]." -x $prefix $chrominfo_file $bam_sample $sample_bins $out_name_load";
+                $command = "recoverChIPlevels -dns ".$READS_SAMPLES[$i]." -x $prefix $chrominfo_file $bam_sample $sample_bins $out_name";
             }else{
                 $command = "recoverChIPlevels -dns ".$READS_SAMPLES[$i]." $chrominfo_file $bam_sample $sample_bins $out_name";
             }
@@ -1077,7 +1076,7 @@ sub NormalizationTraditional
       {
           if($RESULTS ne "results/"){
                 $prefix = $RESULTS."/";
-                $command = "recoverChIPlevels -ns ".$READS_SAMPLES[$i]." -x $prefix $chrominfo_file $bam_sample $sample_bins $out_name_load";
+                $command = "recoverChIPlevels -ns ".$READS_SAMPLES[$i]." -x $prefix $chrominfo_file $bam_sample $sample_bins $out_name";
             }else{
                 $command = "recoverChIPlevels -ns ".$READS_SAMPLES[$i]." $chrominfo_file $bam_sample $sample_bins $out_name";
             }
@@ -1144,7 +1143,7 @@ sub NormalizationChIPRX
       {
           if($RESULTS ne "results/"){
                 $prefix = $RESULTS."/";
-                $command = "recoverChIPlevels -dns ".$READS_SPIKES[$i]." -x $prefix $chrominfo_file $bam_spike $spike_bins $out_name_load";
+                $command = "recoverChIPlevels -dns ".$READS_SPIKES[$i]." -x $prefix $chrominfo_file $bam_spike $spike_bins $out_name";
             }else{
                 $command = "recoverChIPlevels -dns ".$READS_SPIKES[$i]." $chrominfo_file $bam_spike $spike_bins $out_name";
             }
@@ -1153,7 +1152,7 @@ sub NormalizationChIPRX
       {
           if($RESULTS ne "results/"){
                 $prefix = $RESULTS."/";
-                $command = "recoverChIPlevels -ns ".$READS_SPIKES[$i]." -x $prefix $chrominfo_file $bam_spike $spike_bins $out_name_load";
+                $command = "recoverChIPlevels -ns ".$READS_SPIKES[$i]." -x $prefix $chrominfo_file $bam_spike $spike_bins $out_name";
             }else{
                 $command = "recoverChIPlevels -ns ".$READS_SPIKES[$i]." $chrominfo_file $bam_spike $spike_bins $out_name";
             }
@@ -1201,7 +1200,7 @@ sub NormalizationChIPRX
       {
           if($RESULTS ne "results/"){
                 $prefix = $RESULTS."/";
-                $command = "recoverChIPlevels -dns ".$READS_SPIKES[$i]." -x $prefix $chrominfo_file $bam_sample $sample_bins $out_name_load";
+                $command = "recoverChIPlevels -dns ".$READS_SPIKES[$i]." -x $prefix $chrominfo_file $bam_sample $sample_bins $out_name";
             }else{
                 $command = "recoverChIPlevels -dns ".$READS_SPIKES[$i]." $chrominfo_file $bam_sample $sample_bins $out_name";
             }
@@ -1210,7 +1209,7 @@ sub NormalizationChIPRX
       {
           if($RESULTS ne "results/"){
                 $prefix = $RESULTS."/";
-                $command = "recoverChIPlevels -ns ".$READS_SPIKES[$i]." -x $prefix $chrominfo_file $bam_sample $sample_bins $out_name_load";
+                $command = "recoverChIPlevels -ns ".$READS_SPIKES[$i]." -x $prefix $chrominfo_file $bam_sample $sample_bins $out_name";
             }else{
                 $command = "recoverChIPlevels -ns ".$READS_SPIKES[$i]." $chrominfo_file $bam_sample $sample_bins $out_name";
             }
@@ -1273,7 +1272,7 @@ sub NormalizationTagRemoval
       {
           if($RESULTS ne "results/"){
                 $prefix = $RESULTS."/";
-                $command = "recoverChIPlevels -dns $MEGA -x $prefix $chrominfo_file $bam_spike $spike_bins $out_name_load";
+                $command = "recoverChIPlevels -dns $MEGA -x $prefix $chrominfo_file $bam_spike $spike_bins $out_name";
             }else{
                 $command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_spike $spike_bins $out_name";
             }
@@ -1282,7 +1281,7 @@ sub NormalizationTagRemoval
       {
           if($RESULTS ne "results/"){
                 $prefix = $RESULTS."/";
-                $command = "recoverChIPlevels -ns $MEGA -x $prefix $chrominfo_file $bam_spike $spike_bins $out_name_load";
+                $command = "recoverChIPlevels -ns $MEGA -x $prefix $chrominfo_file $bam_spike $spike_bins $out_name";
             }else{
                 $command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_spike $spike_bins $out_name";
             }
@@ -1330,7 +1329,7 @@ sub NormalizationTagRemoval
       {
           if($RESULTS ne "results/"){
                 $prefix = $RESULTS."/";
-                $command = "recoverChIPlevels -dns $MEGA -x $prefix $chrominfo_file $bam_sample $sample_bins $out_name_load";
+                $command = "recoverChIPlevels -dns $MEGA -x $prefix $chrominfo_file $bam_sample $sample_bins $out_name";
             }else{
                 $command = "recoverChIPlevels -dns $MEGA $chrominfo_file $bam_sample $sample_bins $out_name";
             }
@@ -1339,7 +1338,7 @@ sub NormalizationTagRemoval
       {
           if($RESULTS ne "results/"){
                 $prefix = $RESULTS."/";
-                $command = "recoverChIPlevels -ns $MEGA -x $prefix $chrominfo_file $bam_sample $sample_bins $out_name_load";
+                $command = "recoverChIPlevels -ns $MEGA -x $prefix $chrominfo_file $bam_sample $sample_bins $out_name";
             }else{
                 $command = "recoverChIPlevels -ns $MEGA $chrominfo_file $bam_sample $sample_bins $out_name";
             }
