@@ -851,6 +851,7 @@ sub NormalizationRaw
     my ($bam_sample,$bam_spike);
     my $out_name;
     my $out_name_load;
+    my $prefix;
     my ($file_all,$file_avg,$file_max);
 
     # input bam files
