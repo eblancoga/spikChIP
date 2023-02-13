@@ -2551,10 +2551,10 @@ sub GenerateBoxplot
         $towrite = $towrite."normNames <- \"".join("-", @Norm_array)."\"\n";
         $towrite = $towrite."normNames <- unlist(strsplit(normNames,\"-\"))\n\n";
         $towrite = $towrite."normNb <- length(unique(normNames))\n";
-        $towrite = $towrite."if(normNb%%2 == 0){\n";
-        $towrite = $towrite."\tpositions <- seq((normNb/2)+1, length(paths)*$n_experiments, by =(normNb/2)+2)\n";
+        $towrite = $towrite."if($n_experiments%%2 == 0){\n";
+        $towrite = $towrite."\tpositions <- seq(($n_experiments/2)+1, normNb*$n_experiments, by =$n_experiments)\n";
         $towrite = $towrite."}else\n";
-        $towrite = $towrite."\tpositions <- seq(ceiling(normNb/2), length(paths)*$n_experiments, by = ceiling(normNb/2)+1)\n\n";
+        $towrite = $towrite."\tpositions <- seq(floor($n_experiments/2)+1, normNb*$n_experiments, by = $n_experiments)\n\n";
         
         #Determine label of each boxplot
         $towrite = $towrite."peaksbgvec <- strsplit(paths, \"_\")\n";
