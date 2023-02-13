@@ -2487,6 +2487,19 @@ sub pathVector
     return $pathvec;
 }
 
+sub retrieveNorm
+{
+    my @norm_array;
+    
+    if($RAW){push(@norm_array, $RAW_TOKEN);}
+    if($TRADITIONAL){push(@norm_array, $TRADITIONAL_TOKEN);}
+    if($CHIPRX){push(@norm_array, $CHIPRX_TOKEN);}
+    if($TAGREMOVAL){push(@norm_array, $TAGREMOVAL_TOKEN);}
+    if($SPIKCHIP){push(@norm_array, $SPIKCHIP_TOKEN);}
+    
+    return @norm_array;
+}
+
 sub GenerateBoxplot
 {
     my $experiment = $_[0];
@@ -2494,6 +2507,7 @@ sub GenerateBoxplot
     my ($Rfile,$Routput_file);
     my $PDF_file;
     my @input_files;
+    my @Norm_array;
     my $input_file;
     my $expression;
     my ($i,$j);
@@ -2520,6 +2534,7 @@ sub GenerateBoxplot
         (open(RFILE,'>',$Rfile)) or print_error("R SCRIPT (boxplots): FILE $Rfile file can not be opened to write");
         @input_files = peaksBgTXT($experiment, $value, "_peaks.txt", \@input_files);
         @input_files = peaksBgTXT($experiment, $value, "_bg.txt", \@input_files);
+        @Norm_array = retrieveNorm();
         
         # Creating the vector of files path and the palette
         $towrite = pathVector(\@input_files);
@@ -2529,12 +2544,12 @@ sub GenerateBoxplot
         $towrite = $towrite."filist <- lapply(paths,function(x) read.table(x, row.names=1))\n";
         $towrite = $towrite."filist <- unlist(lapply(filist, function(x) as.list(data.frame(x))), recursive=FALSE)\n";
         $towrite = $towrite."filist <- lapply(filist, log2)\n\n"; 
-        $towrite = $towrite."labels <- unique(sapply(strsplit(paths,\"_\"), \"[\",2))\n";
-        $towrite = $towrite."if(!isTRUE(all.equal(length(labels), 1))) stop(\"Problem with the labels\")\n";
+        $towrite = $towrite."labels <- \"".join("-",@NAMES)."\"\n";
         $towrite = $towrite."labels <- unlist(strsplit(labels,\"-\"))\n\n";
         
         #Determine position of ticks
-        $towrite = $towrite."normNames <- sapply(strsplit(paths, \"_\"), \"[\", 3)\n";
+        $towrite = $towrite."normNames <- ".join("-", @Norm_array)."\n";
+        $towrite = $towrite."normNames <- unlist(strsplit(normNames,\"-\"))\n\n";
         $towrite = $towrite."normNb <- length(unique(normNames))\n";
         $towrite = $towrite."if(normNb%%2 == 0){\n";
         $towrite = $towrite."\tpositions <- seq((normNb/2)+1, length(paths)*$n_experiments, by =(normNb/2)+2)\n";
