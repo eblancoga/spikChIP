@@ -2548,7 +2548,7 @@ sub GenerateBoxplot
         $towrite = $towrite."labels <- unlist(strsplit(labels,\"-\"))\n\n";
         
         #Determine position of ticks
-        $towrite = $towrite."normNames <- ".join("-", @Norm_array)."\n";
+        $towrite = $towrite."normNames <- \"".join("-", @Norm_array)."\"\n";
         $towrite = $towrite."normNames <- unlist(strsplit(normNames,\"-\"))\n\n";
         $towrite = $towrite."normNb <- length(unique(normNames))\n";
         $towrite = $towrite."if(normNb%%2 == 0){\n";
