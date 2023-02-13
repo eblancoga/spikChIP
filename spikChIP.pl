@@ -2553,18 +2553,17 @@ sub GenerateBoxplot
     #
     if(!(-e $PDF_file) or $OVERWRITE)
     {
+        if($RESULTS ne "results/"){
+            $Routput_file = $RESULTS."/".$RSCRIPTS.join("-",@NAMES)."_".$BIN_SIZE."_".$experiment."_".$value."_boxplot.Rout";
+        }else{
+            $Routput_file = join("-",@NAMES)."_".$BIN_SIZE."_".$experiment."_".$value."_boxplot.Rout";
+        }
         # execute R script
-        $command = "R CMD BATCH $Rfile";
+        $command = "R CMD BATCH $Rfile $Routput_file";
         print_mess("$command\n");
         system($command);
         #
         # error check in Rout file
-        if($RESULTS ne "results/"){
-            $Routput_file = $RESULTS."/".join("-",@NAMES)."_".$BIN_SIZE."_".$experiment."_".$value."_boxplot.Rout";
-        }else{
-            $Routput_file = join("-",@NAMES)."_".$BIN_SIZE."_".$experiment."_".$value."_boxplot.Rout";
-        }
-        
         (open(ROUT,$Routput_file)) or print_error("R SCRIPTS (avg): FILE $Routput_file can not be opened");
         while($line=<ROUT>)
         {
