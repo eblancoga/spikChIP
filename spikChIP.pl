@@ -1873,6 +1873,7 @@ sub ClassifyBins
 {
     my $i;
     my $command;
+    my $prefix;
     my ($folder,$out_name,$out_common,$out_peaks_file);
     
     
@@ -1897,9 +1898,15 @@ sub ClassifyBins
         }
     	#
     	CleanFile($out_peaks_file);
+
     	if(!(-e $out_peaks_file) or $OVERWRITE)
         {
-        	$command = "matchpeaks -v $PEAKS_SPIKES[$i] $spike_bins $PEAKS_TOKEN $out_name";
+            if($RESULTS ne "results/"){
+                $prefix = $RESULTS."/";
+                $command = "matchpeaks -v -x $prefix $PEAKS_SPIKES[$i] $spike_bins $PEAKS_TOKEN $out_name";
+            }else{
+                $command = "matchpeaks -v $PEAKS_SPIKES[$i] $spike_bins $PEAKS_TOKEN $out_name";
+            }
         	print_mess("$command\n");
         	system($command);
         	$command = "grep spike_bins $out_common > $out_peaks_file";
