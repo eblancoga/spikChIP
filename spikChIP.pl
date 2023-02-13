@@ -2501,8 +2501,8 @@ sub GenerateBoxplot
     # (A) Boxplot with labelling
     # R code to generate the corresponding final boxplot
     if($RESULTS ne "results/"){
-        $Rfile = $RSCRIPTS."/".join("-",@NAMES)."_".$BIN_SIZE."_".$experiment."_".$value."_boxplot.R";
-        $PDF_file = $PLOTS."/".join("-",@NAMES)."_".$BIN_SIZE."_".$experiment."_".$value.".pdf";
+        $Rfile = $RESULTS."/".$RSCRIPTS.join("-",@NAMES)."_".$BIN_SIZE."_".$experiment."_".$value."_boxplot.R";
+        $PDF_file = $RESULTS."/".$PLOTS."/".join("-",@NAMES)."_".$BIN_SIZE."_".$experiment."_".$value.".pdf";
     }else{
         $Rfile = $RSCRIPTS.join("-",@NAMES)."_".$BIN_SIZE."_".$experiment."_".$value."_boxplot.R";
         $PDF_file = $PLOTS.join("-",@NAMES)."_".$BIN_SIZE."_".$experiment."_".$value.".pdf";
