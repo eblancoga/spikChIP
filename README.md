@@ -18,13 +18,14 @@ of the normalization over the background.
 
 spikChIP is a command line that runs in Linux and Mac OS-X environments:
 
-    ./spikChIP.pl -rtxgs -vclw -b <bin_size_kbp> -p <0|1|2|3> <configuration_file> <chrominfo_file>
+    ./spikChIP.pl -rtxgs -vclw -b <bin_size_kbp> -k <chrom_key_spikein> -p <0|1|2|3> <configuration_file> <chrominfo_file>
 
 Users can configure the behavior of the program with the following options:
 
     --clean|-c:  remove intermediate files to reduce the size of the output folder
     --lessMillion|-l: allow the process of BAM files of < 1 Million reads
     --binsize|-b: bin size (default: 10000 bps)
+    --chromkey | -k: Key word used to indicate the spike-in species in the chromInfo file (default: FLY)
     --palette|-p: palette (1 for reds, 2 for greens, 3 for blues and 0 for B&W)
     --help|-h: short help
     --verbose|-v: verbose option
