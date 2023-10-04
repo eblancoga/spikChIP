@@ -46,7 +46,7 @@ my $PLOTS = "plots/";
 my $RSCRIPTS = "Rscripts/";
 my $NOLABELS_TOKEN = "nolabels";
 my $N_STRATEGIES = 5;
-
+my $DEFAULT_CHROMKEY = "FLY";
 
 ## Step 0. Reading arguments
 my %opt;
@@ -67,6 +67,7 @@ my @SAVE_PROCEDURE;
 # --clean|-c:  remove intermediate files to reduce the size of the output folder
 # --lessMillion|-l: allow the process of BAM files of < 1 Million reads
 # --binsize|-b: bin size (default: 10000 bps)
+# --chromkey | -k: Key word used to indicate the spike-in species in the chromInfo file (default: FLY)
 # --palette|-p: palette (1 for reds, 2 for greens, 3 for blues and 0 for B&W)
 # --help|-h: short help
 # --verbose|-v: verbose option
@@ -91,7 +92,7 @@ my $TRADITIONAL = 0;
 my $CHIPRX = 0;
 my $TAGREMOVAL = 0;
 my $SPIKCHIP = 0;
-
+my $CHROMKEY = $DEFAULT_CHROMKEY;
 
 # 0.1 Acquire options
 Getopt::Long::GetOptions(
@@ -99,6 +100,7 @@ Getopt::Long::GetOptions(
     'clean|c' => \$CLEAN,
     'lessMillion|l' => \$LESSMILLION,
     'binsize|b=i' => \$BIN_SIZE,
+    'chromkey|k=s' => \$CHROMKEY,
     'palette|p=i' => \$PALETTE,
     'help|h' => \$HELP,
     'verbose|v' => \$VERBOSE,
@@ -221,7 +223,7 @@ if($RESULTS ne "results/"){
 
 if(!(-e $spike_bins) or $OVERWRITE)
 {
-    $command = "grep FLY $chrominfo_file | gawk 'BEGIN{OFS=\"\\t\";offset=$BIN_SIZE;}{for(i=1;i<\$2-offset;i=i+offset) print \$1,i,i+offset;}' > $spike_bins";
+    $command = "grep $CHROMKEY $chrominfo_file | gawk 'BEGIN{OFS=\"\\t\";offset=$BIN_SIZE;}{for(i=1;i<\$2-offset;i=i+offset) print \$1,i,i+offset;}' > $spike_bins";
     print_mess("$command\n");
     system($command);
 }else{
@@ -247,7 +249,7 @@ if($RESULTS ne "results/"){
 
 if(!(-e $sample_bins) or $OVERWRITE)
 {
-    $command = "grep -v FLY $chrominfo_file | gawk 'BEGIN{OFS=\"\\t\";offset=$BIN_SIZE;}{for(i=1;i<\$2-offset;i=i+offset) print \$1,i,i+offset;}' > $sample_bins";
+    $command = "grep -v $CHROMKEY $chrominfo_file | gawk 'BEGIN{OFS=\"\\t\";offset=$BIN_SIZE;}{for(i=1;i<\$2-offset;i=i+offset) print \$1,i,i+offset;}' > $sample_bins";
     print_mess("$command\n");
     system($command);
 }else{
@@ -1761,13 +1763,13 @@ sub RunspikChIPValues
         # distinguish spike from sample bins
         if(!(-e $final_avg_spike) or $OVERWRITE)
         {
-            $command = "join $final_avg $output_file4 | grep FLY | gawk 'BEGIN{OFS=\"\\t\"}{print $binname,$fields}'> $final_avg_spike";
+            $command = "join $final_avg $output_file4 | grep $CHROMKEY | gawk 'BEGIN{OFS=\"\\t\"}{print $binname,$fields}'> $final_avg_spike";
             print_mess("$command\n");
             system($command);
         }
         if(!(-e $final_avg_sample) or $OVERWRITE)
         {
-            $command = "join $final_avg $output_file4 | grep -v FLY | gawk 'BEGIN{OFS=\"\\t\"}{print $binname,$fields}'> $final_avg_sample";
+            $command = "join $final_avg $output_file4 | grep -v $CHROMKEY | gawk 'BEGIN{OFS=\"\\t\"}{print $binname,$fields}'> $final_avg_sample";
             print_mess("$command\n");
             system($command);
         }
@@ -1849,7 +1851,7 @@ sub RunspikChIPValues
         if(!(-e $final_max_spike) or $OVERWRITE)
         {
             # distinguish spike from sample bins
-            $command = "join $final_max $output_file4 | grep FLY | gawk 'BEGIN{OFS=\"\\t\"}{print $binname,$fields}'> $final_max_spike";
+            $command = "join $final_max $output_file4 | grep $CHROMKEY | gawk 'BEGIN{OFS=\"\\t\"}{print $binname,$fields}'> $final_max_spike";
             print_mess("$command\n");
             system($command);
         }else{
@@ -1857,7 +1859,7 @@ sub RunspikChIPValues
         }
         if(!(-e $final_max_sample) or $OVERWRITE)
         {
-            $command = "join $final_max $output_file4 | grep -v FLY | gawk 'BEGIN{OFS=\"\\t\"}{print $binname,$fields}'> $final_max_sample";
+            $command = "join $final_max $output_file4 | grep -v $CHROMKEY | gawk 'BEGIN{OFS=\"\\t\"}{print $binname,$fields}'> $final_max_sample";
             print_mess("$command");
             system($command);
         }else{
