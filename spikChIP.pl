@@ -27,6 +27,7 @@ my $MAX_BIN_SIZE = 100000;
 my $DEFAULT_PALETTE = 1;
 my $MIN_PALETTE = 0;
 my $MAX_PALETTE = 3;
+my $DEFAULT_EXOGENOME = "FLY";
 my $MEGA = 1000000;
 my $PSEUDOCOUNT = 0.1;
 my $RAW_TOKEN = "RAW";
@@ -62,18 +63,20 @@ my (@PEAKS_SAMPLES,@PEAKS_SPIKES);
 my (@BINS_PEAKS_SAMPLE,@BINS_PEAKS_SPIKE);
 my $bin_size;
 my $palette;
+my $exogenome;
 my $newdir;
 my @CLEAN_PROCEDURE;
 my @SAVE_PROCEDURE;
 
 # -c: clean intermediate files of results to save space
 # -d: allow the process of BAM files of < 1 Million reads
+# -e: exogenous genome identifier (e.g. FLY)
 # -k: bin size (default: 10000 bps)
 # -p: palette (1 for reds, 2 for greens, 3 for blues and 0 for B&W)
 # -h: short help
 # -v: verbose option
 
-(getopts('hvk:p:cd',\%opt)) or print_error("COMMAND LINE: Problems reading options\n");
+(getopts('hvk:p:e:cd',\%opt)) or print_error("COMMAND LINE: Problems reading options\n");
 
 print_mess("$PROGRAM.pl by Enrique Blanco @ CRG (2021)\n");
 print_help();
@@ -138,7 +141,14 @@ print_mess("Effective palette: $palette");
 print_ok();
 print_mess("\n");
 
-# 0.8 Loading filenames from configuration file
+# 0.8 Checking exogenous genome identifier (if selected)
+print_mess("Establishing the exogenous genome identifier\n");
+$exogenome = SettingExogenousGenome();
+print_mess("Effective exogenous genome identifier: $exogenome");
+print_ok();
+print_mess("\n");
+
+# 0.9 Loading filenames from configuration file
 print_mess("Reading configuration file, calculating reads and down-sampling\n");
 print_mess("Processing the configuration file\n");
 ReadingConfigurationFile($configuration_filename);
@@ -162,7 +172,7 @@ print_mess("[$date] Stage 1.  Producing the segmentation of both genomes in bins
 
 # spike segmentation
 $spike_bins = $RESULTS.join("-",@NAMES)."_"."spike_".$bin_size.".bed";
-$command = "grep FLY $chrominfo_file | gawk 'BEGIN{OFS=\"\\t\";offset=$bin_size;}{for(i=1;i<\$2-offset;i=i+offset) print \$1,i,i+offset;}' > $spike_bins";
+$command = "grep $exogenome $chrominfo_file | gawk 'BEGIN{OFS=\"\\t\";offset=$bin_size;}{for(i=1;i<\$2-offset;i=i+offset) print \$1,i,i+offset;}' > $spike_bins";
 print_mess("$command\n");
 system($command);
 
@@ -174,11 +184,18 @@ while($line=<FILEBINS>)
     $n_spike_bins++;
 }
 close(FILEBINS);
-print_mess("$n_spike_bins bins generated in the segmentation of the spike genome\n");
+if ($n_spike_bins > 0)
+{
+    print_mess("$n_spike_bins bins generated in the segmentation of the spike genome\n");
+}
+else
+{
+    print_error("NO SPIKE BINS: segmentation of the spike genome (please, check exogenous genome identifier in the ChromInfo.txt file)");
+}
 
 # sample genome segmentation
 $sample_bins = $RESULTS.join("-",@NAMES)."_"."sample_".$bin_size.".bed";
-$command = "grep -v FLY $chrominfo_file | gawk 'BEGIN{OFS=\"\\t\";offset=$bin_size;}{for(i=1;i<\$2-offset;i=i+offset) print \$1,i,i+offset;}' > $sample_bins";
+$command = "grep -v $exogenome $chrominfo_file | gawk 'BEGIN{OFS=\"\\t\";offset=$bin_size;}{for(i=1;i<\$2-offset;i=i+offset) print \$1,i,i+offset;}' > $sample_bins";
 print_mess("$command\n");
 system($command);
 
@@ -190,7 +207,14 @@ while($line=<FILEBINS>)
     $n_sample_bins++;
 }
 close(FILEBINS);
-print_mess("$n_sample_bins bins generated in the segmentation of the sample genome");
+if ($n_sample_bins > 0)
+{
+    print_mess("$n_sample_bins bins generated in the segmentation of the sample genome");
+}
+else
+{
+    print_error("NO SAMPLE BINS: segmentation of the sample genome (please, check genome chromosome records in the ChromInfo.txt file)");
+}
 CleanFile($spike_bins);
 CleanFile($sample_bins);
 #
@@ -215,7 +239,7 @@ print_mess("Total pairs of sample/spike experiments to be analyzed: $n_experimen
 for($i=0; $i<$n_experiments; $i++)
 {
     $name = $NAMES[$i];
-    print_mess("Processing the $name experiment\n");
+    print_mess("Processing the experiment ".($i+1).": $name\n");
     #
     print_mess("Starting RAW normalization...\n");
     NormalizationRaw($i);
@@ -324,9 +348,8 @@ $date = localtime();
 print_mess("[$date] Stage 5.  Successfully finishing the work\n");
 
 # Cleaning intermediate files (option -c)
-print_mess("Cleaning temporary files");
+print_mess("Cleaning temporary files (rm)\n");
 CleaningFiles();
-print_ok();
 print_mess("\n");
 
 # Compressing final files
@@ -357,10 +380,11 @@ sub print_help
     {
 	print STDERR color("bold blue"),"spikChIP_v1.0\t\t\t\tUser commands\t\t\t\tspikChIP\n\n";
 	print STDERR color("bold blue"),"NAME\n\tspikChIP, a tool to normalize ChIP-seq experiments by spike-in correction\n\n";
-	print STDERR color("bold blue"),"SYNOPSIS:\n\t$PROGRAM -vcdk <bin_size_kbp> -p <0|1|2|3> <configuration_file> <chrominfo_file>\n\n";
+	print STDERR color("bold blue"),"SYNOPSIS:\n\t$PROGRAM -vcde <FLY|HUMAN|MOUSE|EXO> -k <bin_size_kbp> -p <0|1|2|3> <configuration_file> <chrominfo_file>\n\n";
 	print STDERR color("bold blue"),"OPTIONS:\n";
 	print STDERR color("bold blue"),"\t-c: clean intermediate files of results to save space\n";
 	print STDERR color("bold blue"),"\t-d: allow the process of BAM files of < 1 Million reads\n";
+	print STDERR color("bold blue"),"\t-e: exogenous genome identifier (default: FLY, allowed values: FLY,HUMAN,MOUSE,EXO)\n";
 	print STDERR color("bold blue"),"\t-k: bin size (default: 10000 bps)\n";
 	print STDERR color("bold blue"),"\t-p: palette (1 for reds, 2 for greens, 3 for blues and 0 for B&W)\n";
 	print STDERR color("bold blue"),"\t-h: short help\n";
@@ -666,6 +690,28 @@ sub SettingPalette
     return($palette);
 }
 
+sub SettingExogenousGenome
+{
+    my $exo_genome;
+
+    if (exists($opt{e}))
+    {
+	$exo_genome = $opt{"e"};
+    }
+    else
+    {
+	$exo_genome =$DEFAULT_EXOGENOME;
+    }
+
+    # list of valid exogenous identifiers
+    if (($exo_genome ne "FLY") && ($exo_genome ne "HUMAN") && ($exo_genome ne "MOUSE") && ($exo_genome ne "EXO"))
+    {
+	print_error("Please, set the exogenous genome identifier in the valid range (current $exo_genome): FLY|HUMAN|MOUSE|EXO");
+    }
+
+    return($exo_genome);
+}
+
 sub CheckExternalSoftware
 {
     no warnings 'exec';
@@ -865,13 +911,11 @@ sub NormalizationChIPRX
     my ($bam_sample,$bam_spike);
     my $out_name;
     my ($file_all,$file_avg,$file_max);
-    my $total_reads;
     
     
     # input bam files
     $bam_sample = $BAM_SAMPLES[$i];
     $bam_spike = $BAM_SPIKES[$i];
-    $total_reads = $READS_SAMPLES[$i] + $READS_SPIKES[$i];
 
     # Spike bins
     $out_name = $NAMES[$i]."_".$CHIPRX_TOKEN."_".$bin_size."_spike";
@@ -1206,7 +1250,7 @@ sub RunspikChIPValues
     close(RFILE);
     #
     # execute R script
-    $command = "R CMD BATCH $Rfile";
+    $command = "R CMD BATCH --no-save --no-restore $Rfile";
     print_mess("$command\n");
     system($command);
     #
@@ -1235,10 +1279,10 @@ sub RunspikChIPValues
     $binname = " \$".($i+3);
     #
     # distinguish spike from sample bins
-    $command = "join $final_avg $output_file4 | grep FLY | gawk 'BEGIN{OFS=\"\\t\"}{print $binname,$fields}'> $final_avg_spike";
+    $command = "join $final_avg $output_file4 | grep $exogenome | gawk 'BEGIN{OFS=\"\\t\"}{print $binname,$fields}'> $final_avg_spike";
     print_mess("$command\n");
     system($command);
-    $command = "join $final_avg $output_file4 | grep -v FLY | gawk 'BEGIN{OFS=\"\\t\"}{print $binname,$fields}'> $final_avg_sample";
+    $command = "join $final_avg $output_file4 | grep -v $exogenome | gawk 'BEGIN{OFS=\"\\t\"}{print $binname,$fields}'> $final_avg_sample";
     print_mess("$command\n");
     system($command);
 
@@ -1276,7 +1320,7 @@ sub RunspikChIPValues
     close(RFILE);
     #
     # execute R script
-    $command = "R CMD BATCH $Rfile";
+    $command = "R CMD BATCH --no-save --no-restore $Rfile";
     print_mess("$command\n");
     system($command);
     #
@@ -1296,10 +1340,10 @@ sub RunspikChIPValues
     system($command);
     #
     # distinguish spike from sample bins
-    $command = "join $final_max $output_file4 | grep FLY | gawk 'BEGIN{OFS=\"\\t\"}{print $binname,$fields}'> $final_max_spike";
+    $command = "join $final_max $output_file4 | grep $exogenome | gawk 'BEGIN{OFS=\"\\t\"}{print $binname,$fields}'> $final_max_spike";
     print_mess("$command\n");
     system($command);
-    $command = "join $final_max $output_file4 | grep -v FLY | gawk 'BEGIN{OFS=\"\\t\"}{print $binname,$fields}'> $final_max_sample";
+    $command = "join $final_max $output_file4 | grep -v $exogenome | gawk 'BEGIN{OFS=\"\\t\"}{print $binname,$fields}'> $final_max_sample";
     print_mess("$command");
     system($command);
 }
@@ -1704,7 +1748,7 @@ sub GenerateBoxplot
     close(RFILE);
     #
     # execute R script
-    $command = "R CMD BATCH $Rfile";
+    $command = "R CMD BATCH --no-save --no-restore $Rfile";
     print_mess("$command\n");
     system($command);
     #
@@ -1776,7 +1820,7 @@ sub GenerateBoxplot
     close(RFILE);
     #
     # execute R script
-    $command = "R CMD BATCH $Rfile";
+    $command = "R CMD BATCH --no-save --no-restore $Rfile";
     print_mess("$command\n");
     system($command);
     #
@@ -1817,6 +1861,7 @@ sub CleaningFiles
 	for ($i=0; $i<scalar(@CLEAN_PROCEDURE); $i++)
 	{
 	    $command = $CLEAN_PROCEDURE[$i];
+	    print_mess("$command\n"); 
 	    system($command);
 	}
     }
