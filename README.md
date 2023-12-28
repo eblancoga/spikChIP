@@ -18,12 +18,13 @@ of the normalization over the background.
 
 spikChIP is a command line that runs in Linux and Mac OS-X environments:
 
-    ./spikChIP -vhcdk <bin_size_kbp> -p <0|1|2|3> <configuration_file> <chrominfo_file>
+    ./spikChIP -vhcde <FLY|HUMAN|MOUSE|EXO> -k <bin_size_kbp> -p <0|1|2|3> <configuration_file> <chrominfo_file>
 
 Users can configure the behavior of the program with the following options:
 
     -c: remove intermediate files to reduce the size of the output folder
     -d: allow the process of BAM files of < 1 Million reads
+    -e: exogenous genome identifier (default: FLY, allowed values: FLY,HUMAN,MOUSE,EXO)
     -k: number of bp of the bins for the segmentation of the genome
     -p: palette of colors for boxplots (0: black and white, 1: reds, 2: greens, 3: blues)
     -v: verbose (show messages about the processing of the samples)
