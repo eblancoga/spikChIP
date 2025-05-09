@@ -1245,7 +1245,7 @@ sub RunspikChIPValues
     print RFILE "d <- read.table(\"$output_file3\")\n";
     print RFILE "rownames(m) <- d[,1]\n";
     print RFILE "s <- seq(1,$n_spike_bins)\n";
-    print RFILE "mn <- normalize.loess(m,subset=s)\n";
+    print RFILE "mn <- normalize.loess(m,subset=s,span = 1)\n";
     print RFILE "write.table(mn,file=\"$final_avg\",sep=\"\\t\",row.names=TRUE,col.names=FALSE,quote=FALSE)\n";
     close(RFILE);
     #
